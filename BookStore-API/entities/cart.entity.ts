@@ -1,35 +1,36 @@
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
-import {Member} from './member.entity';
+import { Member } from './member.entity';
 import { Receipt } from './receipt.entity';
 import { CartDetail } from './cartdetail.entity';
 
 @Entity({ name: 'Carts' })
 export class Cart {
-    @PrimaryGeneratedColumn({name: 'Id'})
-    id: number;
+  @PrimaryGeneratedColumn({ name: 'Id' })
+  id: number;
 
-    @IsNotEmpty()
-    @Column({name: 'CartDate', type: 'datetime'})
-    cartDate: Date;
+  @IsNotEmpty()
+  @Column({ name: 'CartDate', type: 'datetime' })
+  cartDate: Date;
 
-    @IsNotEmpty()
-    @MaxLength(50)
-    @Column({name: 'CartStatus', type: 'varchar', length: 50})
-    cartStatus: string;
+  @IsNotEmpty()
+  @MaxLength(50)
+  @Column({ name: 'CartStatus', type: 'varchar', length: 50 })
+  cartStatus: string;
 
-    @IsNotEmpty()
-    @Column({name: 'CartTotal', type: 'int'})
-    cartTotal: number;
+  @IsNotEmpty()
+  @Column({ name: 'CartTotal', type: 'int' })
+  cartTotal: number;
 
+  @Column({ type: 'int' })
+  memberId: number;
 
-    @ManyToOne(() => Member, (m) => m.carts)
-    member: Member;
+  @ManyToOne(() => Member, (m) => m.carts)
+  member: Member;
 
-    @OneToMany(() => Receipt, (re) => re.cart)
-    receipts: Receipt[];
+  @OneToOne(() => Receipt, (re) => re.cart)
+  receipts: Receipt[];
 
-    @OneToMany(() => CartDetail, (c) => c.cart)
-    cartDetails: CartDetail[];
-  
+  @OneToMany(() => CartDetail, (c) => c.cart)
+  cartDetails: CartDetail[];
 }

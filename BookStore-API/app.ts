@@ -5,7 +5,7 @@ import logger from 'morgan';
 import path from 'path';
 
 import { AppDataSource } from './data-source';
-
+import categoriesRouter from './routes/categories';
 
 const app: Express = express();
 
@@ -21,6 +21,7 @@ AppDataSource.initialize().then(async () => {
   // use cors
   app.use(cors({ origin: '*' }));
 
+  app.use('/categories', categoriesRouter);
 
   // catch 404 and forward to error handler
   app.use(function (req: Request, res: Response, next: NextFunction) {
