@@ -5,28 +5,28 @@ import { Cart } from './cart.entity';
 
 @Entity({ name: 'CartDetails' })
 export class CartDetail {
-    @PrimaryGeneratedColumn({name: 'Id'})
+    @PrimaryGeneratedColumn({ name: 'Id' })
     id: number;
 
     @IsNotEmpty()
-    @Column({name: 'CartQuantity', type: 'decimal', precision: 18, scale: 2 })
+    @Column({ name: 'CartQuantity', type: 'int', default: 1 })
     cartquantity: number;
 
     @IsNotEmpty()
-    @Column({name: 'SubTotalCart', type: 'int'})
+    @Column({ name: 'SubTotalCart', type: 'money' })
     subtotalcart: number;
 
-    @Column({type: 'int'})
+    @Column({ type: 'int' })
     cartId: number;
-     
-    @Column({type: 'int'})
+
+    @Column({ type: 'int' })
     bookId: number;
+
 
     @OneToMany(() => Book, (b) => b.cartDetail)
     books: Book[];
 
-
     @ManyToOne(() => Cart, (c) => c.cartDetails)
     cart: Cart;
- 
+
 }

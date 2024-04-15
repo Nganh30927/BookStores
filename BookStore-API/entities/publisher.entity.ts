@@ -23,6 +23,8 @@ export class Publisher {
     @Column({name: 'PhoneNumber', type: 'varchar', length: 10, unique: true})
     phonenumber: number;
 
+    
+
     @OneToMany(() => Invoice, (i) => i.publisher)
     invoices: Invoice[];
     @OneToMany(() => Book, (b) => b.publisher)

@@ -19,7 +19,9 @@ export class FeedBack {
     bookId: number;
 
     @Column({type: 'int'})
-    memberId: number
+    memberId: number;
+
+
 
     @ManyToOne(() => Member, (m) => m.feedbacks)
     member: Member;
