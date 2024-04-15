@@ -5,31 +5,31 @@ import { FeedBack } from './feedback.entity';
 
 @Entity({ name: 'Members' })
 export class Member {
-    @PrimaryGeneratedColumn({name: 'Id'})
-    id: number;
+  @PrimaryGeneratedColumn({ name: 'Id' })
+  id: number;
 
-    @MaxLength(50)
-    @IsNotEmpty()
-    @Column({name: 'Name', type: 'nvarchar', length: 50})
-    name: string;
+  @MaxLength(50)
+  @IsNotEmpty()
+  @Column({ name: 'Name', type: 'nvarchar', length: 50 })
+  name: string;
 
-    @MaxLength(500)
-    @IsNotEmpty()
-    @Column({name: 'Address', type: 'nvarchar', length: 500})
-    address: string;
+  @MaxLength(500)
+  @IsNotEmpty()
+  @Column({ name: 'Address', type: 'nvarchar', length: 500 })
+  address: string;
 
-    @Column({name: 'Gender', type: 'nvarchar', nullable: true})
-    gender: string;
+  @IsNotEmpty()
+  @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others'] })
+  gender: string;
 
-    @MaxLength(10)
-    @IsNotEmpty()
-    @Column({name: 'Contact', type: 'nvarchar', unique: true, length: 10})
-    contact: number;
+  @MaxLength(10)
+  @IsNotEmpty()
+  @Column({ name: 'Contact', type: 'nvarchar', unique: true, length: 10 })
+  contact: number;
 
-    @OneToMany(() => Cart, (c) => c.member)
-    carts: Cart[];
+  @OneToMany(() => Cart, (c) => c.member)
+  carts: Cart[];
 
-    @OneToMany(() => FeedBack, (f) => f.member)
-    feedbacks: FeedBack[]
-
+  @OneToMany(() => FeedBack, (f) => f.member)
+  feedbacks: FeedBack[];
 }
