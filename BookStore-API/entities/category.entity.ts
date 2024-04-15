@@ -17,7 +17,6 @@ export class Category extends BaseEntity {
     @Column({name: 'Description', type: 'nvarchar', length: 500, nullable: true})
     description?: string;
 
-
     @OneToMany(() => Book, (b) => b.category)
     books: Book[];
 

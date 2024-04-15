@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
+
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/category.entity';
-
 
 const repository = AppDataSource.getRepository(Category);
 
