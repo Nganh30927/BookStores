@@ -22,7 +22,6 @@ export class CartDetail {
     @Column({ type: 'int' })
     bookId: number;
 
-
     @OneToMany(() => Book, (b) => b.cartDetail)
     books: Book[];
 

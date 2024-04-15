@@ -5,25 +5,26 @@ import { FeedBack } from './feedback.entity';
 
 @Entity({ name: 'Members' })
 export class Member {
-    @PrimaryGeneratedColumn({name: 'Id'})
+    @PrimaryGeneratedColumn({ name: 'Id' })
     id: number;
 
     @MaxLength(50)
     @IsNotEmpty()
-    @Column({name: 'Name', type: 'nvarchar', length: 50})
+    @Column({ name: 'Name', type: 'nvarchar', length: 50 })
     name: string;
 
     @MaxLength(500)
     @IsNotEmpty()
-    @Column({name: 'Address', type: 'nvarchar', length: 500})
+    @Column({ name: 'Address', type: 'nvarchar', length: 500 })
     address: string;
 
-    @Column({name: 'Gender', type: 'nvarchar', nullable: true})
+    @IsNotEmpty()
+    @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others'] })
     gender: string;
 
     @MaxLength(10)
     @IsNotEmpty()
-    @Column({name: 'Contact', type: 'nvarchar', unique: true, length: 10})
+    @Column({ name: 'Contact', type: 'nvarchar', unique: true, length: 10 })
     contact: number;
 
 
