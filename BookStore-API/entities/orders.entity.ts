@@ -39,7 +39,6 @@ export class Order {
     employeId: number;
 
 
-
     @ManyToOne(() => Employee, (e) => e.orders)
     employee: Employee;
 

@@ -21,7 +21,6 @@ export class Invoice {
     orderId: number;
 
 
-
     @ManyToOne(() => Publisher, (p) => p.invoices)
     publisher: Publisher;
 

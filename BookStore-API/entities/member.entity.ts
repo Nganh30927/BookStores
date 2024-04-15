@@ -27,6 +27,8 @@ export class Member {
     @Column({ name: 'Contact', type: 'nvarchar', unique: true, length: 10 })
     contact: number;
 
+
+
     @OneToOne(() => Cart, (c) => c.member)
     cart: Cart;
 
