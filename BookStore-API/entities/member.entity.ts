@@ -30,7 +30,7 @@ export class Member {
 
 
     @OneToOne(() => Cart, (c) => c.member)
-    cart: Cart[];
+    cart: Cart;
 
     @OneToMany(() => FeedBack, (f) => f.member)
     feedbacks: FeedBack[]
