@@ -5,8 +5,8 @@ import logger from 'morgan';
 import path from 'path';
 
 import { AppDataSource } from './data-source';
-import categoriesRouter from './routes/categories.route'
-import booksRouter from './routes/books.route'
+import categoriesRouter from './routes/categories'
+import booksRouter from './routes/books'
 
 
 const app: Express = express();
