@@ -1,4 +1,4 @@
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import {Member} from './member.entity';
 import { Receipt } from './receipt.entity';
@@ -23,11 +23,11 @@ export class Cart {
     cartTotal: number;
 
 
-    @ManyToOne(() => Member, (m) => m.carts)
+    @OneToOne(() => Member, (m) => m.cart)
     member: Member;
 
-    @OneToMany(() => Receipt, (re) => re.cart)
-    receipts: Receipt[];
+    @OneToOne(() => Receipt, (re) => re.cart)
+    receipt: Receipt;
 
     @OneToMany(() => CartDetail, (c) => c.cart)
     cartDetails: CartDetail[];

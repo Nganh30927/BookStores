@@ -1,4 +1,4 @@
-import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Publisher } from './publisher.entity';
 import { Order } from './orders.entity';
@@ -24,7 +24,7 @@ export class Invoice {
     @ManyToOne(() => Publisher, (p) => p.invoices)
     publisher: Publisher;
 
-    @ManyToOne(() => Order, (o) => o.invoices)
+    @OneToOne(() => Order, (o) => o.invoice)
     order: Order;
 
     
