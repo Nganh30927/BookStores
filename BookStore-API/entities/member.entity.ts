@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Cart } from './cart.entity';
 import { FeedBack } from './feedback.entity';
@@ -26,8 +26,8 @@ export class Member {
     @Column({name: 'Contact', type: 'nvarchar', unique: true, length: 10})
     contact: number;
 
-    @OneToMany(() => Cart, (c) => c.member)
-    carts: Cart[];
+    @OneToOne(() => Cart, (c) => c.member)
+    cart: Cart;
 
     @OneToMany(() => FeedBack, (f) => f.member)
     feedbacks: FeedBack[]

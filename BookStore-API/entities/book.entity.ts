@@ -1,4 +1,4 @@
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmpty, IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import {Publisher} from './publisher.entity';
 import {Category} from './category.entity'
@@ -62,13 +62,14 @@ export class Book {
     @ManyToOne(() => Publisher, (p) => p.books)
     publisher: Publisher;
 
-    @OneToMany(() => CartDetail, (c) => c.book)
-    cartDetails: CartDetail[];
+    @ManyToOne(() => CartDetail, (c) => c.books)
+    cartDetail: CartDetail;
 
     @OneToMany(() => FeedBack, (f) => f.book)
     feedbacks: FeedBack[];
 
-    @OneToMany(() => OrderDetail, (o) => o.book)
+    @ManyToMany(() => OrderDetail)
+    @JoinTable()
     orderDetails: OrderDetail[];
 
 }

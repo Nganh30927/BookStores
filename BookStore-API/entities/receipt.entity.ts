@@ -1,4 +1,4 @@
-import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Cart } from './cart.entity';
 
@@ -22,7 +22,7 @@ export class Receipt {
     @Column({type: 'int'})
     cartId: number
 
-    @ManyToOne(() => Cart, (c) => c.receipts)
+    @OneToOne(() => Cart, (c) => c.receipt)
     cart: Cart
 
     

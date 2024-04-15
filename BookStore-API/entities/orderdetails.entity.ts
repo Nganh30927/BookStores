@@ -1,4 +1,4 @@
-import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {  Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Book } from './book.entity';
 import { Order } from './orders.entity';
@@ -30,8 +30,9 @@ export class OrderDetail {
     @Column({type: 'int'})
     orderId: number
 
-    @ManyToOne(() => Book, (b) => b.orderDetails)
-    book: Book;
+    @ManyToMany(() => Book)
+    @JoinTable()
+    books: Book[];
 
     @ManyToOne(() => Order, (o) => o.orderDetails)
     order: Order;

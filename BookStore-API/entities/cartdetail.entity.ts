@@ -1,4 +1,4 @@
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Book } from './book.entity';
 import { Cart } from './cart.entity';
@@ -22,8 +22,8 @@ export class CartDetail {
     @Column({type: 'int'})
     bookId: number;
 
-    @ManyToOne(() => Book, (b) => b.cartDetails)
-    book: Book;
+    @OneToMany(() => Book, (b) => b.cartDetail)
+    books: Book[];
 
 
     @ManyToOne(() => Cart, (c) => c.cartDetails)
