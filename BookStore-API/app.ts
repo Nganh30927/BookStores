@@ -7,6 +7,9 @@ import path from 'path';
 import { AppDataSource } from './data-source';
 import categoriesRouter from './routes/categories'
 import booksRouter from './routes/books'
+import employeeRouter from './routes/employees'
+import memberRouter from './routes/members'
+import publisherRouter from './routes/publishers'
 
 
 const app: Express = express();
@@ -24,6 +27,10 @@ AppDataSource.initialize().then(async () => {
   app.use(cors({ origin: '*' }));
   app.use('/categories', categoriesRouter);
   app.use('/books', booksRouter);
+  app.use('/employees', employeeRouter);
+  app.use('/publishers', publisherRouter);
+  app.use('/members', memberRouter);
+
 
   // catch 404 and forward to error handler
   app.use(function (req: Request, res: Response, next: NextFunction) {
