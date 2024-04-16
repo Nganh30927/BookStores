@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typ
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Cart } from './cart.entity';
 import { FeedBack } from './feedback.entity';
+import { Order } from './orders.entity';
 
 @Entity({ name: 'Members' })
 export class Member {
@@ -33,6 +34,8 @@ export class Member {
     cart: Cart;
 
     @OneToMany(() => FeedBack, (f) => f.member)
-    feedbacks: FeedBack[]
+    feedbacks: FeedBack[];
 
+    @OneToMany(() => Order, (o) => o.member)
+    orders: Order[];
 }

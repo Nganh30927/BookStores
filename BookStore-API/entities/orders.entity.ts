@@ -4,6 +4,7 @@ import { Publisher } from './publisher.entity';
 import { Employee } from './employee.entity';
 import { Invoice } from './invoice.entity';
 import { OrderDetail } from './orderdetails.entity';
+import { Member } from './member.entity';
 
 @Entity({ name: 'Orders' })
 //ShippedDay >= OrderDay
@@ -38,6 +39,12 @@ export class Order {
     @Column({ type: 'int' })
     employeId: number;
 
+    @Column({type: 'int'})
+    memberId: number
+
+
+    @ManyToOne(() => Member, (me) => me.orders)
+    member: Member;
 
     @ManyToOne(() => Employee, (e) => e.orders)
     employee: Employee;

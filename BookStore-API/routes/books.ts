@@ -72,12 +72,12 @@ router.patch('/:id', async (req: Request, res: Response, next: any) => {
 
     await repository.save(book);
 
-    const updatedCategory = await repository
+    const updatedBook = await repository
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.category', 'c')
       .where('b.id = :id', { id: parseInt(req.params.id) })
       .getOne();
-    res.json(updatedCategory);
+    res.json(updatedBook);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
