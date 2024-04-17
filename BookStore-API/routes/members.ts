@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
-import { Employee } from '../entities/employee.entity';
+import { Member } from '../entities/member.entity';
 
-const repository = AppDataSource.getRepository(Employee);
+const repository = AppDataSource.getRepository(Member);
 
 const router = express.Router();
 
@@ -11,13 +11,13 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const employees = await repository.find();
-      if (employees.length === 0) {
+      const members = await repository.find();
+      if (members.length === 0) {
         res.status(204).send({
           error: 'No content',
         });
       } else {
-        res.json(employees);
+        res.json(members);
       }
     } catch (error) {
       console.error(error);
@@ -28,11 +28,11 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   router.get('/:id', async (req: Request, res: Response, next: any) => {
     try {
-      const employee = await repository.findOneBy({ id: parseInt(req.params.id) });
-      if (!employee) {
+      const member = await repository.findOneBy({ id: parseInt(req.params.id) });
+      if (!member) {
         return res.status(410).json({ error: 'Not found' });
       }
-      res.json(employee);
+      res.json(member);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
@@ -43,11 +43,11 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   router.post('/', async (req: Request, res: Response, next: any) => {
     try {
-      const employee = new Employee();
-      Object.assign(employee, req.body);
+      const member = new Member();
+      Object.assign(member, req.body);
   
-      await repository.save(employee);
-      res.status(201).json(employee);
+      await repository.save(member);
+      res.status(201).json(member);
     } catch (error) {
       console.error(error);
       res.status(400).json({ error });
@@ -58,13 +58,13 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   router.patch('/:id', async (req: Request, res: Response, next: any) => {
     try {
-      const employee = await repository.findOneBy({ id: parseInt(req.params.id) });
-      if (!employee) {
+      const member = await repository.findOneBy({ id: parseInt(req.params.id) });
+      if (!member) {
         return res.status(410).json({ error: 'Not found' });
       }
   
-      Object.assign(employee, req.body);
-      await repository.save(employee);
+      Object.assign(member, req.body);
+      await repository.save(member);
   
       const updatedEmployee = await repository.findOneBy({ id: parseInt(req.params.id) });
       res.json(updatedEmployee);
@@ -76,8 +76,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   router.delete('/:id', async (req: Request, res: Response, next: any) => {
     try {
-      const employee = await repository.findOneBy({ id: parseInt(req.params.id) });
-      if (!employee) {
+      const member = await repository.findOneBy({ id: parseInt(req.params.id) });
+      if (!member) {
         return res.status(410).json({ error: 'Not found' });
       }
       await repository.delete({ id: parseInt(req.params.id) });

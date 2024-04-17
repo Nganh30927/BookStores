@@ -9,7 +9,8 @@ import { OrderDetail } from './orderdetails.entity';
 @Entity({ name: 'Books' })
 @Check(`"Quantity" >= 0`)
 @Check(`"Price" >= 0`)
-@Check(`"Discount" >= 0`, `"Discount" <= 100`)
+@Check(`"Discount" >= 0`)
+@Check(`"Discount" <= 100`)
 export class Book {
     @PrimaryGeneratedColumn({ name: 'Id' })
     id: number;
@@ -40,7 +41,7 @@ export class Book {
     description?: string;
 
     @IsNotEmpty()
-    @Column({ name: 'Discount', type: 'decimal', precision: 18, scale: 2, default: 0 })
+    @Column({ name: 'Discount', type: 'decimal', precision: 18, scale: 2})
     discount: number;
 
     @MaxLength(500)
@@ -71,8 +72,7 @@ export class Book {
     @OneToMany(() => FeedBack, (f) => f.book)
     feedbacks: FeedBack[];
 
-    @ManyToMany(() => OrderDetail)
-    @JoinTable()
-    orderDetails: OrderDetail[];
+    @OneToMany(() => OrderDetail, (o) => o.book)
+    orderdetails: OrderDetail[];
 
 }
