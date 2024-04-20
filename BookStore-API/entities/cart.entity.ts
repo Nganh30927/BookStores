@@ -6,34 +6,31 @@ import { CartDetail } from './cartdetail.entity';
 
 @Entity({ name: 'Carts' })
 export class Cart {
-    @PrimaryGeneratedColumn({ name: 'Id' })
-    id: number;
+  @PrimaryGeneratedColumn({ name: 'Id' })
+  id: number;
 
-    @IsNotEmpty()
-    @Column({ name: 'CartDate', type: 'datetime' })
-    cartDate: Date;
+  @IsNotEmpty()
+  @Column({ name: 'CartDate', type: 'datetime' })
+  cartDate: Date;
 
-    @IsNotEmpty()
-    @MaxLength(50)
-    @Column({ name: 'CartStatus', type: 'varchar', length: 50 })
-    cartStatus: string;
+  @IsNotEmpty()
+  @MaxLength(50)
+  @Column({ name: 'CartStatus', type: 'varchar', length: 50 })
+  cartStatus: string;
 
-    @IsNotEmpty()
-    @Column({ name: 'CartTotal', type: 'int' })
-    cartTotal: number;
+  @IsNotEmpty()
+  @Column({ name: 'CartTotal', type: 'int' })
+  cartTotal: number;
 
-    @Column({ type: 'int' })
-    memberId: number;
+  @Column({ type: 'int' })
+  memberId: number;
 
+  @ManyToOne(() => Member, (m) => m.carts)
+  member: Member;
 
+  @OneToOne(() => Receipt, (re) => re.cart)
+  receipts: Receipt[];
 
-    @OneToOne(() => Member, (m) => m.cart)
-    member: Member;
-
-    @OneToOne(() => Receipt, (re) => re.cart)
-    receipt: Receipt;
-
-    @OneToMany(() => CartDetail, (c) => c.cart)
-    cartDetails: CartDetail[];
-
+  @OneToMany(() => CartDetail, (c) => c.cart)
+  cartDetails: CartDetail[];
 }

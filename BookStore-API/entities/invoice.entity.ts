@@ -5,28 +5,24 @@ import { Order } from './orders.entity';
 
 @Entity({ name: 'Invoices' })
 export class Invoice {
-    @PrimaryGeneratedColumn({ name: 'Id' })
-    id: number;
+  @PrimaryGeneratedColumn({ name: 'Id' })
+  id: number;
 
-    @Column({ name: 'InvoiceDate', type: 'date' })
-    invoicedate: Date;
+  @Column({ name: 'InvoiceDate', type: 'date' })
+  invoicedate: Date;
 
-    @Column({ name: 'TotalInvoice', type: 'money' })
-    totalinvoice: number;
+  @Column({ name: 'TotalInvoice', type: 'money' })
+  totalinvoice: number;
 
-    @Column({ type: 'int' })
-    publisherId: number;
+  @Column({ type: 'int' })
+  publisherId: number;
 
-    @Column({ type: 'int' })
-    orderId: number;
+  @Column({ type: 'int' })
+  orderId: number;
 
+  @ManyToOne(() => Publisher, (p) => p.invoices)
+  publisher: Publisher;
 
-    @ManyToOne(() => Publisher, (p) => p.invoices)
-    publisher: Publisher;
-
-    @OneToOne(() => Order, (o) => o.invoice)
-    order: Order;
-
-
-
+  @OneToOne(() => Order, (o) => o.invoices)
+  order: Order;
 }
