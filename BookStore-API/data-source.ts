@@ -6,10 +6,10 @@ import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
   type: 'mssql',
-  host: 'DESKTOP-GUC2D7U',
+  host: '',
   port: 1433,
-  username: 'sa',
-  password: '12345',
+  username: '',
+  password: '',
   database: 'BookShop',
   entities: ['entities/**/*.entity{.ts,.js}', 'entities/**/*.schema{.ts,.js}'],
   synchronize: true,
