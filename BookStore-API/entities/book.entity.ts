@@ -20,6 +20,10 @@ export class Book {
   @Column({ name: 'Name', type: 'nvarchar', length: 100 })
   name: string;
 
+  @MaxLength(100)
+  @Column({ name: 'Author', type: 'nvarchar', length: 100, nullable: true })
+  author?: string;
+
   @MaxLength(500)
   @Column({ name: 'Title', type: 'nvarchar', length: 500, nullable: true })
   title?: string;

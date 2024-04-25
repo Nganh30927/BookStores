@@ -11,7 +11,8 @@ export class Publisher {
 
     @MaxLength(100)
     @IsNotEmpty()
-    @Column({name: 'Name', type: 'nvarchar', length: 500})
+    @Column({ name: 'Name', type: 'nvarchar', length: 100 })
+    name: string;
 
     @IsEmail()
     @IsNotEmpty()
