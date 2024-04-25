@@ -1,0 +1,15 @@
+###
+
+GET http://localhost:9000/publishers
+
+
+###
+## Create a
+POST http://localhost:9000/publishers
+content-type: application/json
+
+{
+    "name": "NXB Hội Nhà Văn",
+    "email": "nhaxuatbanhnv65@gmail.com",
+    "phonenumber": "0938222135"
+}

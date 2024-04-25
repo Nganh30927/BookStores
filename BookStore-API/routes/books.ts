@@ -28,8 +28,34 @@ router.get('/', async (req: Request, res: Response, next: any) => {
   }
 });
 
+
+// SELECT o FROM Book o WHERE o.category.id=?1
+router.get('/list', async (req: Request, res: Response, next: any) => {
+  try {
+    
+    const categoryId = req.query.categoryId; 
+
+    const books = await repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .leftJoinAndSelect('book.publisher', 'publisher')
+      .where("category.id = :categoryId", { categoryId }) 
+      .getMany();
+
+    if (books.length === 0) {
+      res.status(204).send();
+    } else {
+      res.json(books);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 /* GET book by id */
-router.get('/:id', async (req: Request, res: Response, next: any) => {
+router.get('/detail/:id', async (req: Request, res: Response, next: any) => {
   try {
     const book = await repository
       .createQueryBuilder('book')
