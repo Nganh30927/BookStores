@@ -8,14 +8,41 @@ const router = express.Router();
 const repository = AppDataSource.getRepository(Book);
 
 /* GET Books */
+// router.get('/', async (req: Request, res: Response, next: any) => {
+//   try {
+//     // SELECT * FROM [Books] AS 'book'
+//     const books = await repository
+//       .createQueryBuilder('book')
+//       .leftJoinAndSelect('book.category', 'category')
+//       .leftJoinAndSelect('book.publisher', 'publisher')
+//       .getMany();
+
+//     if (books.length === 0) {
+//       res.status(204).send();
+//     } else {
+//       res.json(books);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 router.get('/', async (req: Request, res: Response, next: any) => {
+  // SELECT * FROM [Books] AS 'book'
   try {
-    // SELECT * FROM [Books] AS 'book'
-    const books = await repository
+    const price = req.query.price; 
+
+    const query = repository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.category', 'category')
-      .leftJoinAndSelect('book.publisher', 'publisher')
-      .getMany();
+      .leftJoinAndSelect('book.publisher', 'publisher');
+
+    if (price) {
+      query.where("book.price = :price", { price });
+    }
+
+    const books = await query.getMany();
 
     if (books.length === 0) {
       res.status(204).send();

@@ -5,6 +5,11 @@ GET http://localhost:9000/books/list?categoryId=2
 
 ###
 
+
+GET http://localhost:9000/books?price=85000
+
+###
+
 GET http://localhost:9000/books
 
 ###
