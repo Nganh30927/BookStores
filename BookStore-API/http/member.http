@@ -1,0 +1,18 @@
+###
+
+GET http://localhost:9000/members
+
+
+###
+## Create a 
+POST http://localhost:9000/members
+content-type: application/json
+
+{
+    "name": "Nguyễn Văn Quảng",
+    "address": "76 Lý Thái Tông.....",
+    "gender": "Male",
+    "contact": "0945352208"
+}
+
+###

@@ -32,11 +32,11 @@ export class Employee {
   gender: string;
 
   @IsNotEmpty()
-  @Column({ name: 'Position', type: 'varchar', default: 'Staff' })
+  @Column({ name: 'Position', type: 'varchar', default: 'Staff', enum: ['Staff', 'Admin'] })
   position: string;
 
   @Column({ name: 'BirthDay', type: 'date', nullable: true })
-  birthday: Date;
+  birthday?: Date;
 
   @OneToMany(() => Order, (o) => o.employee)
   orders: Order[];

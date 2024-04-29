@@ -81,6 +81,31 @@ router.get('/list', async (req: Request, res: Response, next: any) => {
 });
 
 
+// @Query("SELECT o FROM Books o WHERE o.name LIKE %?1%")
+router.get('/search', async (req: Request, res: Response, next: any) => {
+  try {
+    
+    const keyword = req.query.keyword; 
+
+    const books = await repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .leftJoinAndSelect('book.publisher', 'publisher')
+      .where("book.name LIKE :keyword", { keyword: `%${keyword}%`}) 
+      .getMany();
+
+    if (books.length === 0) {
+      res.status(204).send();
+    } else {
+      res.json(books);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 /* GET book by id */
 router.get('/detail/:id', async (req: Request, res: Response, next: any) => {
   try {
