@@ -45,7 +45,7 @@ const DefaultLayout = () => {
       label: 'Dashboard',
     },
     {
-      key: 'categories',
+      key: 'category',
       icon: <VideoCameraOutlined />,
       label: 'Categories Management',
     },

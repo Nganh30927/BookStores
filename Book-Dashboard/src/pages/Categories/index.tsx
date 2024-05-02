@@ -291,7 +291,6 @@ const Category= () => {
         name="name"
         rules={[
           { required: true, message: 'Please input category Name!' },
-          // {min: 4, message: 'Tối thiểu 4 kí tự'}
         ]}
       >
         <Input />
