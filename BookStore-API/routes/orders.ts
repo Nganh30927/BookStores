@@ -9,6 +9,8 @@ const repository = AppDataSource.getRepository(Order);
 
 const router = express.Router();
 
+
+
 router.get('/', async (req: Request, res: Response, next: any) => {
     try{
         const orders = await repository
@@ -30,10 +32,10 @@ router.get('/', async (req: Request, res: Response, next: any) => {
             'o.memberId',
             'employee',
             'member',
-            'orderDetail.quantity',
-            'orderDetail.price',
-            'orderDetail.discount',
-            'orderDetail.subtotalorder',
+            'orderDetails.quantity',
+            'orderDetails.price',
+            'orderDetails.discount',
+            'orderDetails.subtotalorder',
             'book',
             'category'
         ]).getMany();
@@ -71,10 +73,10 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
           'o.memberId',
           'employee',
           'member',
-          'orderDetail.quantity',
-          'orderDetail.price',
-          'orderDetail.discount',
-          'orderDetail.subtotalorder',
+          'orderDetails.quantity',
+          'orderDetails.price',
+          'orderDetails.discount',
+          'orderDetails.subtotalorder',
           'book',
           'category'
       ]).getOne();

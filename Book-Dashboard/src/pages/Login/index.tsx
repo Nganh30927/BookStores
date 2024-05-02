@@ -17,20 +17,20 @@ const Login = () => {
   const onFinish = async (values: any) => {
     console.log('Success:', values);
 
-    try {
-      //Dùng hàm login ở store để login
-      const res =  await login(values.email, values.password);
+    // try {
+    //   //Dùng hàm login ở store để login
+    //   const res =  await login(values.email, values.password);
 
-      console.log(res);
-      if(res.isAuthenticated) {
-        navigate('/'); //Login thanh cong thi chuyen huong qua dashboad
-      }else{
-        setMsg(res.error);
-      }
+    //   console.log(res);
+    //   if(res.isAuthenticated) {
+    //     navigate('/'); //Login thanh cong thi chuyen huong qua dashboad
+    //   }else{
+    //     setMsg(res.error);
+    //   }
 
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
     
 
   };

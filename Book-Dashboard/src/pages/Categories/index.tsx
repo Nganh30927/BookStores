@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
 import type { PaginationProps } from 'antd';
 interface DataType {
-  _id?: string;
+  id: number;
   name: string;
   description: string;
  
@@ -27,20 +27,20 @@ const Category= () => {
   
   const navigate = useNavigate();
   //=========================== PHÂN TRANG =================================//
-  const [params] = useSearchParams();
-  const page = params.get('page');
-  const limit = params.get('limit');
-  const int_page = page ? parseInt(page) : 1;
-  const int_limit = limit ? parseInt(limit) :5;
-  const onChangePagination: PaginationProps['onChange'] = (pageNumber) => {
-    console.log('Page: ', pageNumber);
-    navigate(`/category?page=${pageNumber}`);
-  };
+  // const [params] = useSearchParams();
+  // const page = params.get('page');
+  // const limit = params.get('limit');
+  // const int_page = page ? parseInt(page) : 1;
+  // const int_limit = limit ? parseInt(limit) :5;
+  // const onChangePagination: PaginationProps['onChange'] = (pageNumber) => {
+  //   console.log('Page: ', pageNumber);
+  //   navigate(`/category?page=${pageNumber}`);
+  // };
 
  
   //Lay danh sach danhmuc
-  const getCategories = async (page = 1, limit = 5)=> {
-      return axiosClient.get(config.urlAPI+`/categories?page=${page}&limit=${limit}`);
+  const getCategories = async ()=> {
+      return axiosClient.get(config.urlAPI+`/categories`);
   }
 
   // Access the client
@@ -48,16 +48,16 @@ const Category= () => {
 
   //Lấy danh sách về
   const queryCategory = useQuery({
-    queryKey: ['categories', int_page],
-    queryFn: ()=>getCategories(int_page, int_limit) 
+    queryKey: ['categories'],
+    queryFn: ()=>getCategories() 
   });
 
-  console.log('<<=== 🚀 queryCategory.data ===>>',queryCategory.data?.data.data.categories);
+  console.log('<<=== 🚀 queryCategory.data ===>>',queryCategory.data?.data);
 
 
   //======= Sự kiện XÓA =====//
-  const fetchDelete = async (objectID: string)=> {
-      return axiosClient.delete(config.urlAPI+'/categories/'+objectID);
+  const fetchDelete = async (id: number)=> {
+      return axiosClient.delete(config.urlAPI+'/categories/'+id);
   } 
   // Mutations => Thêm mới, xóa, edit
   const mutationDelete = useMutation({
@@ -78,8 +78,8 @@ const Category= () => {
 
   //======= Sự kiện EDit =====//
   const fetchUpdate = async (formData: DataType) => {
-    const {_id, ...payload} = formData;
-    return axiosClient.patch(config.urlAPI+'/categories/'+_id, payload);
+    const {id, ...payload} = formData;
+    return axiosClient.patch(config.urlAPI+'/categories/'+id, payload);
   } 
   // Mutations => Thêm mới, xóa, edit
   const mutationUpdate = useMutation({
@@ -202,7 +202,7 @@ const Category= () => {
 
           <Button danger onClick={()=>{
             console.log('Delete this item', record);
-              mutationDelete.mutate(record._id as string);
+              mutationDelete.mutate(record.id);
           }}>Delete</Button>
 
         </Space>
@@ -223,16 +223,16 @@ const Category= () => {
        setIsModalCreateOpen(true);
      }}>Create a new Category</Button>
 
-    <Table pagination={false} columns={columns} key={'_id'} dataSource={queryCategory.data?.data.data.categories} />
+    <Table pagination={false} columns={columns} key={'id'} dataSource={queryCategory.data?.data}/>
     <div>
-    <Pagination
+    {/* <Pagination
             defaultCurrent={int_page}
             total={queryCategory.data?.data.data.totalRecords}
             showSizeChanger
             defaultPageSize={int_limit}
             onChange={onChangePagination}
             showTotal={(total) => `Total ${total} items`}
-          />
+          /> */}
     </div>
      {/* begin Edit Modal */}
      <Modal title="Edit Category" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
@@ -251,7 +251,7 @@ const Category= () => {
         name="name"
         rules={[
           { required: true, message: 'Please input category Name!' },
-          {min: 4, message: 'Tối thiểu 4 kí tự'}
+          // {min: 4, message: 'Tối thiểu 4 kí tự'}
         ]}
       >
         <Input />
@@ -265,7 +265,7 @@ const Category= () => {
         <Input />
       </Form.Item>
 
-      <Form.Item hidden label='Id' name='_id'>
+      <Form.Item hidden label='Id' name='id'>
             <Input />
       </Form.Item>
      
@@ -291,7 +291,7 @@ const Category= () => {
         name="name"
         rules={[
           { required: true, message: 'Please input category Name!' },
-          {min: 4, message: 'Tối thiểu 4 kí tự'}
+          // {min: 4, message: 'Tối thiểu 4 kí tự'}
         ]}
       >
         <Input />

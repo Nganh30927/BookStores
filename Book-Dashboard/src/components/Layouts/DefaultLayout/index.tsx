@@ -27,11 +27,11 @@ const DefaultLayout = () => {
 
   const {isAuthenticated, logout, user} = useAuth();
   /* Check xem trang thai dang nhap */
-  React.useEffect(()=>{
-    if(!isAuthenticated){
-      navigate('/login');
-    }
-  },[isAuthenticated,navigate])
+  // React.useEffect(()=>{
+  //   if(!isAuthenticated){
+  //     navigate('/login');
+  //   }
+  // },[isAuthenticated,navigate])
 
 
   const {
@@ -45,24 +45,24 @@ const DefaultLayout = () => {
       label: 'Dashboard',
     },
     {
-      key: 'category',
+      key: 'categories',
       icon: <VideoCameraOutlined />,
       label: 'Categories Management',
     },
     {
-      key: 'products',
+      key: 'books',
       icon: <UploadOutlined />,
-      label: 'Products Management',
+      label: 'Books Management',
     },
     {
-      key: 'customer',
+      key: 'member',
       icon: <UploadOutlined />,
-      label: 'Customers Management',
+      label: 'Members Management',
     },
     {
-      key: 'suppliers',
+      key: 'publishers',
       icon: <PieChartOutlined />,
-      label: 'Suppliers Management',
+      label: 'Publishers Management',
     },
     {
       key: 'employees',

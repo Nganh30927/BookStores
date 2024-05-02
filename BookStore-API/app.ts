@@ -10,6 +10,8 @@ import booksRouter from './routes/books'
 import employeeRouter from './routes/employees'
 import memberRouter from './routes/members'
 import publisherRouter from './routes/publishers'
+import orderRouter from './routes/orders'
+import cartRouter from './routes/carts'
 
 
 const app: Express = express();
@@ -30,6 +32,8 @@ AppDataSource.initialize().then(async () => {
   app.use('/employees', employeeRouter);
   app.use('/publishers', publisherRouter);
   app.use('/members', memberRouter);
+  app.use('/orders', orderRouter);
+  app.use('/carts', cartRouter);
 
 
   // catch 404 and forward to error handler

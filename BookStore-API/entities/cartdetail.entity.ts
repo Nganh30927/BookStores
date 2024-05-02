@@ -15,9 +15,9 @@ export class CartDetail {
   @Column({ name: 'CartQuantity', type: 'int', default: 1 })
   cartquantity: number;
 
-  @IsNotEmpty()
-  @Column({ name: 'SubTotalCart', type: 'money' })
-  subtotalcart: number;
+
+  @Column({ name: 'SubTotalCart', type: 'money', nullable:true })
+  subtotalcart?: number;
 
   
 

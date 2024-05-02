@@ -13,6 +13,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import Customers from './pages/Customers';
 import CustomerOrders from './pages/Customers/CustomerOrders';
 import CustomerProfile from './pages/Customers/CustomerProfile';
+import TestFetch from './pages/testFetch';
 import {
   QueryClient,
   QueryClientProvider,
@@ -35,6 +36,7 @@ function App() {
               <Route path="products" element={<ProductsPage />} />
               {/* <Route path="products/:id" element={<ProductDetailsPage />} /> */}
               <Route path="products/:slug" element={<ProductDetailsPage />} />
+              <Route path="tests" element={<TestFetch />} />
           </Route>
 
           {/* OnlyHeaderLayout */}
