@@ -9,7 +9,7 @@ const repository = AppDataSource.getRepository(Book);
 
 const router = express.Router();
 
-const UPLOAD_DIRECTORY = './public/uploads';
+const UPLOAD_DIRECTORY = '../public/uploads';
 
 const storage = diskStorage({
   destination: function (req: Request, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) {

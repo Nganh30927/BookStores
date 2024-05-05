@@ -124,7 +124,7 @@ export default function Orders({}: Props) {
   const onFinishSearchProducts = async (values: any) => {
     try {
       let keyword = values.keyword;
-      const response = await axiosClient.get(config.urlAPI+`/products/search?keyword=${keyword}`);
+      const response = await axiosClient.get(config.urlAPI+`/books/search?keyword=${encodeURIComponent(keyword)}`);
       console.log(response.data);
       setBooks(response.data);
     } catch (error) {}
@@ -612,7 +612,7 @@ export default function Orders({}: Props) {
         }}
       >
         <Form name='search-books' layout='inline' onFinish={onFinishSearchProducts}>
-          <Form.Item name='name' label='Name'>
+          <Form.Item name='keyword' label='Name'>
             <Input />
           </Form.Item>
           <Form.Item>
