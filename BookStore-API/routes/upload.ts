@@ -13,7 +13,7 @@ const UPLOAD_DIRECTORY = './public/uploads';
 
 const storage = diskStorage({
   destination: function (req: Request, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) {
-    const PATH = `${UPLOAD_DIRECTORY}/products/${req.params.id}`;
+    const PATH = `${UPLOAD_DIRECTORY}/books/${req.params.id}`;
     if (!fs.existsSync(PATH)) {
       fs.mkdirSync(PATH, { recursive: true });
     }
@@ -51,7 +51,7 @@ router.post('/books/:id', async (req: Request, res: Response, next: NextFunction
 
     const id = req.params.id;
     const patchData = {
-      imageUrl: `/uploads/products/${req.params.id}/${req.file.filename}`,
+      imageUrl: `/uploads/books/${req.params.id}/${req.file.filename}`,
     };
 
     // Find the book
