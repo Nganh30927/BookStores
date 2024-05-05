@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn, Check } from 'typeorm';
-import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
-import { Publisher } from './publisher.entity';
+import { IsNotEmpty, Max, MaxLength, max, validateOrReject } from 'class-validator';
 import { Employee } from './employee.entity';
 import { Invoice } from './invoice.entity';
 import { OrderDetail } from './orderdetails.entity';
@@ -33,6 +32,10 @@ export class Order {
   @Column({ name: 'PaymentType', type: 'varchar', length: 50, default: 'CASH', enum: ['CASH', 'CREDIT'] })
   paymenttype: string;
 
+ 
+  @Column({ name: 'Description', type: 'nvarchar', nullable: true})
+  description?: string;
+
 
   @Column({ type: 'int' })
   employeeId: number;
@@ -53,3 +56,4 @@ export class Order {
   orderDetails: OrderDetail[];
 
 }
+

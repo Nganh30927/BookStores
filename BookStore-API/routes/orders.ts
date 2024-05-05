@@ -128,4 +128,43 @@ router.post('/', async (req: Request, res: Response, next: any) => {
 });
 
 
+
+router.patch('/:id', async (req: Request, res: Response, next: any) => {
+  try {
+    const order = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!order) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    Object.assign(order, req.body);
+
+    await repository.save(order);
+
+    const updatedOrder = await repository
+      .createQueryBuilder('o')
+      .leftJoinAndSelect('o.member', 'member')
+      .leftJoinAndSelect('o.employee', 'employee')
+      .where('o.id = :id', { id: parseInt(req.params.id) })
+      .getOne();
+    res.json(updatedOrder);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.delete('/:id', async (req: Request, res: Response, next: any) => {
+  try {
+    const order = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    await repository.remove(order);
+    res.status(200).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 export default router;

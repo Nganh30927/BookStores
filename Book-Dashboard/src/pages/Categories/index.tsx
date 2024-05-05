@@ -223,16 +223,9 @@ const Category= () => {
        setIsModalCreateOpen(true);
      }}>Create a new Category</Button>
 
-    <Table pagination={false} columns={columns} key={'id'} dataSource={queryCategory.data?.data}/>
+    <Table pagination={{pageSize: 5}} columns={columns} key={'id'} dataSource={queryCategory.data?.data}/>
     <div>
-    {/* <Pagination
-            defaultCurrent={int_page}
-            total={queryCategory.data?.data.data.totalRecords}
-            showSizeChanger
-            defaultPageSize={int_limit}
-            onChange={onChangePagination}
-            showTotal={(total) => `Total ${total} items`}
-          /> */}
+    
     </div>
      {/* begin Edit Modal */}
      <Modal title="Edit Category" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>

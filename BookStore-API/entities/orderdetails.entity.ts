@@ -39,3 +39,4 @@ export class OrderDetail {
   @ManyToOne(() => Order, (o) => o.orderDetails)
   order: Order;
 }
+
