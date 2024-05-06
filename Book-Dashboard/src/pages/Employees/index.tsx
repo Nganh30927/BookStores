@@ -1,22 +1,7 @@
 import React from 'react';
 import { Space, Table, Button, Modal, Form, Input, message, Select, DatePicker } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-<<<<<<< HEAD
-import {
-  useQuery,
-  useMutation,
-  useQueryClient
-} from '@tanstack/react-query';
-import {
-  EyeOutlined,
-  EyeTwoTone,
-  EyeInvisibleOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-=======
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
->>>>>>> 2669710adad8b1bc7934922060b75b87b08535f8
 import { axiosClient } from '../../library/axiosClient';
 import config from '../../constants/config';
 import moment from 'moment';
@@ -24,7 +9,7 @@ import type { DatePickerProps } from 'antd';
 import { EyeOutlined, EyeTwoTone, EyeInvisibleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 interface DataType {
-  password?: string;
+
   id: number;
   name: string;
   email: string;
@@ -33,11 +18,8 @@ interface DataType {
   address: string;
   position: string;
   birthday?: Date;
-<<<<<<< HEAD
   password: string
  
-=======
->>>>>>> 2669710adad8b1bc7934922060b75b87b08535f8
 }
 
 const Employee = () => {
@@ -49,7 +31,6 @@ const Employee = () => {
   // Ẩn mật khẩu
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const [showPassword, setShowPassword] = React.useState(false);
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
     console.log(date, dateString);
@@ -383,7 +364,6 @@ const Employee = () => {
             <DatePicker onChange={onChange} />
           </Form.Item>
 
-<<<<<<< HEAD
       <Form.Item<DataType>
         label="Address"
         name="address"
@@ -416,19 +396,6 @@ const Employee = () => {
           </Form.Item>
 
       <Form.Item hidden label='Id' name='id'>
-=======
-          <Form.Item<DataType>
-            label="Address"
-            name="address"
-            rules={[
-              { max: 500, message: 'Tối đa 500 kí tự' },
-              {
-                required: true,
-                message: 'Please input your address!',
-              },
-            ]}
-          >
->>>>>>> 2669710adad8b1bc7934922060b75b87b08535f8
             <Input />
           </Form.Item>
 
@@ -548,7 +515,6 @@ const Employee = () => {
             <DatePicker onChange={onChange} />
           </Form.Item>
 
-<<<<<<< HEAD
       <Form.Item<DataType>
         label="Address"
         name="address"
@@ -582,22 +548,6 @@ const Employee = () => {
 
     </Form>
         
-=======
-          <Form.Item<DataType>
-            label="Address"
-            name="address"
-            rules={[
-              { max: 500, message: 'Tối đa 500 kí tự' },
-              {
-                required: true,
-                message: 'Please input your address!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
->>>>>>> 2669710adad8b1bc7934922060b75b87b08535f8
       </Modal>
       {/* End Create Modal */}
     </>
