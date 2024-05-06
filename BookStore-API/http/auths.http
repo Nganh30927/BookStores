@@ -1,0 +1,15 @@
+#Get all User
+POST http://localhost:9000/auth/login HTTP/1.1
+content-type: application/json
+
+{
+ 
+  "email": "saka7@gmail.com",
+  "password": "bukayosaka7"
+  
+}
+
+#Get all User
+GET  http://localhost:9000/auth/profile HTTP/1.1
+content-type: application/json
+

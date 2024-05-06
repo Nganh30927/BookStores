@@ -6,6 +6,13 @@ import {
   useMutation,
   useQueryClient
 } from '@tanstack/react-query';
+import {
+  EyeOutlined,
+  EyeTwoTone,
+  EyeInvisibleOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { axiosClient } from '../../library/axiosClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
@@ -19,6 +26,7 @@ interface DataType {
   address: string;
   position: string;
   birthday?: Date;
+  password: string
  
 }
 
@@ -29,6 +37,8 @@ const Employee= () => {
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
   //Toggle Modal Create
   const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
+  // Ẩn mật khẩu
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
     console.log(date, dateString);
@@ -343,6 +353,29 @@ const Employee= () => {
         <Input />
       </Form.Item>
 
+      <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: "Please input employee password!" },
+              { min: 8, message: "Tối thiểu 8 kí tự" },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? "text" : "password"}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={
+                <EyeOutlined
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                />
+              }
+            />
+          </Form.Item>
+
       <Form.Item hidden label='Id' name='id'>
             <Input />
       </Form.Item>
@@ -441,6 +474,29 @@ const Employee= () => {
       >
         <Input />
       </Form.Item>
+
+      <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: "Please input employee password!" },
+              { min: 8, message: "Tối thiểu 8 kí tự" },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? "text" : "password"}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={
+                <EyeOutlined
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                />
+              }
+            />
+          </Form.Item>
 
     </Form>
         

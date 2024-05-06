@@ -30,7 +30,7 @@ content-type: application/json
     "serialnumber": 119,
     "description": "Văn học....",
     "discount": 20,
-    "imageurl": "https://cdn0.fahasa.com/media/catalog/product/b/u/buoc_cham_lai_giua_the_gian_voi_va.u335.d20160817.t102115.612356.jpg",
+    "imageURL": "https://cdn0.fahasa.com/media/catalog/product/b/u/buoc_cham_lai_giua_the_gian_voi_va.u335.d20160817.t102115.612356.jpg",
     "publisherId": 3,
     "categoryId": 1
 }

@@ -2,10 +2,13 @@ import express, { NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/category.entity';
+import categoryORM from '../controllers/categoryORM';
 
 const repository = AppDataSource.getRepository(Category);
 
 const router = express.Router();
+
+router.get('/typeorm/:id', categoryORM.getItemById);
 
 /* GET categories */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {

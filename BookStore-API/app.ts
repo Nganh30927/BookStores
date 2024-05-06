@@ -4,6 +4,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import logger from 'morgan';
 import path from 'path';
 
+
 import { AppDataSource } from './data-source';
 import categoriesRouter from './routes/categories'
 import booksRouter from './routes/books'
@@ -12,6 +13,8 @@ import memberRouter from './routes/members'
 import publisherRouter from './routes/publishers'
 import orderRouter from './routes/orders'
 import cartRouter from './routes/carts'
+import authRouter from './routes/auth'
+
 
 
 const app: Express = express();
@@ -34,6 +37,7 @@ AppDataSource.initialize().then(async () => {
   app.use('/members', memberRouter);
   app.use('/orders', orderRouter);
   app.use('/carts', cartRouter);
+  app.use('/auth', authRouter)
 
 
   // catch 404 and forward to error handler

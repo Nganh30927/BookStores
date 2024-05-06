@@ -6,6 +6,13 @@ import {
   useMutation,
   useQueryClient
 } from '@tanstack/react-query';
+import {
+  EyeOutlined,
+  EyeTwoTone,
+  EyeInvisibleOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { axiosClient } from '../../library/axiosClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
@@ -13,10 +20,11 @@ import type { PaginationProps } from 'antd';
 interface DataType {
   id: number;
   name: string;
-  // email: string;
+  email?: string;
   contact: number;
   gender: string;
-  address: string
+  address: string;
+  password?: string
 }
 
 const Member= () => {
@@ -26,6 +34,8 @@ const Member= () => {
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
   //Toggle Modal Create
   const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
+  // Ẩn mật khẩu
+  const [showPassword, setShowPassword] = React.useState(false);
   
   const navigate = useNavigate();
  
@@ -174,11 +184,11 @@ const Member= () => {
       key: 'name',
       render: (text) => <a>{text}</a>,
     },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'email',
-    //   key: 'email',
-    // },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
     {
       title: 'Contact',
       dataIndex: 'contact',
@@ -257,13 +267,13 @@ const Member= () => {
         <Input />
       </Form.Item>
   
-      {/* <Form.Item<DataType>
+      <Form.Item<DataType>
         label="Email"
         name="email"
         rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
       >
         <Input />
-      </Form.Item> */}
+      </Form.Item>
 
       <Form.Item<DataType>
         label="Contact"
@@ -301,6 +311,28 @@ const Member= () => {
         <Input />
       </Form.Item>
 
+      <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: "Please input members password!" },
+              { min: 8, message: "Tối thiểu 8 kí tự" },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? "text" : "password"}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={
+                <EyeOutlined
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                />
+              }
+            />
+          </Form.Item>
 
       <Form.Item hidden label='Id' name='id'>
             <Input />
@@ -334,13 +366,13 @@ const Member= () => {
         <Input />
       </Form.Item>
   
-      {/* <Form.Item<DataType>
+      <Form.Item<DataType>
         label="Email"
         name="email"
         rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
       >
         <Input />
-      </Form.Item> */}
+      </Form.Item>
 
       <Form.Item<DataType>
         label="Contact"
@@ -377,6 +409,29 @@ const Member= () => {
       >
         <Input />
       </Form.Item>
+
+      <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: "Please input members password!" },
+              { min: 8, message: "Tối thiểu 8 kí tự" },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? "text" : "password"}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={
+                <EyeOutlined
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                />
+              }
+            />
+          </Form.Item>
 
     </Form>
         
