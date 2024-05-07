@@ -60,8 +60,8 @@ import TextArea from "antd/es/input/TextArea";
     imageURL?: string,
     categoryId: number,
     publisherId: number
-    category?: { id: number; name: string };
-    publisher?: { id: number; name: string };
+    // category?: { id: number; name: string };
+    // publisher?: { id: number; name: string };
   }
   
  
@@ -74,7 +74,8 @@ import TextArea from "antd/es/input/TextArea";
     const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
     //Toggle Modal Create
     const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
-  
+    const [categories, setCategories] = React.useState<any[]>([]); // Kiểu dữ liệu của categories phụ thuộc vào dữ liệu thực tế
+  const [publishers, setPublishers] = React.useState<any[]>([]);
     const [file, setFile] = React.useState(null);
   
   
@@ -134,7 +135,7 @@ import TextArea from "antd/es/input/TextArea";
     //======= Sự kiện EDit =====//
     const fetchUpdate = async (formData: DataType) => {
       const { id, ...payload } = formData;
-      return axiosClient.patch(config.urlAPI+'/books/'+id, payload);
+      return axiosClient.patch(config.urlAPI+'/books/'+ id, payload);
     };
     const mutationUpdate = useMutation({
       mutationFn: fetchUpdate,
@@ -196,7 +197,7 @@ import TextArea from "antd/es/input/TextArea";
         formData.append('name', 'Category 1234');
         formData.append('description', 'Mo ta 1234');
 
-        await axios.post('http://127.0.0.1:9000/upload/books/' + id, formData);
+        await axios.post('http://127.0.0.1:9000/uploads/books/' + id, formData);
       }
 
       fetchBooks();
@@ -330,13 +331,13 @@ import TextArea from "antd/es/input/TextArea";
       title: 'Category',
       dataIndex: 'category',
       key: 'category',
-      render: (_, record) => <span>{record?.category?.name}</span>,
+      render: (_, record: any) => <span>{record.category.name}</span>,
     },
     {
       title: 'Publisher',
       dataIndex: 'publisher',
       key: 'publisher',
-      render: (_, record) => <span>{record?.publisher?.name}</span>,
+      render: (_, record: any) => <span>{record.publisher.name}</span>,
     },
     {
       title: 'Price',
@@ -502,6 +503,22 @@ import TextArea from "antd/es/input/TextArea";
           >
             <InputNumber min={0} addonAfter="$" defaultValue={0} />
           </Form.Item>
+
+          <Form.Item<DataType>
+            hasFeedback
+            label="Serial Number"
+            name="serialnumber"
+            rules={[
+              { required: true, message: 'Please input Book quantity!' },
+              {
+                type: 'number',
+                min: 0,
+                message: 'Tối thiểu phải là 0',
+              },
+            ]}
+          >
+            <InputNumber min={0} defaultValue={0} />
+          </Form.Item>
          
           {/* Xem Rules https://ant.design/components/form#rule */}
           <Form.Item<DataType>
@@ -523,7 +540,8 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={queryCategories.data?.data.map((item: any) => {
+              options={ queryCategories && queryCategories.data && queryCategories.data.data &&
+                queryCategories.data?.data.map((item: any) => {
                 return {
                   label: item.name,
                   value: item.id,
@@ -534,7 +552,8 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-               options={queryPublishers.data?.data.map((item: any) => {
+               options={ queryPublishers && queryPublishers.data && queryPublishers.data.data &&
+                queryPublishers.data?.data.map((item: any) => {
                 return {
                   label: item.name,
                   value: item.id,
@@ -544,7 +563,7 @@ import TextArea from "antd/es/input/TextArea";
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Description" name="descrpition" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
-            <TextArea rows={4} />
+            <TextArea rows={3} />
           </Form.Item>
 
           <Form.Item label='Image'>
@@ -560,7 +579,7 @@ import TextArea from "antd/es/input/TextArea";
             </Upload>
           </Form.Item>
 
-          <Form.Item hidden label="Id" name="_id">
+          <Form.Item hidden label="Id" name="id">
             <Input />
           </Form.Item>
         </Form>
@@ -640,6 +659,22 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType>
             hasFeedback
+            label="Serial Number"
+            name="serialnumber"
+            rules={[
+              { required: true, message: 'Please input Book quantity!' },
+              {
+                type: 'number',
+                min: 0,
+                message: 'Tối thiểu phải là 0',
+              },
+            ]}
+          >
+            <InputNumber min={0} defaultValue={0} />
+          </Form.Item>
+
+          <Form.Item<DataType>
+            hasFeedback
             label="Price"
             name="price"
             rules={[
@@ -674,7 +709,8 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={queryCategories.data?.data.map((item: any) => {
+              options={ queryCategories && queryCategories.data && queryCategories.data.data &&
+                queryCategories.data?.data.map((item: any) => {
                 return {
                   label: item.name,
                   value: item.id,
@@ -685,7 +721,8 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-               options={queryPublishers.data?.data.map((item: any) => {
+               options={ queryPublishers && queryPublishers.data && queryPublishers.data.data &&
+                queryPublishers.data?.data.map((item: any) => {
                 return {
                   label: item.name,
                   value: item.id,
@@ -695,7 +732,7 @@ import TextArea from "antd/es/input/TextArea";
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Description" name="descrpition" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
-            <TextArea rows={4} />
+            <TextArea rows={3} />
           </Form.Item>
 
           <Form.Item label='Image'>
@@ -711,7 +748,7 @@ import TextArea from "antd/es/input/TextArea";
             </Upload>
           </Form.Item>
 
-          <Form.Item hidden label="Id" name="_id">
+          <Form.Item hidden label="Id" name="id">
             <Input />
           </Form.Item>
         </Form>

@@ -340,7 +340,10 @@ export default function Orders({}: Props) {
             />
 
             <Popconfirm title='Delete the order' description='Are you sure to delete this order?' onConfirm={() => {}}>
-              <Button type='primary' danger icon={<DeleteOutlined />} />
+              <Button type='primary' danger icon={<DeleteOutlined />} 
+              onClick={() => {
+                onDelete(record)
+              }}/>
             </Popconfirm>
           </Space>
         );
@@ -570,6 +573,10 @@ export default function Orders({}: Props) {
           </Form.Item>
           <Form.Item<DataType> name='description' label='Description'>
             <Input.TextArea rows={2} />
+          </Form.Item>
+
+          <Form.Item hidden label="Id" name="id">
+            <Input />
           </Form.Item>
         </Form>
       </Modal>

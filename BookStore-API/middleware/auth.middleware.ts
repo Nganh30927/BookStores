@@ -17,8 +17,6 @@ interface decodedJWT extends JwtPayload {
     id?: number
   }
 
-
-
   const checkToken = async (req:Request, res: Response, next:NextFunction)=>{
     //b1.Lấy token header gửi lên ==> xác thực hợp lệ
     const authHeader = req.headers['authorization'];
