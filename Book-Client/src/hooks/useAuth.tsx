@@ -3,13 +3,11 @@ import { axiosClient } from '../library/axiosClient';
 import { persist, createJSONStorage, } from 'zustand/middleware'
 import config from '../constants/config';
 interface User {
-  _id: string;
+  id: number;
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string
   phoneNumber: string;
-  role: string;
-  photo: string;
+  position: string;
   address: string;
 }
 
@@ -37,13 +35,13 @@ const useAuth = create(
         set({isLoading: true });
 
         //dùng thư viện axiosClient để handle việc check, gửi và lưu token xuống localStorage
-        const response = await axiosClient.post(config.urlAPI+'/v1/auth/login', { email, password });
+        const response = await axiosClient.post(config.urlAPI+'/auth/login', { email, password });
         console.log('useAuth',response);
         //Check nếu login thành công
         if (response && response.status === 200) {
           const isAuthenticated = response.status === 200; //==> TRUE
           //Gọi tiếp API lấy thông tin User
-          const {data} = await axiosClient.get(config.urlAPI+'/v1/auth/profile');
+          const {data} = await axiosClient.get(config.urlAPI+'auth/profile');
 
           //cập nhật lại state
           set({user: data.data, isAuthenticated,isLoading: false });

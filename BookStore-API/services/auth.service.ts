@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { AppDataSource } from '../data-source';
 import { Employee } from '../entities/employee.entity';
-import { Member } from '../entities/member.entity';
+
 
 const employeerepository = AppDataSource.getRepository(Employee);
-const membererepository = AppDataSource.getRepository(Member);
+
 dotenv.config();
 
 const login = async(payload: {email: string, password: string})=>{
@@ -16,10 +16,7 @@ const login = async(payload: {email: string, password: string})=>{
     let user = await employeerepository.findOne({ where: { email: payload.email}});
     let userType = 'Employee';
 
-    if (!user) {
-      let user: Employee | Member | null = await employeerepository.findOne({ where: { email: payload.email}});
-      userType = 'Member';
-    }
+    console.log('find User:', userType);
 
     //Nếu không tồn tại
     if(!user){
@@ -85,12 +82,6 @@ const login = async(payload: {email: string, password: string})=>{
         .createQueryBuilder('employee')
         .select(["employee.id", "employee.email", /* other fields except password */])
         .where("employee.id = :id", { id })
-        .getOne();
-    } else if (userType === 'Member') {
-      user = await membererepository
-        .createQueryBuilder('member')
-        .select(["member.id", "member.email", /* other fields except password */])
-        .where("member.id = :id", { id })
         .getOne();
     } else {
       throw createError(400, 'Invalid user type');

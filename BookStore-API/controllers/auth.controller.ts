@@ -8,8 +8,9 @@ const login = async(req:Request, res: Response, next: NextFunction)=>{
        * payload = {email, password}
        */
       const payload = req.body;
+      console.log('Received login request with payload:', payload);
       const result = await authService.login(payload);
-      console.log('<<=== 🚀 result ===>>',payload,result);
+      console.log('<<=== 🚀 login result ===>>',payload,result);
       sendJsonSuccess(res)(result);
     } catch (error) {
       next(error)

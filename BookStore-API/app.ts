@@ -14,6 +14,7 @@ import publisherRouter from './routes/publishers'
 import orderRouter from './routes/orders'
 import cartRouter from './routes/carts'
 import authRouter from './routes/auth'
+import uploadRouter from './routes/upload'
 
 
 
@@ -37,7 +38,8 @@ AppDataSource.initialize().then(async () => {
   app.use('/members', memberRouter);
   app.use('/orders', orderRouter);
   app.use('/carts', cartRouter);
-  app.use('/auth', authRouter)
+  app.use('/auth', authRouter);
+  app.use('/uploads', uploadRouter)
 
 
   // catch 404 and forward to error handler

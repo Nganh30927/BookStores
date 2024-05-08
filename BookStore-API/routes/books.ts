@@ -29,17 +29,22 @@ const repository = AppDataSource.getRepository(Book);
 // });
 
 router.get('/', async (req: Request, res: Response, next: any) => {
-  // SELECT * FROM [Books] AS 'book'
   try {
-    const price = req.query.price; 
+    const minPrice = req.query.minPrice; // Giả sử bạn nhận giá tối thiểu từ query parameter
+    const maxPrice = req.query.maxPrice; // Giả sử bạn nhận giá tối đa từ query parameter
 
     const query = repository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.category', 'category')
       .leftJoinAndSelect('book.publisher', 'publisher');
+      
+      // http://localhost:9000/books?minPrice=&maxPrice=
+    if (minPrice) {
+      query.andWhere("book.price >= :minPrice", { minPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có minPrice
+    }
 
-    if (price) {
-      query.where("book.price = :price", { price });
+    if (maxPrice) {
+      query.andWhere("book.price <= :maxPrice", { maxPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có maxPrice
     }
 
     const books = await query.getMany();
@@ -54,6 +59,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // SELECT o FROM Book o WHERE o.category.id=?1

@@ -67,6 +67,7 @@ router.post('/books/:id', function (req: Request, res: Response, next: NextFunct
       return res.status(500).json({
         message: err.message,
       });
+      
     }
     const publicUrl = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${req.file?.filename}`;
 
