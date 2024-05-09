@@ -10,7 +10,7 @@ import { AppDataSource } from '../data-source';
 import { Book } from '../entities/book.entity';
 const repository = AppDataSource.getRepository(Book);
 
-const UPLOAD_DIRECTORY = './public/uploads';
+const UPLOAD_DIRECTORY = '../public/uploads';
 const router: Router = express.Router();
 
 const upload = multer({
