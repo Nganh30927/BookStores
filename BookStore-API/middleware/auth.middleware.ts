@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 import { AppDataSource } from '../data-source';
 
 import { Employee } from '../entities/employee.entity';
-
+const repository = AppDataSource.getRepository(Employee);
 
 dotenv.config();
-const employeerepository = AppDataSource.getRepository(Employee);
+
 
 
 
@@ -16,7 +16,6 @@ const employeerepository = AppDataSource.getRepository(Employee);
 interface decodedJWT extends JwtPayload {
     id?: number
   }
-
   const checkToken = async (req:Request, res: Response, next:NextFunction)=>{
     //b1.Lấy token header gửi lên ==> xác thực hợp lệ
     const authHeader = req.headers['authorization'];
@@ -31,7 +30,10 @@ interface decodedJWT extends JwtPayload {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as decodedJWT;
       //try verify user exits in database
-      const user = await employeerepository.findOne({ where: { id: decoded.id } });
+      const user = await repository.findOne({ where: { id: decoded.id } });
+    
+
+     // Kiểm tra xem user hoặc customer có tồn tại hay không
       if (!user) {
         return next(createError(401, 'Unauthorized'));
       }

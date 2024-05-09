@@ -4,11 +4,11 @@ import jwt, {JwtPayload} from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { AppDataSource } from '../data-source';
 
-import { Employee } from '../entities/employee.entity';
+
 import { Member } from '../entities/member.entity';
 
 dotenv.config();
-const employeerepository = AppDataSource.getRepository(Employee);
+
 const membererepository = AppDataSource.getRepository(Member);
 
 
@@ -31,15 +31,14 @@ interface decodedJWT extends JwtPayload {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as decodedJWT;
       //try verify user exits in database
-      const user = await employeerepository.findOne({ where: { id: decoded.id } });
       const member = await membererepository.findOne({ where: { id: decoded.id }})
-      if (!user && ! member) {
+      if (!member) {
         return next(createError(401, 'Unauthorized'));
       }
 
-      console.log('<<=== 🚀 user ===>>',user);
+      console.log('<<=== 🚀 member ===>>',member);
       //Đăng ký biến user global trong app
-      res.locals.user = user || member;
+      res.locals.user = member;
 
 
       next();
