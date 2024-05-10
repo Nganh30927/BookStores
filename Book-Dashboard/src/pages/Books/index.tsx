@@ -1,161 +1,155 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-    Button,
-    Form,
-    Input,
-    Modal,
-    Select,
-    Space,
-    Table,
-    Image,
-    // Button,
-    // Modal,
-    // Form,
-    // Input,
-    message,
-    Card,
-    Popconfirm,
-    Spin,
-    InputNumber,
-    Upload,
-    // Pagination,
-  } from "antd";
-  // import type { ColumnsType } from "antd/es/table";
-  import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-  import { useNavigate, useSearchParams } from "react-router-dom";
-  import { axiosClient } from "../../library/axiosClient";
-  import config from "../../constants/config";
-  import React, { useState } from "react";
-  import { AnyObject } from "antd/es/_util/type";
-  import { ColumnsType } from "antd/es/table";
-  import numeral from 'numeral';
-  import {
-    CloseOutlined,
-    DeleteOutlined,
-    EditOutlined,
-    QuestionCircleOutlined,
-    UploadOutlined
-  } from "@ant-design/icons";
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Table,
+  Image,
+  // Button,
+  // Modal,
+  // Form,
+  // Input,
+  message,
+  Card,
+  Popconfirm,
+  Spin,
+  InputNumber,
+  Upload,
+  // Pagination,
+} from 'antd';
+// import type { ColumnsType } from "antd/es/table";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { axiosClient } from '../../library/axiosClient';
+import config from '../../constants/config';
+import React, { useState } from 'react';
+import { AnyObject } from 'antd/es/_util/type';
+import { ColumnsType } from 'antd/es/table';
+import numeral from 'numeral';
+import { CloseOutlined, DeleteOutlined, EditOutlined, QuestionCircleOutlined, UploadOutlined } from '@ant-design/icons';
 
-  import form from "antd/es/form";
-  import axios from "axios";
-import TextArea from "antd/es/input/TextArea";
-  
-  // import { useNavigate, useSearchParams } from "react-router-dom";
-  // import config from "../../constants/config";
-  // import type { PaginationProps } from "antd";
+import form from 'antd/es/form';
+import axios from 'axios';
+import TextArea from 'antd/es/input/TextArea';
 
+// import { useNavigate, useSearchParams } from "react-router-dom";
+// import config from "../../constants/config";
+// import type { PaginationProps } from "antd";
 
-  interface DataType{
-    id: number,
-    name: string,
-    author?: string,
-    title?: string,
-    quantity: number,
-    price: number,
-    serialnumber: number,
-    description?: string,
-    discount: number,
-    imageURL?: string,
-    categoryId: number,
-    publisherId: number
-    // category?: { id: number; name: string };
-    // publisher?: { id: number; name: string };
-  }
-  
- 
-  
-  const BooksPage = () => {
-    const navigate = useNavigate();
-    //message edit
-    const [messageApi, contextHolder] = message.useMessage();
-    //Toggle Modal Edit
-    const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
-    //Toggle Modal Create
-    const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
-    const [file, setFile] = React.useState(null);
-  
-  
-    
-  
-    //======= lấy sản phẩm  =====//
-    // Access the client
-    const queryClient = useQueryClient();
+interface DataType {
+  id: number;
+  name: string;
+  author?: string;
+  title?: string;
+  quantity: number;
+  price: number;
+  serialnumber: number;
+  description?: string;
+  discount: number;
+  imageURL?: string;
+  categoryId: number;
+  publisherId: number;
+  // category?: { id: number; name: string };
+  // publisher?: { id: number; name: string };
+}
 
-    const fetchBooks = async () => {
-      return axiosClient.get(config.urlAPI + `/books`);
-    };
+const BooksPage = () => {
+  const navigate = useNavigate();
+  //message edit
+  const [messageApi, contextHolder] = message.useMessage();
+  //Toggle Modal Edit
+  const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
+  //Toggle Modal Create
+  const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
+  const [file, setFile] = React.useState(null);
 
-    const queryBooks = useQuery({
-      queryKey: ['books'],
-      queryFn: () => fetchBooks(),
-    }); 
+  //======= lấy sản phẩm  =====//
+  // Access the client
+  const queryClient = useQueryClient();
 
-    console.log("queryBooks", queryBooks.data?.data);
-  
-    //======= lấy danh mục  =====//
-    const queryCategories = useQuery({
-      queryKey: ["categories"],
-      queryFn: async () =>
-        await axiosClient.get(config.urlAPI+`/categories`),
-    });
-    console.log("queryCategories", queryCategories.data?.data);
-  
-    //======= lấy suppliers  =====//
-    const queryPublishers = useQuery({
-      queryKey: ["suppliers"],
-      queryFn: async () =>
-        await axiosClient.get(config.urlAPI+`/publishers`),
-    });
-    console.log("queryPublishers", queryPublishers.data?.data);
-  
-    //======= Sự kiện XÓA =====//
-    const fetchDelete = async (id: number) => {
-      return await axiosClient.delete(config.urlAPI + "/books/" + id);
-    };
-    const mutationDelete = useMutation({
-      mutationFn: fetchDelete,
-      onSuccess: () => {
-        console.log("Delete success !");
-        messageApi.open({
-          type: "success",
-          content: "Delete success !",
-        });
-        // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-        queryClient.invalidateQueries({ queryKey: ["books"] });
-      },
-      onError: () => {
-        //khi gọi API bị lỗi
-        console.log("mutationDelete error Api");
-      },
-    });
-    //======= Sự kiện EDit =====//
-    const fetchUpdate = async (formData: DataType) => {
-      const { id, ...payload } = formData;
-      return axiosClient.patch(config.urlAPI+'/books/'+ id, payload);
-    };
-    const mutationUpdate = useMutation({
-      mutationFn: fetchUpdate,
-      onSuccess: () => {
-        console.log("Update success !");
-        messageApi.open({
-          type: "success",
-          content: "Update success !",
-        });
-        // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-        queryClient.invalidateQueries({ queryKey: ["books"] });
-        //Ẩn modal
-        setIsModalEditOpen(false);
-      },
-      onError: () => {
-        //khi gọi API bị lỗi
-        console.log("mutationUpdate error Api");
-      },
-    });
+  const fetchBooks = async () => {
+    return axiosClient.get(config.urlAPI + `/books`);
+  };
 
+  const queryBooks = useQuery({
+    queryKey: ['books'],
+    queryFn: () => fetchBooks(),
+  });
 
-    const [updateForm] = Form.useForm();
+  console.log('queryBooks', queryBooks.data?.data);
+
+  //======= lấy danh mục  =====//
+  const queryCategories = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => await axiosClient.get(config.urlAPI + `/categories`),
+  });
+  console.log('queryCategories', queryCategories.data?.data);
+
+  //======= lấy publishers  =====//
+  const queryPublishers = useQuery({
+    queryKey: ['publishers'],
+    queryFn: async () => await axiosClient.get(config.urlAPI + `/publishers`),
+  });
+  console.log('queryPublishers', queryPublishers.data?.data);
+
+  //======= Sự kiện XÓA =====//
+  const fetchDelete = async (id: number) => {
+    await axiosClient.delete(config.urlAPI + '/books/' + id);
+    return axios.delete('http://localhost:9000/uploads/books/' + id);
+  };
+  const mutationDelete = useMutation({
+    mutationFn: fetchDelete,
+    onSuccess: () => {
+      console.log('Delete success !');
+      messageApi.open({
+        type: 'success',
+        content: 'Delete success !',
+      });
+      // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+    },
+    onError: () => {
+      //khi gọi API bị lỗi
+      console.log('mutationDelete error Api');
+    },
+  });
+  //======= Sự kiện EDit =====//
+  const fetchUpdate = async (formData: DataType) => {
+    const { id, ...payload } = formData;
+    const response = await axiosClient.patch(config.urlAPI + '/books/' + id, payload);
+    if (file) {
+      const updatedFData = new FormData();
+      updatedFData.append('file', file);
+
+      await axios.patch('http://127.0.0.1:9000/uploads/books/' + id, updatedFData);
+      console.log('Update Imgage success !', file);
+    }
+    console.log('Updated !', response.data);
+  };
+  const mutationUpdate = useMutation({
+    mutationFn: fetchUpdate,
+    onSuccess: () => {
+      console.log('Update success !');
+      messageApi.open({
+        type: 'success',
+        content: 'Update success !',
+      });
+      // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      //Ẩn modal
+      setIsModalEditOpen(false);
+    },
+    onError: () => {
+      //khi gọi API bị lỗi
+      console.log('mutationUpdate error Api');
+    },
+  });
+
+  const [updateForm] = Form.useForm();
   //Khi nhấn nut OK trên Modal
   const handleEditOk = () => {
     // setIsModalEditOpen(false);
@@ -172,6 +166,7 @@ import TextArea from "antd/es/input/TextArea";
   //hàm lấy thông tin từ form Edit
   const onFinishEdit = async (values: any) => {
     console.log('Success:', values); //=> chính là thông tin ở form edit
+    console.log('file:', file);
     //Gọi API để update product
     mutationUpdate.mutate(values);
   };
@@ -183,7 +178,6 @@ import TextArea from "antd/es/input/TextArea";
   //======= Sự kiện Create =====//
   const fetchCreate = async (formData: DataType) => {
     try {
-      console.log('Success:', formData);
       const response = await axiosClient.post(config.urlAPI + '/books', formData);
       console.log(response.data);
 
@@ -192,10 +186,9 @@ import TextArea from "antd/es/input/TextArea";
       if (file) {
         const fData = new FormData();
         fData.append('file', file);
-        fData.append('name', 'Category 1234');
-        fData.append('description', 'Mo ta 1234');
 
         await axios.post('http://127.0.0.1:9000/uploads/books/' + id, fData);
+        console.log('Create success !', file);
       }
     } catch (error) {
       console.log('Error:', error);
@@ -287,7 +280,7 @@ import TextArea from "antd/es/input/TextArea";
       dataIndex: 'imageURL',
       width: '1%',
       render: (text: string, record: any, index: number) => {
-        return <img src={'http://localhost:9000' + text} style={{ height: 60 }} alt='' />;
+        return <img src={'http://localhost:9000' + text} style={{ height: 60 }} alt="" />;
       },
     },
     {
@@ -312,8 +305,7 @@ import TextArea from "antd/es/input/TextArea";
         }
 
         // Truncate the string to 3 characters and append "..."
-        const truncatedText =
-          text.length > 2 ? text.substring(0, 2) + "..." : text;
+        const truncatedText = text.length > 2 ? text.substring(0, 2) + '...' : text;
         return <span>{truncatedText}</span>;
       },
     },
@@ -365,7 +357,6 @@ import TextArea from "antd/es/input/TextArea";
       },
     },
 
-
     {
       title: 'Action',
       key: 'action',
@@ -375,7 +366,7 @@ import TextArea from "antd/es/input/TextArea";
             onClick={() => {
               console.log('Edit this item');
               setIsModalEditOpen(true); //show modal edit lên
-              updateForm.setFieldsValue({ ...record});
+              updateForm.setFieldsValue({ ...record });
             }}
           >
             Edit
@@ -409,16 +400,14 @@ import TextArea from "antd/es/input/TextArea";
         Create a new Product
       </Button>
 
-      <Table pagination={{pageSize: 5}} columns={columns} key={'id'} dataSource={queryBooks.data?.data} />
+      <Table pagination={{ pageSize: 5 }} columns={columns} key={'id'} dataSource={queryBooks.data?.data} />
       <div
         style={{
           marginTop: '20px',
         }}
-      >
-        
-      </div>
+      ></div>
       {/* begin Edit Modal */}
-      <Modal width={960} title="Edit Product" okText='Update Product' open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
+      <Modal width={960} title="Edit Product" okText="Update Product" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
         <Form
           form={updateForm}
           name="edit-form"
@@ -429,41 +418,15 @@ import TextArea from "antd/es/input/TextArea";
           onFinishFailed={onFinishEditFailed}
           autoComplete="off"
         >
-          <Form.Item<DataType>
-            hasFeedback
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: 'Please input Book name!' },
-             
-            ]}
-          >
+          <Form.Item<DataType> hasFeedback label="Name" name="name" rules={[{ required: true, message: 'Please input Book name!' }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item<DataType>
-            hasFeedback
-            label="Author"
-            name="author"
-            rules={[
-              { required: true, message: 'Please input Book Author!' },
-             
-            ]}
-           
-          >
+          <Form.Item<DataType> hasFeedback label="Author" name="author" rules={[{ required: true, message: 'Please input Book Author!' }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item<DataType>
-            hasFeedback
-            label="Title"
-            name="title"
-            rules={[
-              { required: true, message: 'Please input Book Title!' },
-             
-            ]}
-           
-          >
+          <Form.Item<DataType> hasFeedback label="Title" name="title" rules={[{ required: true, message: 'Please input Book Title!' }]}>
             <Input />
           </Form.Item>
 
@@ -514,7 +477,7 @@ import TextArea from "antd/es/input/TextArea";
           >
             <InputNumber min={0} defaultValue={0} />
           </Form.Item>
-         
+
           {/* Xem Rules https://ant.design/components/form#rule */}
           <Form.Item<DataType>
             hasFeedback
@@ -535,25 +498,33 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={ queryCategories && queryCategories.data && queryCategories.data.data &&
+              options={
+                queryCategories &&
+                queryCategories.data &&
+                queryCategories.data.data &&
                 queryCategories.data?.data.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-               options={ queryPublishers && queryPublishers.data && queryPublishers.data.data &&
+              options={
+                queryPublishers &&
+                queryPublishers.data &&
+                queryPublishers.data.data &&
                 queryPublishers.data?.data.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
@@ -561,9 +532,9 @@ import TextArea from "antd/es/input/TextArea";
             <TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item label='Image'>
+          <Form.Item label="Image">
             <Upload
-              listType='text'
+              listType="text"
               showUploadList={true}
               beforeUpload={(f: any) => {
                 setFile(f);
@@ -582,12 +553,7 @@ import TextArea from "antd/es/input/TextArea";
       {/* End Edit Modal */}
 
       {/* begin Create Modal */}
-      <Modal width={960} title="Create Product" 
-      open={isModalCreateOpen} 
-      onOk={handleCreateOk} 
-      onCancel={handleCreateCancel}
-      okText='Create Product'
-      >
+      <Modal width={960} title="Create Product" open={isModalCreateOpen} onOk={handleCreateOk} onCancel={handleCreateCancel} okText="Create Product">
         <Form
           form={createForm}
           name="create-form"
@@ -598,41 +564,15 @@ import TextArea from "antd/es/input/TextArea";
           onFinishFailed={onFinishCreateFailed}
           autoComplete="off"
         >
-           <Form.Item<DataType>
-            hasFeedback
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: 'Please input Book name!' },
-             
-            ]}
-          >
+          <Form.Item<DataType> hasFeedback label="Name" name="name" rules={[{ required: true, message: 'Please input Book name!' }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item<DataType>
-            hasFeedback
-            label="Author"
-            name="author"
-            rules={[
-              { required: true, message: 'Please input Book Author!' },
-             
-            ]}
-           
-          >
+          <Form.Item<DataType> hasFeedback label="Author" name="author" rules={[{ required: true, message: 'Please input Book Author!' }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item<DataType>
-            hasFeedback
-            label="Title"
-            name="title"
-            rules={[
-              { required: true, message: 'Please input Book Title!' },
-             
-            ]}
-           
-          >
+          <Form.Item<DataType> hasFeedback label="Title" name="title" rules={[{ required: true, message: 'Please input Book Title!' }]}>
             <Input />
           </Form.Item>
 
@@ -683,7 +623,7 @@ import TextArea from "antd/es/input/TextArea";
           >
             <InputNumber min={0} addonAfter="$" defaultValue={0} />
           </Form.Item>
-         
+
           {/* Xem Rules https://ant.design/components/form#rule */}
           <Form.Item<DataType>
             hasFeedback
@@ -704,25 +644,33 @@ import TextArea from "antd/es/input/TextArea";
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={ queryCategories && queryCategories.data && queryCategories.data.data &&
+              options={
+                queryCategories &&
+                queryCategories.data &&
+                queryCategories.data.data &&
                 queryCategories.data?.data.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-               options={ queryPublishers && queryPublishers.data && queryPublishers.data.data &&
+              options={
+                queryPublishers &&
+                queryPublishers.data &&
+                queryPublishers.data.data &&
                 queryPublishers.data?.data.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
@@ -730,9 +678,9 @@ import TextArea from "antd/es/input/TextArea";
             <TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item label='Image'>
+          <Form.Item label="Image">
             <Upload
-              listType='text'
+              listType="text"
               showUploadList={true}
               beforeUpload={(f: any) => {
                 setFile(f);
