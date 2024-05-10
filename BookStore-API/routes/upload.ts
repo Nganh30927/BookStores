@@ -8,9 +8,10 @@ const { S3Client } = require('@aws-sdk/client-s3');
 
 import { AppDataSource } from '../data-source';
 import { Book } from '../entities/book.entity';
+
 const repository = AppDataSource.getRepository(Book);
 
-const UPLOAD_DIRECTORY = '../public/uploads';
+const UPLOAD_DIRECTORY = path.join(__dirname, '..', 'public', 'uploads');
 const router: Router = express.Router();
 
 const upload = multer({
@@ -60,42 +61,74 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-router.post('/books/:id', function (req: Request, res: Response, next: NextFunction) {
+// router.post('/books/:id', function (req: Request, res: Response, next: NextFunction) {
+//   upload(req, res, async (err: any) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).json({
+//         message: err.message,
+//       });
+      
+//     }
+//     const publicUrl = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${req.file?.filename}`;
+
+//     res.status(200).json({
+//       message: 'File uploaded successfully',
+//       publicUrl,
+//     });
+//     // Find the book
+//     const book = await repository
+//       .createQueryBuilder('book')
+//       .where('book.id = :id', { id: parseInt(req.params.id) })
+//       .getOne();
+
+//     const patchData = {
+//       imageURL: `/uploads/books/${req.params.id}/${req.file?.filename}`,
+//     };
+
+//     if (book) {
+//       // Update the book data
+//       book.imageURL = patchData.imageURL;
+
+//       // Save the updated book data
+//       const updatedBook = await repository.save(book);
+
+//       res.status(200).json({ message: 'File uploaded successfully', publicUrl });
+//     } else {
+//       res.status(404).json({ message: 'Book not found' });
+//     }
+//   });
+// });
+
+router.post('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
   upload(req, res, async (err: any) => {
     if (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: err.message,
-      });
-      
+      // An error occurred when uploading
+      return res.status(500).json({ message: err.message });
     }
-    const publicUrl = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${req.file?.filename}`;
+    // Everything went fine
+    // console.log('host', req.get('host'));
 
-    res.status(200).json({
-      message: 'File uploaded successfully',
-      publicUrl,
-    });
-    // Find the book
-    const book = await repository
-      .createQueryBuilder('book')
-      .where('book.id = :id', { id: parseInt(req.params.id) })
-      .getOne();
-
+    const id = parseInt(req.params.id);
+    const filename = req.file ? req.file.filename : '';
     const patchData = {
-      imageUrl: `/uploads/books/${req.params.id}/${req.file?.filename}`,
+      imageURL: `/uploads/books/${req.params.id}/${filename}`,
     };
+    
 
-    if (book) {
-      // Update the book data
-      book.imageURL = patchData.imageUrl;
+    let found = await repository.findOne({where: {id}});
 
-      // Save the updated book data
-      const updatedBook = await repository.save(book);
+      if (found) {
+        found = await repository.save({ ...found, ...patchData });
+        const publicUrl: string = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${filename}`;
 
-      res.status(200).json({ message: 'File uploaded successfully', publicUrl });
-    } else {
-      res.status(404).json({ message: 'Book not found' });
-    }
+        res.status(200).json({ message: 'File uploaded successfully', publicUrl });
+      }else{
+        res.status(404).json({ message: 'Book not found' });
+      }
+
+
+   
   });
 });
 

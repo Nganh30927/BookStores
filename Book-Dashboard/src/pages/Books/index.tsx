@@ -55,7 +55,7 @@ import TextArea from "antd/es/input/TextArea";
     quantity: number,
     price: number,
     serialnumber: number,
-    descrpition?: string,
+    description?: string,
     discount: number,
     imageURL?: string,
     categoryId: number,
@@ -74,8 +74,6 @@ import TextArea from "antd/es/input/TextArea";
     const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
     //Toggle Modal Create
     const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
-    const [categories, setCategories] = React.useState<any[]>([]); // Kiểu dữ liệu của categories phụ thuộc vào dữ liệu thực tế
-  const [publishers, setPublishers] = React.useState<any[]>([]);
     const [file, setFile] = React.useState(null);
   
   
@@ -192,16 +190,13 @@ import TextArea from "antd/es/input/TextArea";
       const id = response.data.id;
 
       if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('name', 'Category 1234');
-        formData.append('description', 'Mo ta 1234');
+        const fData = new FormData();
+        fData.append('file', file);
+        fData.append('name', 'Category 1234');
+        fData.append('description', 'Mo ta 1234');
 
-        await axios.post('http://127.0.0.1:9000/uploads/books/' + id, formData);
+        await axios.post('http://127.0.0.1:9000/uploads/books/' + id, fData);
       }
-
-      fetchBooks();
-      createForm.resetFields();
     } catch (error) {
       console.log('Error:', error);
     }
@@ -216,7 +211,7 @@ import TextArea from "antd/es/input/TextArea";
         content: 'Create success !',
       });
       // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['books'] });
       //Ẩn modal
       setIsModalCreateOpen(false);
       createForm.resetFields(); //làm trống các input
@@ -288,8 +283,8 @@ import TextArea from "antd/es/input/TextArea";
   const columns: ColumnsType<DataType> = [
     {
       title: 'Picture',
-      key: 'imageUrl',
-      dataIndex: 'imageUrl',
+      key: 'imageURL',
+      dataIndex: 'imageURL',
       width: '1%',
       render: (text: string, record: any, index: number) => {
         return <img src={'http://localhost:9000' + text} style={{ height: 60 }} alt='' />;
@@ -352,7 +347,7 @@ import TextArea from "antd/es/input/TextArea";
     },
     {
       title: 'Description',
-      dataIndex: 'descrpition',
+      dataIndex: 'description',
       key: 'description',
     },
     {
@@ -562,7 +557,7 @@ import TextArea from "antd/es/input/TextArea";
             />
           </Form.Item>
 
-          <Form.Item<DataType> hasFeedback label="Description" name="descrpition" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
+          <Form.Item<DataType> hasFeedback label="Description" name="description" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
             <TextArea rows={3} />
           </Form.Item>
 
@@ -731,7 +726,7 @@ import TextArea from "antd/es/input/TextArea";
             />
           </Form.Item>
 
-          <Form.Item<DataType> hasFeedback label="Description" name="descrpition" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
+          <Form.Item<DataType> hasFeedback label="Description" name="description" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
             <TextArea rows={3} />
           </Form.Item>
 
