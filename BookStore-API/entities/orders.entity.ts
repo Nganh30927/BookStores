@@ -24,18 +24,15 @@ export class Order {
   status: string;
 
   @MaxLength(500)
-  @IsNotEmpty()
-  @Column({ name: 'ShippingAddress', type: 'nvarchar', length: 500 })
+  @Column({ name: 'ShippingAddress', type: 'nvarchar', length: 500, nullable: true })
   shippingaddress: string;
 
   @IsNotEmpty()
   @Column({ name: 'PaymentType', type: 'varchar', length: 50, default: 'CASH', enum: ['CASH', 'CREDIT'] })
   paymenttype: string;
 
- 
-  @Column({ name: 'Description', type: 'nvarchar', nullable: true})
+  @Column({ name: 'Description', type: 'nvarchar', nullable: true })
   description?: string;
-
 
   @Column({ type: 'int' })
   employeeId: number;
@@ -54,6 +51,4 @@ export class Order {
 
   @OneToMany(() => OrderDetail, (o) => o.order)
   orderDetails: OrderDetail[];
-
 }
-

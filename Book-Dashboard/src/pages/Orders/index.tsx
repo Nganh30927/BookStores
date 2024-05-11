@@ -1,37 +1,29 @@
-import React, { useState } from "react";
-import {
-  Space,
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  message,
-  Pagination,
-  Card,
-  Popconfirm,
-  Select,
-} from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosClient } from "../../library/axiosClient";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import config from "../../constants/config";
-import type { PaginationProps, TableColumnsType } from "antd";
+import React, { useState } from 'react';
+import { Space, Table, Button, Modal, Form, Input, message, Pagination, Card, Popconfirm, Select, Divider, DatePicker, Drawer } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { axiosClient } from '../../library/axiosClient';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import config from '../../constants/config';
+import type { PaginationProps, TableColumnsType } from 'antd';
 import { CalendarOutlined, DeleteOutlined, EditOutlined, FolderAddOutlined, MailOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import numeral from 'numeral';
 import dayjs from 'dayjs';
+import moment from 'moment';
+import { PopconfirmProps, Descriptions, DescriptionsProps, Badge } from 'antd';
+import type { DatePickerProps } from 'antd';
 
 interface DataType {
-    id: number,
-    orderday: Date,
-    shippedday?: Date,
-    status: string,
-    shippingaddress: string,
-    paymenttype: string,
-    description?: string,
-    employeeId: number,
-    memberId: number
+  id: number;
+  orderday: Date;
+  shippedday?: Date;
+  status: string;
+  shippingAddress: string;
+  paymentType: string;
+  description?: string;
+  employeeId: number;
+  memberId: number;
+  orderDetails: any[];
 }
 
 type Props = {};
@@ -39,13 +31,16 @@ type Props = {};
 export default function Orders({}: Props) {
   const [createForm] = Form.useForm<DataType>();
   const [updateForm] = Form.useForm<DataType>();
-
+  const [formEdit] = Form.useForm();
+  const [refresh, setRefresh] = React.useState(false);
   const [orders, setOrders] = React.useState([]);
   const [selectedOrder, setSelectedOrder] = React.useState<any>(null);
   const [selectedOrderToAddOrderDetails, setSelectedOrderToAddOrderDetails] = React.useState<any>(null);
-
+  const [orderId, setOrderId] = React.useState<any>(0);
+  const [order, setOrder] = React.useState<any>([]);
   const [members, setMembers] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // Search products
   const [books, setBooks] = React.useState([]);
@@ -53,11 +48,24 @@ export default function Orders({}: Props) {
   // Selected products
   const [selectedBooks, setSelectedBooks] = React.useState<any[]>([]);
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setRefresh(!refresh);
+  };
+
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
+  const confirm: PopconfirmProps['onConfirm'] = (e) => {
+    onDelete(orderId);
+  };
+
   const getOrders = async () => {
     try {
-      const response = await axiosClient.get(config.urlAPI+'/orders');
+      const response = await axiosClient.get(config.urlAPI + '/orders');
       setOrders(response.data);
-      console.log('orders', response.data?.data)
+      console.log('orders', response.data?.data);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -65,7 +73,7 @@ export default function Orders({}: Props) {
 
   const getMembers = async () => {
     try {
-      const response = await axiosClient.get(config.urlAPI+'/members');
+      const response = await axiosClient.get(config.urlAPI + '/members');
       setMembers(response.data);
     } catch (error) {
       console.log('Error:', error);
@@ -74,7 +82,7 @@ export default function Orders({}: Props) {
 
   const getEmployees = async () => {
     try {
-      const response = await axiosClient.get(config.urlAPI+'/employees');
+      const response = await axiosClient.get(config.urlAPI + '/employees');
       setEmployees(response.data);
     } catch (error) {
       console.log('Error:', error);
@@ -85,12 +93,23 @@ export default function Orders({}: Props) {
     getMembers();
     getEmployees();
     getOrders();
-  }, []);
+  }, [refresh]);
+
+  const getOrderbyId = async (orderId: any) => {
+    try {
+      const response: any = await axiosClient.get(`/orders/${orderId}`);
+      setOrder([response.data]);
+      setRefresh(!refresh);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const onFinish = async (values: DataType) => {
     try {
+      createForm.setFieldsValue({ orderDetails: [] });
       console.log('Success:', values);
-      await axiosClient.post(config.urlAPI+'/orders', values);
+      await axiosClient.post(config.urlAPI + '/orders', values);
       getOrders();
       createForm.resetFields();
       message.success('Create order successfully!');
@@ -101,7 +120,7 @@ export default function Orders({}: Props) {
 
   const onDelete = async (id: number) => {
     try {
-      await axiosClient.delete(config.urlAPI+`/orders/${id}`);
+      await axiosClient.delete(config.urlAPI + `/orders/${id}`);
       getOrders();
       message.success('Order deleted successfully!');
     } catch (error) {
@@ -112,7 +131,7 @@ export default function Orders({}: Props) {
   const onUpdate = async (values: any) => {
     try {
       console.log('Success:', values);
-      await axiosClient.patch(config.urlAPI+`/orders/${selectedOrder.id}`, values);
+      await axiosClient.patch(config.urlAPI + `/orders/${selectedOrder.id}`, values);
       getOrders();
       setSelectedOrder(null);
       message.success('Order updated successfully!');
@@ -124,7 +143,7 @@ export default function Orders({}: Props) {
   const onFinishSearchProducts = async (values: any) => {
     try {
       let keyword = values.keyword;
-      const response = await axiosClient.get(config.urlAPI+`/books/search?keyword=${encodeURIComponent(keyword)}`);
+      const response = await axiosClient.get(config.urlAPI + `/books/search?keyword=${encodeURIComponent(keyword)}`);
       console.log(response.data);
       setBooks(response.data);
     } catch (error) {}
@@ -137,7 +156,7 @@ export default function Orders({}: Props) {
       key: 'index',
       width: 60,
       fixed: 'left',
-      
+
       render: (text: string, record: any, index: number) => {
         return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
       },
@@ -153,7 +172,7 @@ export default function Orders({}: Props) {
           title: 'Name',
           dataIndex: 'member-name',
           key: 'member-name',
-
+          width: '10%',
           render: (text: string, record: any, index: number) => {
             return (
               <div style={{ whiteSpace: 'nowrap' }}>
@@ -169,7 +188,7 @@ export default function Orders({}: Props) {
           title: 'Phone',
           dataIndex: 'member-phone',
           key: 'member-phone',
-
+          width: '8%',
           render: (text: string, record: any, index: number) => {
             return (
               <div>
@@ -185,7 +204,7 @@ export default function Orders({}: Props) {
           title: 'Email',
           dataIndex: 'member-email',
           key: 'member-email',
-
+          width: '10%',
           render: (text: string, record: any, index: number) => {
             return (
               <div>
@@ -208,6 +227,7 @@ export default function Orders({}: Props) {
           title: 'Name',
           dataIndex: 'employee-name',
           key: 'employee-name',
+          width: '10%',
           render: (text: string, record: any, index: number) => {
             return (
               <div style={{ whiteSpace: 'nowrap' }}>
@@ -223,6 +243,7 @@ export default function Orders({}: Props) {
           title: 'Phone',
           dataIndex: 'employee-phone',
           key: 'employee-phone',
+          width: '8%',
           render: (text: string, record: any, index: number) => {
             return (
               <div>
@@ -238,6 +259,7 @@ export default function Orders({}: Props) {
           title: 'Email',
           dataIndex: 'employee-email',
           key: 'employee-email',
+          width: '10%',
           render: (text: string, record: any, index: number) => {
             return (
               <div>
@@ -255,7 +277,7 @@ export default function Orders({}: Props) {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      width: 200,
+      width: '7%',
       render: (text: string, record: any, index: number) => {
         return <span>{text}</span>;
       },
@@ -264,9 +286,9 @@ export default function Orders({}: Props) {
       title: () => {
         return <div style={{ whiteSpace: 'nowrap' }}>Payment Type</div>;
       },
-      dataIndex: 'paymentType',
+      dataIndex: 'paymenttype',
       key: 'paymenttype',
-      width: 200,
+      width: '8%',
       render: (text: string, record: any, index: number) => {
         return <span>{text}</span>;
       },
@@ -275,7 +297,7 @@ export default function Orders({}: Props) {
       title: 'Date',
       dataIndex: 'orderday',
       key: 'orderday',
-      width: 200,
+      width: '11%',
       render: (text: string, record: any, index: number) => {
         return (
           <div style={{ whiteSpace: 'nowrap' }}>
@@ -291,7 +313,7 @@ export default function Orders({}: Props) {
       title: 'Shipped Date',
       dataIndex: 'shippedday',
       key: 'shippedday',
-      width: 200,
+      width: '11%',
       render: (text: string, record: any, index: number) => {
         return (
           <div style={{ whiteSpace: 'nowrap' }}>
@@ -308,7 +330,7 @@ export default function Orders({}: Props) {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
-      width: 120,
+      width: '10%',
       render: (text: string, record: any, index: number) => {
         return <span>{text}</span>;
       },
@@ -317,13 +339,14 @@ export default function Orders({}: Props) {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-
+      width: '12%',
+      align: 'center',
       fixed: 'right',
       render: (text: any, record: any) => {
         return (
-          <Space size='small'>
+          <Space size="small">
             <Button
-              type='primary'
+              type="primary"
               icon={<FolderAddOutlined />}
               onClick={() => {
                 setSelectedOrderToAddOrderDetails(record);
@@ -331,20 +354,36 @@ export default function Orders({}: Props) {
             />
 
             <Button
-              type='primary'
+              type="primary"
               icon={<EditOutlined />}
               onClick={() => {
                 setSelectedOrder(record);
-                updateForm.setFieldsValue(record);
+                const newvalues = { ...record, orderday: moment(record.orderday), shippedday: moment(record.shippedday) };
+                updateForm.setFieldsValue(newvalues);
               }}
             />
 
-            <Popconfirm title='Delete the order' description='Are you sure to delete this order?' onConfirm={() => {}}>
-              <Button type='primary' danger icon={<DeleteOutlined />} 
-              onClick={() => {
-                onDelete(record)
-              }}/>
+            <Popconfirm title="Delete the order" description="Are you sure to delete this order?" onConfirm={confirm}>
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setOrderId(record.id);
+                }}
+              />
             </Popconfirm>
+
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsModalOpen(true);
+                getOrderbyId(record.id);
+                console.log('order', order);
+              }}
+            >
+              +
+            </Button>
           </Space>
         );
       },
@@ -429,11 +468,77 @@ export default function Orders({}: Props) {
     },
   ];
 
+  const OrdersDetail: DescriptionsProps['items'] = [
+    {
+      key: 'id',
+      label: 'Order ID',
+      span: 2,
+      children: order && order?.map((item: any, index: number) => <span key={index}>{item.id}</span>),
+    },
+
+    {
+      key: 'status',
+      label: 'Status',
+      children:
+        order &&
+        order?.map((item: any, index: number) => {
+          return (
+            <Badge
+              key={index}
+              status={
+                item.status === 'COMPLETED'
+                  ? 'success'
+                  : 'processing' && item.status === 'CANCELLED'
+                  ? 'error'
+                  : 'processing' && item.status === 'WAITING'
+                  ? 'processing'
+                  : 'error'
+              }
+              text={item.status}
+            />
+          );
+        }),
+      span: 2,
+    },
+
+    {
+      key: 'members',
+      label: 'Member',
+      children:
+        order &&
+        order?.map((item: any, index: number) => {
+          return <span key={index}>{item.member.name}</span>;
+        }),
+      span: 2,
+    },
+    {
+      key: 'employees',
+      label: 'Employees',
+      children:
+        order &&
+        order?.map((item: any, index: number) => {
+          return <span key={index}>{item.employee.name}</span>;
+        }),
+      span: 2,
+    },
+
+    {
+      key: 'description',
+      label: 'Mô tả',
+      children:
+        order &&
+        order?.map((item: any, index: number) => {
+          return <span key={index}>{item.description}</span>;
+        }),
+      span: 4,
+    },
+  ];
+
   return (
     <div style={{ padding: 36 }}>
-      <Card title='Create new order' style={{ width: '100%' }}>
+      <Card title="Create new order" style={{ width: '100%' }}>
         <Form
-          name='create-order'
+          name="create-order"
           form={createForm}
           initialValues={{
             status: 'WAITING',
@@ -443,28 +548,34 @@ export default function Orders({}: Props) {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
         >
-          <Form.Item<DataType> name='memberId' label='Member'>
+          <Form.Item<DataType> name="memberId" label="Member">
             <Select
-              options={members.map((item: any) => {
-                return {
-                  label: item.name + ' - ' + item.email + ' - ' + item.contact,
-                  value: item.id,
-                };
-              })}
+              options={
+                members &&
+                members?.map((item: any) => {
+                  return {
+                    label: item.name + ' - ' + item.email + ' - ' + item.contact,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
-          <Form.Item<DataType> name='employeeId' label='Employee'>
+          <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
-              options={employees.map((item: any) => {
-                return {
-                  label: item.name + ' - ' + item.email + ' - ' + item.phonenumber,
-                  value: item.id,
-                };
-              })}
+              options={
+                employees &&
+                employees?.map((item: any) => {
+                  return {
+                    label: item.name + ' - ' + item.email + ' - ' + item.phonenumber,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
-          <Form.Item<DataType> name='paymenttype' label='Payment Type'>
+          <Form.Item<DataType> name="paymentType" label="Payment Type">
             <Select
               options={[
                 {
@@ -479,28 +590,40 @@ export default function Orders({}: Props) {
             />
           </Form.Item>
 
-          <Form.Item<DataType> name='description' label='Description'>
+          <Form.Item<DataType> name="description" label="Description">
             <Input.TextArea rows={3} />
           </Form.Item>
 
+          <Form.Item name="orderDetails" hidden={true}></Form.Item>
+
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type='primary' htmlType='submit'>
+            <Button type="primary" htmlType="submit">
               Save changes
             </Button>
           </Form.Item>
         </Form>
       </Card>
+      <Divider />
 
-      <Card title='List of orders' style={{ width: '100%', marginTop: 36 }}>
-        <Table dataSource={orders} columns={columns} bordered scroll={{ x: 1800 }} />
-      </Card>
-
+      <Table
+        dataSource={orders}
+        columns={columns}
+        bordered
+        scroll={{ x: 1800 }}
+        title={() => {
+          return (
+            <div>
+              <h3>LIST OF ORDERS</h3>
+            </div>
+          );
+        }}
+      />
       <Modal
         centered
         width={800}
-        title='Edit order'
+        title="Edit order"
         open={selectedOrder}
-        okText='Save changes'
+        okText="Save changes"
         onOk={() => {
           updateForm.submit();
         }}
@@ -508,31 +631,37 @@ export default function Orders({}: Props) {
           setSelectedOrder(null);
         }}
       >
-        <Form form={updateForm} name='update-order' labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={{}} onFinish={onUpdate}>
-          <Form.Item<DataType> name='memberId' label='Member'>
+        <Form form={updateForm} name="update-order" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={{}} onFinish={onUpdate}>
+          <Form.Item<DataType> name="memberId" label="Member">
             <Select
               disabled
-              options={members.map((item: any) => {
-                return {
-                  label: item.name + ' - ' + item?.email + ' - ' + item.contact,
-                  value: item.id,
-                };
-              })}
+              options={
+                members &&
+                members?.map((item: any) => {
+                  return {
+                    label: item.name + ' - ' + item?.email + ' - ' + item.contact,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
-          <Form.Item<DataType> name='employeeId' label='Employee'>
+          <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
-              options={employees.map((item: any) => {
-                return {
-                  label: item.name + ' - ' + item.email + ' - ' + item.phonenumber,
-                  value: item.id,
-                };
-              })}
+              options={
+                employees &&
+                employees?.map((item: any) => {
+                  return {
+                    label: item.name + ' - ' + item.email + ' - ' + item.phonenumber,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
-          <Form.Item<DataType> name='status' label='Status'>
+          <Form.Item<DataType> name="status" label="Status">
             <Select
               options={[
                 {
@@ -551,7 +680,7 @@ export default function Orders({}: Props) {
             />
           </Form.Item>
 
-          <Form.Item<DataType> name='paymenttype' label='Payment Type'>
+          <Form.Item<DataType> name="paymentType" label="Payment Type">
             <Select
               options={[
                 {
@@ -565,13 +694,13 @@ export default function Orders({}: Props) {
               ]}
             />
           </Form.Item>
-          <Form.Item<DataType> name='shippedday' label='Shipping Address'>
+          <Form.Item<DataType> name="shippingAddress" label="Shipping Address">
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item<DataType> name='shippedday' label='Shipped Date'>
-            <Input />
+          <Form.Item<DataType> name="shippedday" label="Shipped Date">
+            <DatePicker onChange={onChange} />
           </Form.Item>
-          <Form.Item<DataType> name='description' label='Description'>
+          <Form.Item<DataType> name="description" label="Description">
             <Input.TextArea rows={2} />
           </Form.Item>
 
@@ -583,12 +712,16 @@ export default function Orders({}: Props) {
 
       {/* ADD ORDER DETAILS */}
 
+      <Drawer title="Order Details" placement="right" onClose={handleCancel} open={isModalOpen} width={'50%'}>
+        <Descriptions bordered items={OrdersDetail}></Descriptions>
+      </Drawer>
+
       <Modal
         centered
         width={800}
-        title='Add products to order'
+        title="Add books to order"
         open={selectedOrderToAddOrderDetails}
-        okText='Add to order'
+        okText="Add to order"
         onOk={async () => {
           // 1. selectedOrderToAddOrderDetails
           // 2. selectedProducts (quantity = 1)
@@ -618,19 +751,19 @@ export default function Orders({}: Props) {
           setSelectedOrderToAddOrderDetails(null);
         }}
       >
-        <Form name='search-books' layout='inline' onFinish={onFinishSearchProducts}>
-          <Form.Item name='keyword' label='Name'>
+        <Form name="search-books" layout="inline" onFinish={onFinishSearchProducts}>
+          <Form.Item name="keyword" label="Name">
             <Input />
           </Form.Item>
           <Form.Item>
-            <Button type='primary' htmlType='submit'>
+            <Button type="primary" htmlType="submit">
               Search
             </Button>
           </Form.Item>
         </Form>
 
         <Table
-          rowKey='id'
+          rowKey="id"
           columns={books_columns}
           dataSource={books}
           rowSelection={{
