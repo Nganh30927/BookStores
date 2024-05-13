@@ -3,14 +3,13 @@ import { axiosClient } from '../library/axiosClient';
 import { persist, createJSONStorage, } from 'zustand/middleware'
 import config from '../constants/config';
 interface User {
-  _id: string;
+  id: number;
   email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: string;
-  photo: string;
+  name: string
+  phonenumber: number;
+  position: string;
   address: string;
+  gender: string
 }
 
 interface Auth {
@@ -44,10 +43,10 @@ const useAuth = create(
           const isAuthenticated = response.status === 200; //==> TRUE
           //Gọi tiếp API lấy thông tin User
           const {data} = await axiosClient.get(config.urlAPI+'/auth/profile');
-
+          
           //cập nhật lại state
           set({user: data.data, isAuthenticated,isLoading: false });
-          
+          console.log('get data profile ', data);
           //trả lại thông tin cho hàm login
           return { isAuthenticated, error: '',isLoading: false };
         }

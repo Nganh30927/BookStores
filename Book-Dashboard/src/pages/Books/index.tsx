@@ -133,7 +133,15 @@ import TextArea from "antd/es/input/TextArea";
     //======= Sự kiện EDit =====//
     const fetchUpdate = async (formData: DataType) => {
       const { id, ...payload } = formData;
-      return axiosClient.patch(config.urlAPI+'/books/'+ id, payload);
+      const response = await axiosClient.patch(config.urlAPI + '/books/' + id, payload);
+      if (file) {
+        const updatedFData = new FormData();
+        updatedFData.append('file', file);
+  
+        await axios.patch('http://127.0.0.1:9000/uploads/books/' + id, updatedFData);
+        console.log('Update Imgage success !', file);
+      }
+      console.log('Updated !', response.data);
     };
     const mutationUpdate = useMutation({
       mutationFn: fetchUpdate,

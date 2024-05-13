@@ -132,4 +132,35 @@ router.post('/books/:id', async (req: Request, res: Response, next: NextFunction
   });
 });
 
+
+//Patch Book Image Url
+router.patch('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
+  upload(req, res, async (err: any) => {
+    if (err) {
+      // An error occurred when uploading
+      return res.status(500).json({ message: err.message });
+    }
+    // Everything went fine
+    const id = parseInt(req.params.id);
+    const filename = req.file ? req.file.filename : '';
+    const patchData = {
+      imageURL: `/uploads/books/${req.params.id}/${filename}`,
+    };
+
+    let found = await repository.findOneBy({ id: id });
+
+    if (found) {
+      found.imageURL = patchData.imageURL;
+      await repository.save(found);
+
+      // found = await repository.save({ ...found, ...patchData });
+      const publicUrl: string = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${filename}`;
+
+      res.status(200).json({ message: 'File uploaded successfully', publicUrl });
+    } else {
+      res.status(404).json({ message: 'Book not found' });
+    }
+  });
+});
+
 export default router;

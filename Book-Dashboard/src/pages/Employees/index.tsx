@@ -395,13 +395,10 @@ const Employee = () => {
             />
           </Form.Item>
 
-      <Form.Item hidden label='Id' name='id'>
-            <Input />
-          </Form.Item>
+        <Form.Item hidden label='Id' name='id'>
+              <Input />
+            </Form.Item>
 
-          <Form.Item hidden label="Id" name="id">
-            <Input />
-          </Form.Item>
         </Form>
       </Modal>
       {/* End Edit Modal */}

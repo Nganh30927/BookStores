@@ -35,9 +35,9 @@ router.get('/', async (req: Request, res: Response, next: any) => {
             'orderDetails.quantity',
             'orderDetails.price',
             'orderDetails.discount',
-            'orderDetails.subtotalorder',
             'book',
-            'category'
+            'category',
+            'publisher'
         ]).getMany();
 
         if (orders.length === 0) {
@@ -76,9 +76,9 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
           'orderDetails.quantity',
           'orderDetails.price',
           'orderDetails.discount',
-          'orderDetails.subtotalorder',
           'book',
-          'category'
+          'category',
+          'punlisher'
       ]).getOne();
 
       if (order) {

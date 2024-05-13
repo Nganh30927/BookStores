@@ -27,11 +27,11 @@ const DefaultLayout = () => {
 
   const {isAuthenticated, logout, user} = useAuth();
   /* Check xem trang thai dang nhap */
-  // React.useEffect(()=>{
-  //   if(!isAuthenticated){
-  //     navigate('/login');
-  //   }
-  // },[isAuthenticated,navigate])
+  React.useEffect(()=>{
+    if(!isAuthenticated){
+      navigate('/login');
+    }
+  },[isAuthenticated,navigate])
 
 
   const {
@@ -112,8 +112,8 @@ const DefaultLayout = () => {
             }}
           />
           <Space>
-          <Avatar src={<img src={user?.photo} alt="avatar" />} />
-            <strong>{user?.firstName}</strong>
+          {/* <Avatar src={<img src={user?.photo} alt="avatar" />} /> */}
+            <strong>{user?.name}</strong>
           <Button type='primary' onClick={()=>{
             logout();
           }}>

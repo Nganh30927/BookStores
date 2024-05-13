@@ -4,12 +4,17 @@ content-type: application/json
 
 {
  
-  "email": "saka7@gmail.com",
-  "password": "bukayosaka7"
+  "email": "nganh@gmail.com",
+  "password": "nganh12345"
   
 }
 ###
 #Get all User
 GET  http://localhost:9000/auth/profile HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTU0NjI2MTUsImV4cCI6MTcxNjc1ODYxNX0.1hwrImPnrTgUpTpVFpGmYG3KudidRBcwNZM6GO7UshI
 
+###
+GET http://localhost:9000/auth/refresh-token HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTU0NjI2NDEsImV4cCI6MTcxODA1NDY0MX0.F7JwOMCSA8OjzEAYfkgrSxT6eGma8QK5fFbsFHv9rZs
