@@ -33,18 +33,15 @@ router.get('/', async (req: Request, res: Response, next: any) => {
     const minPrice = req.query.minPrice; // Giả sử bạn nhận giá tối thiểu từ query parameter
     const maxPrice = req.query.maxPrice; // Giả sử bạn nhận giá tối đa từ query parameter
 
-    const query = repository
-      .createQueryBuilder('book')
-      .leftJoinAndSelect('book.category', 'category')
-      .leftJoinAndSelect('book.publisher', 'publisher');
-      
-      // http://localhost:9000/books?minPrice=&maxPrice=
+    const query = repository.createQueryBuilder('book').leftJoinAndSelect('book.category', 'category').leftJoinAndSelect('book.publisher', 'publisher');
+
+    // http://localhost:9000/books?minPrice=&maxPrice=
     if (minPrice) {
-      query.andWhere("book.price >= :minPrice", { minPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có minPrice
+      query.andWhere('book.price >= :minPrice', { minPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có minPrice
     }
 
     if (maxPrice) {
-      query.andWhere("book.price <= :maxPrice", { maxPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có maxPrice
+      query.andWhere('book.price <= :maxPrice', { maxPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có maxPrice
     }
 
     const books = await query.getMany();
@@ -60,19 +57,16 @@ router.get('/', async (req: Request, res: Response, next: any) => {
   }
 });
 
-
-
 // SELECT o FROM Book o WHERE o.category.id=?1
 router.get('/list', async (req: Request, res: Response, next: any) => {
   try {
-    
-    const categoryId = req.query.categoryId; 
+    const categoryId = req.query.categoryId;
 
     const books = await repository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.category', 'category')
       .leftJoinAndSelect('book.publisher', 'publisher')
-      .where("category.id = :categoryId", { categoryId }) 
+      .where('category.id = :categoryId', { categoryId })
       .getMany();
 
     if (books.length === 0) {
@@ -85,19 +79,17 @@ router.get('/list', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 // @Query("SELECT o FROM Books o WHERE o.name LIKE %?1%")
 router.get('/search', async (req: Request, res: Response, next: any) => {
   try {
-    
-    const keyword = req.query.keyword; 
+    const keyword = req.query.keyword;
 
     const books = await repository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.category', 'category')
       .leftJoinAndSelect('book.publisher', 'publisher')
-      .where("book.name LIKE :keyword", { keyword: `%${keyword}%`}) 
+      .where('book.name LIKE :keyword', { keyword: `%${keyword}%` })
       .getMany();
 
     if (books.length === 0) {
@@ -110,7 +102,6 @@ router.get('/search', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 /* GET book by id */
 router.get('/detail/:id', async (req: Request, res: Response, next: any) => {
@@ -178,6 +169,7 @@ router.delete('/:id', async (req: Request, res: Response, next: any) => {
     await repository.delete({
       id: book.id,
     });
+
     res.status(200).send();
   } catch (error) {
     console.error(error);

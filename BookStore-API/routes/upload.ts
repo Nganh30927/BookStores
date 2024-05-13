@@ -33,22 +33,6 @@ const upload = multer({
   }),
 }).single('file');
 
-// const s3 = new S3Client();
-
-// const upload2 = multer({
-//   storage: multerS3({
-//     contentType: multerS3.AUTO_CONTENT_TYPE,
-//     s3: s3,
-//     bucket: 'some-bucket',
-//     metadata: function (req, file, cb) {
-//       cb(null, { fieldName: file.fieldname });
-//     },
-//     key: function (req, file, cb) {
-//       cb(null, Date.now().toString());
-//     },
-//   }),
-// });
-
 function toSafeFileName(fileName: string): string {
   const fileInfo = path.parse(fileName);
   const safeFileName = fileInfo.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() + fileInfo.ext;
@@ -61,45 +45,6 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// router.post('/books/:id', function (req: Request, res: Response, next: NextFunction) {
-//   upload(req, res, async (err: any) => {
-//     if (err) {
-//       console.log(err);
-//       return res.status(500).json({
-//         message: err.message,
-//       });
-      
-//     }
-//     const publicUrl = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${req.file?.filename}`;
-
-//     res.status(200).json({
-//       message: 'File uploaded successfully',
-//       publicUrl,
-//     });
-//     // Find the book
-//     const book = await repository
-//       .createQueryBuilder('book')
-//       .where('book.id = :id', { id: parseInt(req.params.id) })
-//       .getOne();
-
-//     const patchData = {
-//       imageURL: `/uploads/books/${req.params.id}/${req.file?.filename}`,
-//     };
-
-//     if (book) {
-//       // Update the book data
-//       book.imageURL = patchData.imageURL;
-
-//       // Save the updated book data
-//       const updatedBook = await repository.save(book);
-
-//       res.status(200).json({ message: 'File uploaded successfully', publicUrl });
-//     } else {
-//       res.status(404).json({ message: 'Book not found' });
-//     }
-//   });
-// });
-
 router.post('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
   upload(req, res, async (err: any) => {
     if (err) {
@@ -109,45 +54,13 @@ router.post('/books/:id', async (req: Request, res: Response, next: NextFunction
     // Everything went fine
     // console.log('host', req.get('host'));
 
-    const id = parseInt(req.params.id);
-    const filename = req.file ? req.file.filename : '';
-    const patchData = {
-      imageURL: `/uploads/books/${req.params.id}/${filename}`,
-    };
-    
-
-    let found = await repository.findOne({where: {id}});
-
-      if (found) {
-        found = await repository.save({ ...found, ...patchData });
-        const publicUrl: string = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${filename}`;
-
-        res.status(200).json({ message: 'File uploaded successfully', publicUrl });
-      }else{
-        res.status(404).json({ message: 'Book not found' });
-      }
-
-
-   
-  });
-});
-
-
-//Patch Book Image Url
-router.patch('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
-  upload(req, res, async (err: any) => {
-    if (err) {
-      // An error occurred when uploading
-      return res.status(500).json({ message: err.message });
-    }
-    // Everything went fine
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
     const filename = req.file ? req.file.filename : '';
     const patchData = {
       imageURL: `/uploads/books/${req.params.id}/${filename}`,
     };
 
-    let found = await repository.findOneBy({ id: id });
+    let found = await repository.findOneBy({ id: parseInt(id) });
 
     if (found) {
       found.imageURL = patchData.imageURL;
@@ -163,4 +76,62 @@ router.patch('/books/:id', async (req: Request, res: Response, next: NextFunctio
   });
 });
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
+//Patch Book Image Url
+router.patch('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
+  upload(req, res, async (err: any) => {
+    if (err) {
+      // An error occurred when uploading
+      return res.status(500).json({ message: err.message });
+    }
+    // Everything went fine
+<<<<<<< HEAD
+    const id = parseInt(req.params.id);
+=======
+    const id = req.params.id;
+>>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
+    const filename = req.file ? req.file.filename : '';
+    const patchData = {
+      imageURL: `/uploads/books/${req.params.id}/${filename}`,
+    };
+
+<<<<<<< HEAD
+    let found = await repository.findOneBy({ id: id });
+=======
+    let found = await repository.findOneBy({ id: parseInt(id) });
+>>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
+
+    if (found) {
+      found.imageURL = patchData.imageURL;
+      await repository.save(found);
+
+      // found = await repository.save({ ...found, ...patchData });
+      const publicUrl: string = `${req.protocol}://${req.get('host')}/uploads/books/${req.params.id}/${filename}`;
+
+      res.status(200).json({ message: 'File uploaded successfully', publicUrl });
+    } else {
+      res.status(404).json({ message: 'Book not found' });
+    }
+  });
+});
+
+<<<<<<< HEAD
 export default router;
+=======
+// Delete Book Image folder
+router.delete('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const PATH = `${UPLOAD_DIRECTORY}/books/${id}`;
+
+  if (fs.existsSync(PATH)) {
+    fs.rmdirSync(PATH, { recursive: true });
+    res.status(200).json({ message: 'Image deleted successfully' });
+  }
+  fs.rmdirSync(UPLOAD_DIRECTORY + '/books', { recursive: true });
+});
+
+export default router;
+>>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
