@@ -76,10 +76,6 @@ router.post('/books/:id', async (req: Request, res: Response, next: NextFunction
   });
 });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
 //Patch Book Image Url
 router.patch('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
   upload(req, res, async (err: any) => {
@@ -88,21 +84,13 @@ router.patch('/books/:id', async (req: Request, res: Response, next: NextFunctio
       return res.status(500).json({ message: err.message });
     }
     // Everything went fine
-<<<<<<< HEAD
     const id = parseInt(req.params.id);
-=======
-    const id = req.params.id;
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
     const filename = req.file ? req.file.filename : '';
     const patchData = {
       imageURL: `/uploads/books/${req.params.id}/${filename}`,
     };
 
-<<<<<<< HEAD
     let found = await repository.findOneBy({ id: id });
-=======
-    let found = await repository.findOneBy({ id: parseInt(id) });
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
 
     if (found) {
       found.imageURL = patchData.imageURL;
@@ -118,9 +106,6 @@ router.patch('/books/:id', async (req: Request, res: Response, next: NextFunctio
   });
 });
 
-<<<<<<< HEAD
-export default router;
-=======
 // Delete Book Image folder
 router.delete('/books/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
@@ -134,4 +119,3 @@ router.delete('/books/:id', async (req: Request, res: Response, next: NextFuncti
 });
 
 export default router;
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
