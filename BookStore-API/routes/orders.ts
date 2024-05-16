@@ -34,8 +34,6 @@ router.get('/', async (req: Request, res: Response, next: any) => {
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
-        'book',
-        'category',
       ])
       .getMany();
 
@@ -77,8 +75,6 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
-        'book',
-        'category',
       ])
       .getOne();
 
@@ -127,25 +123,79 @@ router.post('/', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+//Update order
+// router.patch('/:id', async (req: Request, res: Response, next: any) => {
+//   try {
+//     const order = await repository.findOneBy({ id: parseInt(req.params.id) });
+//     if (!order) {
+//       return res.status(404).json({ error: 'Not found' });
+//     }
+//     const updatedOrderData = req.body as Order;
+//     const updatedOrder = repository.merge(order, updatedOrderData);
+//     await repository.save(updatedOrder);
+//     res.status(200).json(updatedOrder);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 router.patch('/:id', async (req: Request, res: Response, next: any) => {
   try {
-    const order = await repository.findOneBy({ id: parseInt(req.params.id) });
+    const orderId = parseInt(req.params.id);
+    const order = await repository.findOne({ where: { id: orderId }, relations: ['orderDetails'] });
     if (!order) {
       return res.status(404).json({ error: 'Not found' });
     }
 
-    Object.assign(order, req.body);
+    const updatedOrderData = req.body as Order;
+    const updatedOrder = repository.merge(order, updatedOrderData);
 
-    await repository.save(order);
+    // Update order details
+    const orderDetailRepository = AppDataSource.getRepository(OrderDetail);
+    for (const detail of updatedOrderData.orderDetails) {
+      const existingDetail = order.orderDetails.find((d) => d.orderId === detail.orderId && d.bookId === detail.bookId);
+      if (existingDetail) {
+        orderDetailRepository.merge(existingDetail, detail);
+        await orderDetailRepository.save(existingDetail);
+      } else {
+        await orderDetailRepository.save(detail);
+      }
+    }
 
-    const updatedOrder = await repository
+    await repository.save(updatedOrder);
+
+    const result = await repository
       .createQueryBuilder('o')
       .leftJoinAndSelect('o.member', 'member')
       .leftJoinAndSelect('o.employee', 'employee')
-      .where('o.id = :id', { id: parseInt(req.params.id) })
+      .leftJoinAndSelect('o.orderDetails', 'orderDetails')
+      .leftJoinAndSelect('orderDetails.book', 'book')
+      .leftJoinAndSelect('book.category', 'category')
+      .leftJoinAndSelect('book.publisher', 'publisher')
+      .where('o.id = :id', { id: orderId })
+      .select([
+        'o.id',
+        'o.orderday',
+        'o.shippedday',
+        'o.status',
+        'o.shippingaddress',
+        'o.paymenttype',
+        'o.description',
+        'o.employeeId',
+        'o.memberId',
+        'employee',
+        'member',
+        'orderDetails.quantity',
+        'orderDetails.price',
+        'orderDetails.discount',
+        'orderDetails.subtotalorder',
+        'book',
+        'category',
+      ])
       .getOne();
-    res.json(updatedOrder);
+
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

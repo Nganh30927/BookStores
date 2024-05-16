@@ -24,6 +24,24 @@ import FormItem from 'antd/es/form/FormItem';
 import OrderDetailTable from './OrderDetailsTable';
 import { set } from 'react-hook-form';
 
+interface OrderItem {
+  orderId?: number;
+  bookId: number;
+  quantity: number;
+  price: number;
+  discount: number;
+  subtotalorder?: number;
+}
+
+interface OrderDataType {
+  orderId?: number;
+  bookId: number;
+  quantity: number;
+  price: number;
+  discount: number;
+  subtotalorder?: number;
+}
+
 interface DataType {
   id: number;
   orderday: Date;
@@ -34,7 +52,13 @@ interface DataType {
   description?: string;
   employeeId: number;
   memberId: number;
-  orderDetails: any[];
+  orderDetails: OrderDataType[];
+  orderId?: number;
+  bookId: number;
+  quantity: number;
+  price: number;
+  discount: number;
+  subtotalorder?: number;
 }
 
 type Props = {};
@@ -48,7 +72,7 @@ export default function Orders({}: Props) {
   const [selectedOrder, setSelectedOrder] = React.useState<any>(null);
   const [selectedOrderToAddOrderDetails, setSelectedOrderToAddOrderDetails] = React.useState<any>(false);
   const [orderId, setOrderId] = React.useState<any>(0);
-  const [order, setOrder] = React.useState<any>([]);
+  const [order, setOrder] = React.useState<DataType[]>([]);
   const [orderDetails, setOrderDetails] = React.useState<any>([]);
   const [members, setMembers] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
@@ -59,15 +83,6 @@ export default function Orders({}: Props) {
   type FormInstance<T> = GetRef<typeof Form<T>>;
 
   const EditableContext = React.createContext<FormInstance<any> | null>(null);
-
-  interface OrderItem {
-    orderId?: number;
-    bookId: number;
-    quantity: number;
-    price: number;
-    discount: number;
-    subtotalorder?: number;
-  }
 
   interface EditableRowProps {
     index: number;
@@ -133,7 +148,7 @@ export default function Orders({}: Props) {
             },
           ]}
         >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} type="number" defaultValue={1} min={1} />
+          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
         </Form.Item>
       ) : (
         <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
@@ -147,15 +162,6 @@ export default function Orders({}: Props) {
 
   type EditableTableProps = Parameters<typeof Table>[0];
 
-  interface OrderDataType {
-    orderId?: number;
-    bookId: number;
-    quantity: number;
-    price: number;
-    discount: number;
-    subtotalorder?: number;
-  }
-
   type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
   // Search products
@@ -163,10 +169,9 @@ export default function Orders({}: Props) {
 
   // Selected products
   const [selectedBooks, setSelectedBooks] = React.useState<any[]>([]);
-  const [finalSelectedBook, setfinalSelectedBook] = React.useState<any[]>([]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: any[]) => {
-    console.log(selectedRows, newSelectedRowKeys);
+    // console.log(selectedRows, newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
     if (selectedRows.length > 0) {
       setSelectedBooks(selectedRows);
@@ -182,9 +187,6 @@ export default function Orders({}: Props) {
   const handleCancel = () => {
     setIsModalOpen(false);
     setSelectedBooks([]);
-    setfinalSelectedBook([]);
-    setOrderDetailsData([]);
-    setOrderDetails([]);
   };
 
   const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
@@ -232,17 +234,15 @@ export default function Orders({}: Props) {
     try {
       const response: any = await axiosClient.get(`/orders/${orderId}`);
       setOrder([response.data]);
-      // setOrderDetails(response.data?.orderDetails);
-      // console.log('orderDetails', orderDetails);
+      setOrderDetails(response.data?.orderDetails);
       setRefresh(!refresh);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onFinish = async (values: DataType) => {
+  const onFinishCreate = async (values: DataType) => {
     try {
-      createForm.setFieldsValue({ orderDetails: [] });
       console.log('Success:', values);
       await axiosClient.post(config.urlAPI + '/orders', values);
       getOrders();
@@ -291,32 +291,33 @@ export default function Orders({}: Props) {
     }
   };
 
-  const addBookToOrderDetails = async (bookId: number, orderId: number) => {
+  const addBookToOrderDetails = async () => {
     try {
-      const newOrderDetails = finalSelectedBook.map((item: any, index: number) => {
-        return;
+      const newOrderDetails = OrderDetailsData.map((item: any, index: number) => ({
+        orderId: orderId,
+        bookId: item.bookId,
+        quantity: item.quantity,
+        price: item.price,
+        discount: item.discount,
+      }));
+
+      //add order details in order
+      const newOrder = order.map((item: any, index: number) => {
+        return {
+          orderday: item.orderday,
+          shippedday: item.shippedday,
+          status: item.status,
+          shippingaddress: item.shippingaddress,
+          paymenttype: item.paymenttype,
+          description: item.description,
+          employeeId: item.employeeId,
+          memberId: item.memberId,
+          orderDetails: newOrderDetails,
+        };
       });
-      // console.log('orderDetails', newOrderDetails);
-      const newOrder = order.filter((item: any) => item !== 'orderDetails').push('orderDetails', newOrderDetails);
-      setOrderDetails(newOrder);
-      // console.log('orderDetails', orderDetails);
-      // let orderDetails = selectedBooks.map((p: any) => {
-      //   return {
-      //     bookId: p.id,
-      //     quantity: 1,
-      //     price: p.price,
-      //     discount: p.discount,
-      //   };
-      // });
-
-      // console.log('orderDetails', orderDetails);
-
-      // const result = await axiosClient.patch(`/orders/${selectedOrderToAddOrderDetails.id}`, {
-      //   orderDetails: orderDetails,
-      // });
-
-      // setSelectedOrderToAddOrderDetails(null);
-      // setSelectedBooks([]);
+      console.log('order', newOrder);
+      const result = await axiosClient.patch(`/orders/${orderId}`, newOrder);
+      console.log('result', result);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -324,13 +325,23 @@ export default function Orders({}: Props) {
 
   const addSelectedBooks = async () => {
     try {
-      const newSelectedBooks = selectedBooks.map((item: any, index: number) => {
-        return { ...item, quantity: 1 };
+      const newSelectedBook = selectedBooks.map((item: any, index: number) => {
+        return {
+          bookId: item.id,
+          name: item.name,
+          author: item.author,
+          quantity: 1,
+          price: item.price,
+          discount: item.discount,
+        };
       });
-      finalSelectedBook.push(...newSelectedBooks);
-      setOrderDetailsData(finalSelectedBook);
-      setSelectedOrderToAddOrderDetails(null);
-      setRefresh(!refresh);
+      const found = OrderDetailsData.find((item: any) => item.bookId === newSelectedBook[0].bookId);
+      if (!found) {
+        setOrderDetailsData([...OrderDetailsData, ...newSelectedBook]);
+        setSelectedOrderToAddOrderDetails(null);
+      } else {
+        message.error('Book already exists in the order');
+      }
     } catch (error) {
       console.log('Error:', error);
     }
@@ -387,22 +398,6 @@ export default function Orders({}: Props) {
             );
           },
         },
-        {
-          title: 'Email',
-          dataIndex: 'member-email',
-          key: 'member-email',
-          width: '10%',
-          render: (text: string, record: any, index: number) => {
-            return (
-              <div>
-                <Space>
-                  <MailOutlined />
-                  <span>{record.member.email}</span>
-                </Space>
-              </div>
-            );
-          },
-        },
       ],
     },
     {
@@ -437,22 +432,6 @@ export default function Orders({}: Props) {
                 <Space>
                   <PhoneOutlined />
                   <span>{record.employee.phonenumber}</span>
-                </Space>
-              </div>
-            );
-          },
-        },
-        {
-          title: 'Email',
-          dataIndex: 'employee-email',
-          key: 'employee-email',
-          width: '10%',
-          render: (text: string, record: any, index: number) => {
-            return (
-              <div>
-                <Space>
-                  <MailOutlined />
-                  <span>{record.employee.email}</span>
                 </Space>
               </div>
             );
@@ -512,6 +491,15 @@ export default function Orders({}: Props) {
         );
       },
     },
+    {
+      title: 'Shipping Address',
+      dataIndex: 'shippingaddress',
+      key: 'shippingaddress',
+      width: '10%',
+      render: (text: string, record: any, index: number) => {
+        return <span>{text}</span>;
+      },
+    },
 
     {
       title: 'Description',
@@ -556,8 +544,10 @@ export default function Orders({}: Props) {
             <Button
               type="primary"
               onClick={() => {
+                setOrderId(record.id);
                 setIsModalOpen(true);
                 getOrderbyId(record.id);
+                // setOrderDetailsData(record.orderDetails);
               }}
             >
               +
@@ -713,8 +703,8 @@ export default function Orders({}: Props) {
   ];
 
   // Edit OrderDetails
-  const [OrderDetailsData, setOrderDetailsData] = React.useState<OrderDataType[]>([]);
-
+  const [OrderDetailsData, setOrderDetailsData] = React.useState<any[]>([]);
+  console.log('orderDetails', OrderDetailsData);
   const selectedBookscolumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
       title: 'No.',
@@ -792,7 +782,6 @@ export default function Orders({}: Props) {
   ];
 
   const handleSave = (row: OrderDataType) => {
-    console.log('OrderDetailsData', OrderDetailsData);
     const newData = [...OrderDetailsData];
     const index = newData.findIndex((item) => row.bookId === item.bookId);
     const item = newData[index];
@@ -801,7 +790,6 @@ export default function Orders({}: Props) {
       ...row,
     });
     setOrderDetailsData(newData);
-    console.log('newData', newData);
   };
 
   const components = {
@@ -915,7 +903,7 @@ export default function Orders({}: Props) {
             status: 'WAITING',
             paymentType: 'CASH',
           }}
-          onFinish={onFinish}
+          onFinish={onFinishCreate}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
         >
@@ -968,7 +956,13 @@ export default function Orders({}: Props) {
           <Form.Item name="orderDetails" hidden={true}></Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                createForm.setFieldsValue({ orderDetails: [] });
+              }}
+            >
               Save changes
             </Button>
           </Form.Item>
@@ -1020,6 +1014,7 @@ export default function Orders({}: Props) {
 
           <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
+              disabled
               options={
                 employees &&
                 employees?.map((item: any) => {
@@ -1133,7 +1128,7 @@ export default function Orders({}: Props) {
           style={{ marginLeft: '90%', marginTop: 15 }}
           icon={<SaveOutlined />}
           onClick={() => {
-            handleSave;
+            addBookToOrderDetails();
           }}
         >
           Save
