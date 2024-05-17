@@ -34,8 +34,6 @@ router.get('/', async (req: Request, res: Response, next: any) => {
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
-        'book',
-        'category',
       ])
       .getMany();
 
@@ -77,8 +75,6 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
-        'book',
-        'category',
       ])
       .getOne();
 
@@ -127,6 +123,22 @@ router.post('/', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+//Update order
+// router.patch('/:id', async (req: Request, res: Response, next: any) => {
+//   try {
+//     const order = await repository.findOneBy({ id: parseInt(req.params.id) });
+//     if (!order) {
+//       return res.status(404).json({ error: 'Not found' });
+//     }
+//     const updatedOrderData = req.body as Order;
+//     const updatedOrder = repository.merge(order, updatedOrderData);
+//     await repository.save(updatedOrder);
+//     res.status(200).json(updatedOrder);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 
 router.patch('/:id', async (req: Request, res: Response, next: any) => {
