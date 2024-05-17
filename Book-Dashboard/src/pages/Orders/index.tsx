@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import { Space, Table, Button, Modal, Form, Input, message, Pagination, Card, Popconfirm, Select, Divider, DatePicker, Drawer } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Space, Table, Button, Modal, Form, Input, message, Pagination, Card, Popconfirm, Select, Divider, DatePicker, Drawer, InputNumber } from 'antd';
 import { axiosClient } from '../../library/axiosClient';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
-import type { PaginationProps, TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import {
   CalendarOutlined,
   DeleteOutlined,
@@ -15,12 +12,35 @@ import {
   PhoneOutlined,
   UserOutlined,
   ShoppingCartOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import numeral from 'numeral';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import { PopconfirmProps, Descriptions, DescriptionsProps, Badge } from 'antd';
-import type { DatePickerProps, CheckboxProps } from 'antd';
+import type { DatePickerProps } from 'antd';
+import type { GetRef, InputRef } from 'antd';
+import FormItem from 'antd/es/form/FormItem';
+import OrderDetailTable from './OrderDetailsTable';
+import { set } from 'react-hook-form';
+
+interface OrderItem {
+  orderId?: number;
+  bookId: number;
+  quantity: number;
+  price: number;
+  discount: number;
+  subtotalorder?: number;
+}
+
+interface OrderDataType {
+  orderId?: number;
+  bookId: number;
+  quantity: number;
+  price: number;
+  discount: number;
+  subtotalorder?: number;
+}
 
 interface DataType {
   id: number;
@@ -32,16 +52,15 @@ interface DataType {
   description?: string;
   employeeId: number;
   memberId: number;
-  orderDetails: any[];
+  orderDetails: {
+    orderId?: number;
+    bookId: number;
+    quantity: number;
+    price: number;
+    discount: number;
+    subtotalorder?: number;
+  }[],
 }
-
-// type orderDetailsType= {
-//   bookId: number;
-//   quantity: number;
-//   price: number;
-//   discount: number;
-//   orderId: number;
-// };
 
 type Props = {};
 
@@ -50,29 +69,110 @@ export default function Orders({}: Props) {
   const [updateForm] = Form.useForm<DataType>();
   const [formSearchBook] = Form.useForm();
   const [refresh, setRefresh] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
   const [orders, setOrders] = React.useState([]);
   const [selectedOrder, setSelectedOrder] = React.useState<any>(null);
   const [selectedOrderToAddOrderDetails, setSelectedOrderToAddOrderDetails] = React.useState<any>(false);
   const [orderId, setOrderId] = React.useState<any>(0);
-  const [order, setOrder] = React.useState<any>([]);
-  const [orderDetails, setOrderDetails] = React.useState<any>([{ quantity: 0 }]);
+  const [order, setOrder] = React.useState<DataType[]>([]);
+  const [orderDetails, setOrderDetails] = React.useState<any>([]);
   const [members, setMembers] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
+  // Editable Table
+  type FormInstance<T> = GetRef<typeof Form<T>>;
+
+  const EditableContext = React.createContext<FormInstance<any> | null>(null);
+
+  interface EditableRowProps {
+    index: number;
+  }
+
+  const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
+    const [Quantityform] = Form.useForm();
+    return (
+      <Form form={Quantityform} component={false}>
+        <EditableContext.Provider value={Quantityform}>
+          <tr {...props} />
+        </EditableContext.Provider>
+      </Form>
+    );
+  };
+
+  interface EditableCellProps {
+    title: React.ReactNode;
+    editable: boolean;
+    dataIndex: keyof OrderItem;
+    record: OrderItem;
+    handleSave: (record: OrderItem) => void;
+  }
+
+  const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
+    const [editing, setEditing] = useState(false);
+    const inputRef = useRef<InputRef>(null);
+    const form = useContext(EditableContext)!;
+
+    useEffect(() => {
+      if (editing) {
+        inputRef.current?.focus();
+      }
+    }, [editing]);
+
+    const toggleEdit = () => {
+      setEditing(!editing);
+      form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+    };
+
+    const save = async () => {
+      try {
+        const values = await form.validateFields();
+
+        toggleEdit();
+        handleSave({ ...record, ...values });
+      } catch (errInfo) {
+        console.log('Save failed:', errInfo);
+      }
+    };
+
+    let childNode = children;
+
+    if (editable) {
+      childNode = editing ? (
+        <Form.Item
+          style={{ margin: 0 }}
+          name={dataIndex}
+          rules={[
+            {
+              required: true,
+              message: `${title} is required.`,
+            },
+          ]}
+        >
+          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        </Form.Item>
+      ) : (
+        <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
+          {children}
+        </div>
+      );
+    }
+
+    return <td {...restProps}>{childNode}</td>;
+  };
+
+  type EditableTableProps = Parameters<typeof Table>[0];
+
+  type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+
   // Search products
   const [books, setBooks] = React.useState([]);
 
   // Selected products
-  const [finalSelectedBooks, setFinalSelectedBooks] = React.useState<any[]>([]);
   const [selectedBooks, setSelectedBooks] = React.useState<any[]>([]);
 
-  //Checkbox selection
-
   const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: any[]) => {
-    console.log(selectedRows, newSelectedRowKeys);
+    // console.log(selectedRows, newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
     if (selectedRows.length > 0) {
       setSelectedBooks(selectedRows);
@@ -88,10 +188,9 @@ export default function Orders({}: Props) {
   const handleCancel = () => {
     setIsModalOpen(false);
     setSelectedBooks([]);
-    setFinalSelectedBooks([]);
   };
 
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+  const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
     console.log(date, dateString);
   };
 
@@ -133,20 +232,19 @@ export default function Orders({}: Props) {
   }, [refresh]);
 
   const getOrderbyId = async (orderId: any) => {
+    console.log('get orderById')
     try {
       const response: any = await axiosClient.get(`/orders/${orderId}`);
       setOrder([response.data]);
       setOrderDetails(response.data?.orderDetails);
-      console.log('orderDetails', orderDetails);
       setRefresh(!refresh);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onFinish = async (values: DataType) => {
+  const onFinishCreate = async (values: DataType) => {
     try {
-      createForm.setFieldsValue({ orderDetails: [] });
       console.log('Success:', values);
       await axiosClient.post(config.urlAPI + '/orders', values);
       getOrders();
@@ -179,6 +277,19 @@ export default function Orders({}: Props) {
     }
   };
 
+  // updateOrder gửi yêu cầu PATCH tới API. Hàm addBookToOrderDetails => sử dụng hàm 
+  // updateOrder để cập nhật đơn hàng với các chi tiết đơn hàng mới. Sau khi cập nhật, gọi 
+  // getOrderbyId để làm mới dữ liệu đơn hàng
+
+  const updateOrder = async (orderId: number, updatedOrderData: DataType) => {
+    try {
+      const response = await axiosClient.patch(config.urlAPI + `/orders/${orderId}`, updatedOrderData);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const onFinishSearchProducts = async (values: any) => {
     try {
       let keyword = values.name;
@@ -195,56 +306,87 @@ export default function Orders({}: Props) {
     }
   };
 
-  const addBookToOrderDetails = async (bookId: number, orderId: number) => {
-    // 1. selectedOrderToAddOrderDetails
-    // 2. selectedProducts (quantity = 1)
+  // const addBookToOrderDetails = async () => {
+  //   try {
+  //     const newOrderDetails = OrderDetailsData.map((item: any, index: number) => ({
+  //       orderId: orderId,
+  //       bookId: item.bookId,
+  //       quantity: item.quantity,
+  //       price: item.price,
+  //       discount: item.discount,
+  //     }));
+
+  //     //add order details in order
+  //     const newOrder = order.map((item: any, index: number) => {
+  //       return {
+  //         orderday: item.orderday,
+  //         shippedday: item.shippedday,
+  //         status: item.status,
+  //         shippingaddress: item.shippingaddress,
+  //         paymenttype: item.paymenttype,
+  //         description: item.description,
+  //         employeeId: item.employeeId,
+  //         memberId: item.memberId,
+  //         orderDetails: newOrderDetails,
+  //       };
+  //     });
+  //     console.log('order', newOrder);
+  //     const result = await axiosClient.patch(`/orders/${orderId}`, newOrder);
+  //     console.log('result', result);
+  //   } catch (error) {
+  //     console.log('Error:', error);
+  //   }
+  // };
+  const addBookToOrderDetails = async () => {
     try {
-      //Find book in orderDetails
-      if (orderDetails.length > 0) {
-        let found = orderDetails.find((item: any) => item.bookId === bookId);
-        if (found) {
-          found.quantity += 1;
-          found.subtotalorder = found.quantity * found.price * (1 - found.discount / 100);
-          console.log('newOrderDetails', orderDetails);
-        } else {
-          setOrderDetails(selectedBooks.map((p: any) => ({ bookId: p.id, quantity: 1, price: p.price, discount: p.discount })));
-          console.log('orderDetails', orderDetails);
-        }
+      // Prepare new order details
+      const newOrderDetails = OrderDetailsData.map((item: any, index: number) => ({
+        orderId: orderId,
+        bookId: item.bookId,
+        quantity: item.quantity,
+        price: item.price,
+        discount: item.discount,
+      }));
+  
+      // Prepare updated order data
+      const updatedOrderData = {
+        ...order[0], // assuming order is an array with one element
+        orderDetails: newOrderDetails,
+      };
+  
+      // Update the order
+      const updatedOrder = await updateOrder(orderId, updatedOrderData);
+      console.log('updatedOrder', updatedOrder);
+  
+      // Refresh the order data
+      getOrderbyId(orderId);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  const addSelectedBooks = async () => {
+    try {
+      const newSelectedBook = selectedBooks.map((item: any, index: number) => {
+        return {
+          bookId: item.id,
+          name: item.name,
+          author: item.author,
+          quantity: 1,
+          price: item.price,
+          discount: item.discount,
+        };
+      });
+      const found = OrderDetailsData.find((item: any) => item.bookId === newSelectedBook[0].bookId);
+      if (!found) {
+        setOrderDetailsData([...OrderDetailsData, ...newSelectedBook]);
+        setSelectedOrderToAddOrderDetails(null);
+      } else {
+        message.error('Book already exists in the order');
       }
-
-      // let orderDetails = selectedBooks.map((p: any) => {
-      //   return {
-      //     bookId: p.id,
-      //     quantity: 1,
-      //     price: p.price,
-      //     discount: p.discount,
-      //   };
-      // });
-
-      // console.log('orderDetails', orderDetails);
-
-      // const result = await axiosClient.patch(`/orders/${selectedOrderToAddOrderDetails.id}`, {
-      //   orderDetails: orderDetails,
-      // });
-
-      // setSelectedOrderToAddOrderDetails(null);
-      // setSelectedBooks([]);
     } catch (error) {
       console.log('Error:', error);
     }
   };
-
-  const addSelectedBooks = async () => {
-    const found = finalSelectedBooks.find((item: any) => item.id === selectedBooks[0].id);
-    if (found) {
-      setFinalSelectedBooks(finalSelectedBooks.map((item: any) => (item.id === selectedBooks[0].id ? { ...item } : item)));
-    } else {
-      setFinalSelectedBooks([...finalSelectedBooks, ...selectedBooks]);
-    }
-    setSelectedOrderToAddOrderDetails(null);
-  };
-  console.log('finalSelectedBooks', finalSelectedBooks);
-
   const columns: TableColumnsType<DataType> = [
     {
       title: 'No.',
@@ -296,22 +438,6 @@ export default function Orders({}: Props) {
             );
           },
         },
-        {
-          title: 'Email',
-          dataIndex: 'member-email',
-          key: 'member-email',
-          width: '10%',
-          render: (text: string, record: any, index: number) => {
-            return (
-              <div>
-                <Space>
-                  <MailOutlined />
-                  <span>{record.member.email}</span>
-                </Space>
-              </div>
-            );
-          },
-        },
       ],
     },
     {
@@ -346,22 +472,6 @@ export default function Orders({}: Props) {
                 <Space>
                   <PhoneOutlined />
                   <span>{record.employee.phonenumber}</span>
-                </Space>
-              </div>
-            );
-          },
-        },
-        {
-          title: 'Email',
-          dataIndex: 'employee-email',
-          key: 'employee-email',
-          width: '10%',
-          render: (text: string, record: any, index: number) => {
-            return (
-              <div>
-                <Space>
-                  <MailOutlined />
-                  <span>{record.employee.email}</span>
                 </Space>
               </div>
             );
@@ -421,6 +531,15 @@ export default function Orders({}: Props) {
         );
       },
     },
+    {
+      title: 'Shipping Address',
+      dataIndex: 'shippingaddress',
+      key: 'shippingaddress',
+      width: '10%',
+      render: (text: string, record: any, index: number) => {
+        return <span>{text}</span>;
+      },
+    },
 
     {
       title: 'Description',
@@ -465,9 +584,10 @@ export default function Orders({}: Props) {
             <Button
               type="primary"
               onClick={() => {
+                setOrderId(record.id);
                 setIsModalOpen(true);
                 getOrderbyId(record.id);
-                console.log('orderDetails', orderDetails);
+                // setOrderDetailsData(record.orderDetails);
               }}
             >
               +
@@ -622,11 +742,14 @@ export default function Orders({}: Props) {
     },
   ];
 
-  const selectedBookscolumns: TableColumnsType<DataType> = [
+  // Edit OrderDetails
+  const [OrderDetailsData, setOrderDetailsData] = React.useState<any[]>([]);
+  console.log('orderDetails', OrderDetailsData);
+  const selectedBookscolumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
       title: 'No.',
-      dataIndex: 'index',
-      key: 'index',
+      dataIndex: 'bookId',
+      key: 'bookId',
       width: '1%',
       render: (text: string, record: any, index: number) => {
         return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
@@ -635,7 +758,7 @@ export default function Orders({}: Props) {
     {
       title: 'Name',
       dataIndex: 'name',
-      key: 'name2',
+      key: 'name',
       width: '1%',
     },
     {
@@ -681,13 +804,11 @@ export default function Orders({}: Props) {
       dataIndex: 'quantity',
       key: 'quantity',
       width: '1%',
-      align: 'right',
-      render: (text: string, record: any, index: number) => {
-        return <span key={index}>1</span>;
-      },
+      editable: true,
     },
     {
       title: 'Total Price',
+      dataIndex: 'subtotalorder',
       key: 'total',
       width: '1%',
       render: (text: string, record: any, index: number) => {
@@ -700,6 +821,118 @@ export default function Orders({}: Props) {
     },
   ];
 
+  const handleSave = (row: OrderDataType) => {
+    const newData = [...OrderDetailsData];
+    const index = newData.findIndex((item) => row.bookId === item.bookId);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    setOrderDetailsData(newData);
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
+  const Newcolumns = selectedBookscolumns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: DataType) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave,
+      }),
+    };
+  });
+
+  // const selectedBookscolumns: TableColumnsType<any> = [
+  //   {
+  //     title: 'No.',
+  //     dataIndex: 'index',
+  //     key: 'index',
+  //     width: '1%',
+  //     render: (text: string, record: any, index: number) => {
+  //       return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
+  //     },
+  //   },
+  //   {
+  //     title: 'Name',
+  //     dataIndex: 'name',
+  //     key: 'name2',
+  //     width: '1%',
+  //   },
+  //   {
+  //     title: 'Author',
+  //     dataIndex: 'author',
+  //     key: 'author',
+  //     width: '1%',
+  //   },
+  //   {
+  //     title: 'Price',
+  //     dataIndex: 'price',
+  //     key: 'price',
+  //     width: '1%',
+  //     render: (text: string, record: any, index: number) => {
+  //       return (
+  //         <div style={{ textAlign: 'right' }} key={index}>
+  //           {numeral(text).format('$0,0')}
+  //         </div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     title: 'Discount',
+  //     dataIndex: 'discount',
+  //     key: 'discount',
+  //     width: '1%',
+  //     render: (text: string, record: any, index: number) => {
+  //       let color = '#4096ff';
+
+  //       if (record.discount >= 50) {
+  //         color = '#ff4d4f';
+  //       }
+
+  //       return (
+  //         <div style={{ textAlign: 'right', color: color }} key={index}>
+  //           {numeral(text).format('0,0.0')}%
+  //         </div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     title: 'Quantity',
+  //     dataIndex: 'quantity',
+  //     key: 'quantity',
+  //     width: '1%',
+  //     render: (text: string, record: any, index: number) => {
+  //       return <InputNumber></InputNumber>;
+  //     },
+  //   },
+  //   {
+  //     title: 'Total Price',
+  //     dataIndex: 'subtotalorder',
+  //     key: 'total',
+  //     width: '1%',
+  //     render: (text: string, record: any, index: number) => {
+  //       return (
+  //         <div style={{ textAlign: 'right' }} key={index}>
+  //           {numeral((record.price - ((100 - record.discount) / 100) * record.price) * record.quantity).format('$0,0')}
+  //         </div>
+  //       );
+  //     },
+  //   },
+  // ];
+
   return (
     <div style={{ padding: 36 }}>
       <Card title="Create new order" style={{ width: '100%' }}>
@@ -710,7 +943,7 @@ export default function Orders({}: Props) {
             status: 'WAITING',
             paymentType: 'CASH',
           }}
-          onFinish={onFinish}
+          onFinish={onFinishCreate}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
         >
@@ -763,7 +996,13 @@ export default function Orders({}: Props) {
           <Form.Item name="orderDetails" hidden={true}></Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                createForm.setFieldsValue({ orderDetails: [] });
+              }}
+            >
               Save changes
             </Button>
           </Form.Item>
@@ -815,6 +1054,7 @@ export default function Orders({}: Props) {
 
           <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
+              disabled
               options={
                 employees &&
                 employees?.map((item: any) => {
@@ -864,7 +1104,7 @@ export default function Orders({}: Props) {
             <Input.TextArea rows={2} />
           </Form.Item>
           <Form.Item<DataType> name="shippedday" label="Shipped Date">
-            <DatePicker onChange={onChange} />
+            <DatePicker onChange={onDateChange} />
           </Form.Item>
           <Form.Item<DataType> name="description" label="Description">
             <Input.TextArea rows={2} />
@@ -921,8 +1161,18 @@ export default function Orders({}: Props) {
           Search book
         </Button>
         <Divider />
-        <Table rowKey="id" columns={selectedBookscolumns} dataSource={finalSelectedBooks}></Table>
-        <Divider />
+        {/* <Table rowKey="id" columns={selectedBookscolumns} dataSource={finalSelectedBooks} pagination={false}></Table> */}
+        <Table components={components} rowClassName={() => 'editable-row'} bordered dataSource={OrderDetailsData} columns={Newcolumns as ColumnTypes} />
+        <Button
+          type="primary"
+          style={{ marginLeft: '90%', marginTop: 15 }}
+          icon={<SaveOutlined />}
+          onClick={() => {
+            addBookToOrderDetails();
+          }}
+        >
+          Save
+        </Button>
       </Drawer>
 
       {/* <Modal

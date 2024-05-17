@@ -29,14 +29,9 @@ export class OrderDetail {
   @Column({ name: 'SubTotalOrder', type: 'money', nullable: true })
   subtotalorder?: number;
 
-  
-
-  
-
   @ManyToOne(() => Book, (b) => b.orderDetails)
   book: Book;
 
   @ManyToOne(() => Order, (o) => o.orderDetails)
   order: Order;
 }
-
