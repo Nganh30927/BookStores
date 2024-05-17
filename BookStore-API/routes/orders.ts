@@ -9,35 +9,6 @@ const repository = AppDataSource.getRepository(Order);
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response, next: any) => {
-<<<<<<< HEAD
-    try{
-        const orders = await repository
-        .createQueryBuilder('o')
-        .leftJoinAndSelect('o.member', 'member')
-        .leftJoinAndSelect('o.employee', 'employee')
-        .leftJoinAndSelect('o.orderDetails', 'orderDetails')
-        .leftJoinAndSelect('orderDetails.book', 'book')
-        .leftJoinAndSelect('book.category', 'category')
-        .leftJoinAndSelect('book.publisher', 'publisher')
-        .select([
-            'o.id',
-            'o.orderday',
-            'o.shippedday',
-            'o.status',
-            'o.shippingaddress',
-            'o.paymenttype',
-            'o.employeeId',
-            'o.memberId',
-            'employee',
-            'member',
-            'orderDetails.quantity',
-            'orderDetails.price',
-            'orderDetails.discount',
-            'book',
-            'category',
-            'publisher'
-        ]).getMany();
-=======
   try {
     const orders = await repository
       .createQueryBuilder('o')
@@ -67,7 +38,6 @@ router.get('/', async (req: Request, res: Response, next: any) => {
         'category',
       ])
       .getMany();
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
 
     if (orders.length === 0) {
       res.status(204).send();
@@ -92,25 +62,6 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
       .leftJoinAndSelect('book.publisher', 'publisher')
       .where('o.id = :id', { id: req.params.id })
       .select([
-<<<<<<< HEAD
-          'o.id',
-          'o.orderday',
-          'o.shippedday',
-          'o.status',
-          'o.shippingaddress',
-          'o.paymenttype',
-          'o.employeeId',
-          'o.memberId',
-          'employee',
-          'member',
-          'orderDetails.quantity',
-          'orderDetails.price',
-          'orderDetails.discount',
-          'book',
-          'category',
-          'punlisher'
-      ]).getOne();
-=======
         'o.id',
         'o.orderday',
         'o.shippedday',
@@ -130,7 +81,6 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
         'category',
       ])
       .getOne();
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
 
     if (order) {
       res.json(order);

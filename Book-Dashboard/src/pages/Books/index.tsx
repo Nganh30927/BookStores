@@ -71,81 +71,9 @@ const BooksPage = () => {
   // Access the client
   const queryClient = useQueryClient();
 
-<<<<<<< HEAD
-    console.log("queryBooks", queryBooks.data?.data);
-  
-    //======= lấy danh mục  =====//
-    const queryCategories = useQuery({
-      queryKey: ["categories"],
-      queryFn: async () =>
-        await axiosClient.get(config.urlAPI+`/categories`),
-    });
-    console.log("queryCategories", queryCategories.data?.data);
-  
-    //======= lấy suppliers  =====//
-    const queryPublishers = useQuery({
-      queryKey: ["suppliers"],
-      queryFn: async () =>
-        await axiosClient.get(config.urlAPI+`/publishers`),
-    });
-    console.log("queryPublishers", queryPublishers.data?.data);
-  
-    //======= Sự kiện XÓA =====//
-    const fetchDelete = async (id: number) => {
-      return await axiosClient.delete(config.urlAPI + "/books/" + id);
-    };
-    const mutationDelete = useMutation({
-      mutationFn: fetchDelete,
-      onSuccess: () => {
-        console.log("Delete success !");
-        messageApi.open({
-          type: "success",
-          content: "Delete success !",
-        });
-        // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-        queryClient.invalidateQueries({ queryKey: ["books"] });
-      },
-      onError: () => {
-        //khi gọi API bị lỗi
-        console.log("mutationDelete error Api");
-      },
-    });
-    //======= Sự kiện EDit =====//
-    const fetchUpdate = async (formData: DataType) => {
-      const { id, ...payload } = formData;
-      const response = await axiosClient.patch(config.urlAPI + '/books/' + id, payload);
-      if (file) {
-        const updatedFData = new FormData();
-        updatedFData.append('file', file);
-  
-        await axios.patch('http://127.0.0.1:9000/uploads/books/' + id, updatedFData);
-        console.log('Update Imgage success !', file);
-      }
-      console.log('Updated !', response.data);
-    };
-    const mutationUpdate = useMutation({
-      mutationFn: fetchUpdate,
-      onSuccess: () => {
-        console.log("Update success !");
-        messageApi.open({
-          type: "success",
-          content: "Update success !",
-        });
-        // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-        queryClient.invalidateQueries({ queryKey: ["books"] });
-        //Ẩn modal
-        setIsModalEditOpen(false);
-      },
-      onError: () => {
-        //khi gọi API bị lỗi
-        console.log("mutationUpdate error Api");
-      },
-    });
-=======
   const fetchBooks = async () => {
     return axiosClient.get(config.urlAPI + `/books`);
   };
->>>>>>> 20098e6d3245f212cbe8351fcdbae93200086b16
 
   const queryBooks = useQuery({
     queryKey: ['books'],
