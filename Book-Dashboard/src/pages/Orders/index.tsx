@@ -22,7 +22,7 @@ import type { DatePickerProps } from 'antd';
 import type { GetRef, InputRef } from 'antd';
 import FormItem from 'antd/es/form/FormItem';
 import OrderDetailTable from './OrderDetailsTable';
-import { set } from 'react-hook-form';
+import { get, set } from 'react-hook-form';
 
 interface OrderItem {
   orderId?: number;
@@ -59,7 +59,7 @@ interface DataType {
     price: number;
     discount: number;
     subtotalorder?: number;
-  }[],
+  }[];
 }
 
 type Props = {};
@@ -74,11 +74,12 @@ export default function Orders({}: Props) {
   const [selectedOrderToAddOrderDetails, setSelectedOrderToAddOrderDetails] = React.useState<any>(false);
   const [orderId, setOrderId] = React.useState<any>(0);
   const [order, setOrder] = React.useState<DataType[]>([]);
-  const [orderDetails, setOrderDetails] = React.useState<any>([]);
+  const [orderDetails, setOrderDetails] = React.useState([]);
   const [members, setMembers] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [OrderDetailsData, setOrderDetailsData] = React.useState<any[]>([]);
 
   // Editable Table
   type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -231,18 +232,31 @@ export default function Orders({}: Props) {
     getOrders();
   }, [refresh]);
 
+  React.useEffect(() => {
+    setOrderDetailsData(
+      orderDetails.map((item: any) => {
+        return {
+          orderId: item.orderId,
+          bookId: item.book.id,
+          name: item.book.name,
+          author: item.book.author,
+          quantity: item.quantity,
+          price: item.price,
+        };
+      }),
+    );
+  }, [refresh]);
+
   const getOrderbyId = async (orderId: any) => {
-    console.log('get orderById')
     try {
       const response: any = await axiosClient.get(`/orders/${orderId}`);
       setOrder([response.data]);
-      setOrderDetails(response.data?.orderDetails);
+      setOrderDetails(response.data.orderDetails);
       setRefresh(!refresh);
     } catch (error) {
       console.log(error);
     }
   };
-
   const onFinishCreate = async (values: DataType) => {
     try {
       console.log('Success:', values);
@@ -277,14 +291,17 @@ export default function Orders({}: Props) {
     }
   };
 
-  // updateOrder gửi yêu cầu PATCH tới API. Hàm addBookToOrderDetails => sử dụng hàm 
-  // updateOrder để cập nhật đơn hàng với các chi tiết đơn hàng mới. Sau khi cập nhật, gọi 
+  // updateOrder gửi yêu cầu PATCH tới API. Hàm addBookToOrderDetails => sử dụng hàm
+  // updateOrder để cập nhật đơn hàng với các chi tiết đơn hàng mới. Sau khi cập nhật, gọi
   // getOrderbyId để làm mới dữ liệu đơn hàng
 
   const updateOrder = async (orderId: number, updatedOrderData: DataType) => {
     try {
       const response = await axiosClient.patch(config.urlAPI + `/orders/${orderId}`, updatedOrderData);
-      return response.data;
+      message.success('Order updated successfully!');
+      console.log('response', response.data);
+      // Refresh the order data
+      getOrderbyId(orderId);
     } catch (error) {
       console.error(error);
     }
@@ -306,37 +323,6 @@ export default function Orders({}: Props) {
     }
   };
 
-  // const addBookToOrderDetails = async () => {
-  //   try {
-  //     const newOrderDetails = OrderDetailsData.map((item: any, index: number) => ({
-  //       orderId: orderId,
-  //       bookId: item.bookId,
-  //       quantity: item.quantity,
-  //       price: item.price,
-  //       discount: item.discount,
-  //     }));
-
-  //     //add order details in order
-  //     const newOrder = order.map((item: any, index: number) => {
-  //       return {
-  //         orderday: item.orderday,
-  //         shippedday: item.shippedday,
-  //         status: item.status,
-  //         shippingaddress: item.shippingaddress,
-  //         paymenttype: item.paymenttype,
-  //         description: item.description,
-  //         employeeId: item.employeeId,
-  //         memberId: item.memberId,
-  //         orderDetails: newOrderDetails,
-  //       };
-  //     });
-  //     console.log('order', newOrder);
-  //     const result = await axiosClient.patch(`/orders/${orderId}`, newOrder);
-  //     console.log('result', result);
-  //   } catch (error) {
-  //     console.log('Error:', error);
-  //   }
-  // };
   const addBookToOrderDetails = async () => {
     try {
       // Prepare new order details
@@ -347,19 +333,16 @@ export default function Orders({}: Props) {
         price: item.price,
         discount: item.discount,
       }));
-  
+
       // Prepare updated order data
       const updatedOrderData = {
         ...order[0], // assuming order is an array with one element
         orderDetails: newOrderDetails,
       };
-  
+
       // Update the order
       const updatedOrder = await updateOrder(orderId, updatedOrderData);
       console.log('updatedOrder', updatedOrder);
-  
-      // Refresh the order data
-      getOrderbyId(orderId);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -387,6 +370,7 @@ export default function Orders({}: Props) {
       console.log('Error:', error);
     }
   };
+
   const columns: TableColumnsType<DataType> = [
     {
       title: 'No.',
@@ -585,9 +569,8 @@ export default function Orders({}: Props) {
               type="primary"
               onClick={() => {
                 setOrderId(record.id);
-                setIsModalOpen(true);
                 getOrderbyId(record.id);
-                // setOrderDetailsData(record.orderDetails);
+                setIsModalOpen(true);
               }}
             >
               +
@@ -743,8 +726,7 @@ export default function Orders({}: Props) {
   ];
 
   // Edit OrderDetails
-  const [OrderDetailsData, setOrderDetailsData] = React.useState<any[]>([]);
-  console.log('orderDetails', OrderDetailsData);
+
   const selectedBookscolumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
       title: 'No.',
@@ -854,84 +836,6 @@ export default function Orders({}: Props) {
       }),
     };
   });
-
-  // const selectedBookscolumns: TableColumnsType<any> = [
-  //   {
-  //     title: 'No.',
-  //     dataIndex: 'index',
-  //     key: 'index',
-  //     width: '1%',
-  //     render: (text: string, record: any, index: number) => {
-  //       return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
-  //     },
-  //   },
-  //   {
-  //     title: 'Name',
-  //     dataIndex: 'name',
-  //     key: 'name2',
-  //     width: '1%',
-  //   },
-  //   {
-  //     title: 'Author',
-  //     dataIndex: 'author',
-  //     key: 'author',
-  //     width: '1%',
-  //   },
-  //   {
-  //     title: 'Price',
-  //     dataIndex: 'price',
-  //     key: 'price',
-  //     width: '1%',
-  //     render: (text: string, record: any, index: number) => {
-  //       return (
-  //         <div style={{ textAlign: 'right' }} key={index}>
-  //           {numeral(text).format('$0,0')}
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: 'Discount',
-  //     dataIndex: 'discount',
-  //     key: 'discount',
-  //     width: '1%',
-  //     render: (text: string, record: any, index: number) => {
-  //       let color = '#4096ff';
-
-  //       if (record.discount >= 50) {
-  //         color = '#ff4d4f';
-  //       }
-
-  //       return (
-  //         <div style={{ textAlign: 'right', color: color }} key={index}>
-  //           {numeral(text).format('0,0.0')}%
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: 'Quantity',
-  //     dataIndex: 'quantity',
-  //     key: 'quantity',
-  //     width: '1%',
-  //     render: (text: string, record: any, index: number) => {
-  //       return <InputNumber></InputNumber>;
-  //     },
-  //   },
-  //   {
-  //     title: 'Total Price',
-  //     dataIndex: 'subtotalorder',
-  //     key: 'total',
-  //     width: '1%',
-  //     render: (text: string, record: any, index: number) => {
-  //       return (
-  //         <div style={{ textAlign: 'right' }} key={index}>
-  //           {numeral((record.price - ((100 - record.discount) / 100) * record.price) * record.quantity).format('$0,0')}
-  //         </div>
-  //       );
-  //     },
-  //   },
-  // ];
 
   return (
     <div style={{ padding: 36 }}>
@@ -1122,9 +1026,6 @@ export default function Orders({}: Props) {
         width={800}
         title="Add books to order"
         open={selectedOrderToAddOrderDetails}
-        onOk={() => {
-          console.log('orderDetails', orderDetails);
-        }}
         onCancel={() => {
           setSelectedOrderToAddOrderDetails(null);
         }}
@@ -1146,7 +1047,15 @@ export default function Orders({}: Props) {
         </Button>
       </Modal>
 
-      <Drawer title="Order Details" placement="right" onClose={handleCancel} open={isModalOpen} width={'40%'}>
+      <Drawer
+        title="Order Details"
+        placement="right"
+        onClose={() => {
+          handleCancel();
+        }}
+        open={isModalOpen}
+        width={'40%'}
+      >
         <Descriptions bordered items={OrdersDetail}></Descriptions>
         <Divider />
         <Button
@@ -1161,7 +1070,6 @@ export default function Orders({}: Props) {
           Search book
         </Button>
         <Divider />
-        {/* <Table rowKey="id" columns={selectedBookscolumns} dataSource={finalSelectedBooks} pagination={false}></Table> */}
         <Table components={components} rowClassName={() => 'editable-row'} bordered dataSource={OrderDetailsData} columns={Newcolumns as ColumnTypes} />
         <Button
           type="primary"

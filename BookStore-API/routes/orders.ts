@@ -30,10 +30,13 @@ router.get('/', async (req: Request, res: Response, next: any) => {
         'o.memberId',
         'employee',
         'member',
+        'orderDetails.orderId',
         'orderDetails.quantity',
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
+        'book',
+        'category',
       ])
       .getMany();
 
@@ -71,10 +74,13 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
         'o.memberId',
         'employee',
         'member',
+        'orderDetails.orderId',
         'orderDetails.quantity',
         'orderDetails.price',
         'orderDetails.discount',
         'orderDetails.subtotalorder',
+        'book',
+        'category',
       ])
       .getOne();
 
@@ -140,11 +146,10 @@ router.post('/', async (req: Request, res: Response, next: any) => {
 //   }
 // });
 
-
 router.patch('/:id', async (req: Request, res: Response, next: any) => {
   try {
     const orderId = parseInt(req.params.id);
-    const order = await repository.findOne({ where: { id: orderId }, relations: ["orderDetails"] });
+    const order = await repository.findOne({ where: { id: orderId }, relations: ['orderDetails'] });
     if (!order) {
       return res.status(404).json({ error: 'Not found' });
     }
@@ -155,7 +160,7 @@ router.patch('/:id', async (req: Request, res: Response, next: any) => {
     // Update order details
     const orderDetailRepository = AppDataSource.getRepository(OrderDetail);
     for (const detail of updatedOrderData.orderDetails) {
-      const existingDetail = order.orderDetails.find(d => d.orderId === detail.orderId && d.bookId === detail.bookId);
+      const existingDetail = order.orderDetails.find((d) => d.orderId === detail.orderId && d.bookId === detail.bookId);
       if (existingDetail) {
         orderDetailRepository.merge(existingDetail, detail);
         await orderDetailRepository.save(existingDetail);
@@ -203,12 +208,10 @@ router.patch('/:id', async (req: Request, res: Response, next: any) => {
   }
 });
 
-
-
 router.delete('/:id', async (req: Request, res: Response, next: any) => {
   try {
     const orderId = parseInt(req.params.id);
-    const order = await repository.findOne({ where: { id: orderId }, relations: ["orderDetails"] });
+    const order = await repository.findOne({ where: { id: orderId }, relations: ['orderDetails'] });
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
@@ -227,6 +230,5 @@ router.delete('/:id', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 export default router;
