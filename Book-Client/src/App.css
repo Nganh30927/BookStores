@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,700&display=swap');
-
-.bg-color {
-    background-color: #212121;
-}
-.text-color{
-    color: #212121;
+:root {
+  --main-color : #f82222;
+  --main_color_hover: #ea1044;
+  --border: #E4E4E4;
+  --text: #666666;
+  --accent: #000000;
+  --lighter: #999999;
 }
 
 
