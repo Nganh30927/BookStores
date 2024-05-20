@@ -99,7 +99,6 @@ const BooksPage = () => {
   //======= Sự kiện XÓA =====//
   const fetchDelete = async (id: number) => {
     await axiosClient.delete(config.urlAPI + '/books/' + id);
-    return axios.delete('http://localhost:9000/uploads/books/' + id);
   };
   const mutationDelete = useMutation({
     mutationFn: fetchDelete,

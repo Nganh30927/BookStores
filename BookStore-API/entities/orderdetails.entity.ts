@@ -11,7 +11,7 @@ export class OrderDetail {
   orderId: number;
 
   @PrimaryColumn({ type: 'int' })
-  bookId: number;
+  bookId?: number;
 
   @IsNotEmpty()
   @Column({ name: 'Quantity', type: 'decimal', precision: 18, scale: 2, default: 1 })
