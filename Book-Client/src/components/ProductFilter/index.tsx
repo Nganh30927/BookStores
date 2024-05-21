@@ -35,15 +35,8 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
     })
 
     return(
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6 md:gap-8 lg:gap-10 lg:max-w-2xs lg:pt-28  lg:pb-9 px-4">
-                <div className="hidden lg:block pb-10 lg:border-b border-gray-600">
-                  <h6 className="font-bold text-black mb-5" data-config-id="auto-txt-2-2">Price</h6>
-                  <input className="w-full bg-blue-500" type="range" data-config-id="auto-input-1-2" />
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600" data-config-id="auto-txt-3-2">$0</span>
-                    <span className="text-sm font-medium text-gray-600" data-config-id="auto-txt-4-2">$200</span>
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6 md:gap-8 lg:gap-10 lg:max-w-2xs lg:pt-6  lg:pb-9 px-4">
+              
                 <div className="hidden lg:block pb-10 lg:border-b border-gray-600">
                   <h6 className="font-bold text-black mb-8" data-config-id="auto-txt-5-2">Category</h6>
                   <li className='list-none'>

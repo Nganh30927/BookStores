@@ -87,7 +87,7 @@ const queryBooks = useQuery({
       </Helmet>
     
      
-        <section data-section-id="1" data-share="" data-category="search-solid" data-component-id="fce12138_02_awz" className="py-10 bg-gray-100">
+        <section data-section-id="1" data-share="" data-category="search-solid" data-component-id="fce12138_02_awz" className="py-10">
         <div className="container px-4 mx-auto">
           <div className=" flex flex-wrap -mx-4">
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
@@ -123,16 +123,6 @@ const queryBooks = useQuery({
                       <option value="3">Home</option>
                       <option value="4">Kids</option>
                     </select>
-                  </div>
-                </div>
-                <div>
-                  <div className="lg:hidden md:w-80 ml-4">
-                    <h6 className="font-bold text-black mb-5" data-config-id="auto-txt-2-2">Price</h6>
-                    <input className="w-full bg-blue-500" type="range" data-config-id="auto-input-1-2" />
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600" data-config-id="auto-txt-3-2">$0</span>
-                      <span className="text-sm font-medium text-gray-600" data-config-id="auto-txt-4-2">$200</span>
-                    </div>
                   </div>
                 </div>
               </div>
