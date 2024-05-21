@@ -142,7 +142,7 @@ const queryBooks = useQuery({
                    return(
                     <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
                     <Link to={`/books/${book.id}`} className="block p-5 ">
-                      <img className="block w-full h-80 mb-8 object-contain  transition-all group-hover:scale-105" src={`../../../../BookStore-API/public/${book.imageURL}`} alt={book.name} data-config-id="auto-img-1-9" />
+                      <img className="block w-full h-80 mb-8 object-contain  transition-all group-hover:scale-105" src={`http://localhost:9000` + `${book.imageURL}`} alt={book.name} data-config-id="auto-img-1-9" />
                       <div className="">
 
                         <h6 className="font-bold text-black mt-2 mb-5" data-config-id="auto-txt-2-9">{book.name}</h6>

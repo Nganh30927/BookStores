@@ -96,7 +96,7 @@ const BooksDetailsPage = () => {
                       <div className="border-gray-300 border-4">
                         <img
                           className="block h-full w-full"
-                          src={`../../../../BookStore-API/public/${book?.data.imageURL}`}
+                          src={`http://localhost:9000` + `${book?.data.imageURL}`}
                           alt=""
                           style={{ maxHeight: 650 }}
                           data-config-id="auto-img-4-3"

@@ -11,6 +11,8 @@ import config from '../../constants/config';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import GetNewBookCollection from '../../components/GetNewBookCollection';
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -19,22 +21,24 @@ const HomePage = () => {
   const limit = params.get('limit');
   const int_page = page ? parseInt(page) : 1;
 
-  const [product, setProduct] = React.useState(null);
-  React.useEffect(()=>{
-      const fetchData = async () =>{
-          const res = await fetch ('http://localhost:9000/books/list?categoryId=1010');
-          const data = await res.json();
-          console.log(data)
-      }
-      fetchData();
-  },[])
-
-
-
   const [currentPage, setCurrentPage] = React.useState(int_page);
   //===========Category SmartPhone=======//
- 
+  // const fetchBook = async (page = 1, limit = 5) => {
+  //   return axios.get(config.urlAPI + `/v1/products?page=${page}&limit=${limit}`);
+  // };
 
+  // Sử dụng useQuery để fetch data từ API
+  // const queryCategorySmartPhone = useQuery({
+  //   queryKey: ['products_smartphone', int_page, limit],
+  //   queryFn: () => fetchBook(int_page),
+  //   onSuccess: (data) => {
+  //     //Thành công thì trả lại data
+  //     console.log(data);
+  //   },
+  //   onError: (error) => {
+  //     console.log(error);
+  //   },
+  // });
 
   return (
     <div>
@@ -42,6 +46,7 @@ const HomePage = () => {
         <meta charSet="utf-8" />
         <title>Home Page</title>
       </Helmet>
+      {/* //========Book Slide=======// */}
       <section
         data-section-id="1"
         data-share=""
@@ -83,10 +88,14 @@ const HomePage = () => {
                   className="mySwiper"
                 >
                   <SwiperSlide className="">
-                    <img className="w-full h-full  rounded-xl" src="" alt="Slide 1" />
+                    <img className="w-full h-full  rounded-xl" src="https://dienmaytinphat.com/wp-content/uploads/2022/04/43X75K-6.jpg" alt="Slide 1" />
                   </SwiperSlide>
                   <SwiperSlide>
-                    <img className="w-full h-full  rounded-xl bg-gray-400" src="" alt="Slide 2" />
+                    <img
+                      className="w-full h-full  rounded-xl bg-gray-400"
+                      src="https://dienmaytinphat.com/wp-content/uploads/2022/04/43X75K-6.jpg"
+                      alt="Slide 2"
+                    />
                   </SwiperSlide>
                 </Swiper>
               </div>
@@ -100,8 +109,8 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+        {/* Book Category */}
       </section>
-
       <section data-section-id={1} data-share="" data-category="banner" data-component-id="842e895d_11_awz" className="py-6 bg-white">
         <div className="container  mx-auto">
           <div className="max-w-md lg:max-w-none mx-auto shadow overflow-hidden">
@@ -162,26 +171,27 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* //========New Book Collections=======// */}
       <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24 bg-gray-300  container mx-auto">
         <div className="container mx-auto px-4">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-between">
               <div>
-                <h1 className="text-3xl text-white font-bold mb-2" data-config-id="auto-txt-1-2">
-                  Featured Collections
+                <h1 className="text-3xl text-green-700 font-bold mb-2" data-config-id="auto-txt-1-2">
+                  New Collections
                 </h1>
                 <span>
-                  <div className="w-28 mb-6  border-b border-red-700 dark:border-gray-400"></div>
+                  <div className="w-28 mb-6  border-b border-green-700 dark:border-gray-400"></div>
                 </span>
               </div>
 
-              <p className="text-gray-500" data-config-id="auto-txt-2-2">
-                Most Selling and Trending Products in our shop
+              <p className="text-green-700 font-bold mb-2 text-lg" data-config-id="auto-txt-2-2">
+                Find more 
               </p>
             </div>
             <div className="flex flex-wrap -mx-4">
-              <Swiper
-                slidesPerView={1}
+              {/* <Swiper
+                slidesPerView={5}
                 spaceBetween={10}
                 freeMode={true}
                 pagination={{
@@ -209,10 +219,14 @@ const HomePage = () => {
                 }}
               >
                 <SwiperSlide>
-                  {' '}
                   <div className="w-full  px-4 my-4">
                     <div className="block relative bg-white  rounded-xl overflow-hidden hover:scale-105 ease-in duration-300">
-                      <img className="block w-full h-80 object-contain rounded-t-xl  " src="" alt="" data-config-id="auto-img-1-2" />
+                      <img
+                        className="block w-full h-80 object-contain rounded-t-xl  "
+                        src="https://dienmaytinphat.com/wp-content/uploads/2022/04/43X75K-6.jpg"
+                        alt=""
+                        data-config-id="auto-img-1-2"
+                      />
 
                       <a className="group block py-4 ms-3" href="#">
                         <h6
@@ -240,15 +254,15 @@ const HomePage = () => {
                     </div>
                   </div>
                 </SwiperSlide>
-              </Swiper>
+              </Swiper> */}
+              <GetNewBookCollection />
             </div>
           </div>
         </div>
       </section>
-
       <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
         <picture className="relative">
-          <img className="opacity-80 object-cover w-full" style={{ height: '500px' }} src="../../../public/images/model-iphone.PNG" alt="" />
+          <img className="opacity-80 object-cover w-full" style={{ height: '500px' }} src="../../../images/model-iphone.PNG" alt="" />
 
           <div className="absolute xl:top-[35%] xl:left-[5%] lg:top-[35%] lg:left-[-7%] md:top-[38%] md:left-[-28%] top-[50%] left-[-20%] -translate-x-[-50%] -translate-y-[-50%] transform md:-translate-x-[-50%] md:-translate-y-[-50%]  text-center">
             <div className="w-full">

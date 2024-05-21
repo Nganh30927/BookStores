@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:8080/api/v1/auth/login';
+const API_URL = 'http://localhost:9000';
 
 const axiosClient = axios.create({
   baseURL: API_URL,
@@ -29,11 +29,11 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   async (response) => {
     /**
-     * Tùy vào response của BACKEND API trả về với cấu trúc như thế nào 
+     * Tùy vào response của BACKEND API trả về với cấu trúc như thế nào
      * bạn điều chỉnh lại cho đúng với cách code của bạn
      */
-    console.log('<<=== 🚀 axiosClient response.data  ===>>',response.data.data);
-    const { token, refreshToken } = response.data.data;
+    console.log('<<=== 🚀 axiosClient response.data axiosClient  ===>>', response.data);
+    const { token, refreshToken } = response.data;
     // khi LOGIN oK ==> LƯU token và freshTOken xuống localStorage
     if (token) {
       window.localStorage.setItem('token', token);
@@ -45,7 +45,6 @@ axiosClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-
     //Khi lỗi, và lỗi không phải 401 --> trả lại lỗi
 
     if (error?.response?.status !== 401) {
@@ -54,7 +53,7 @@ axiosClient.interceptors.response.use(
 
     const originalConfig = error.config;
 
-     //Khi lỗi, và lỗi 401 --> ko có quyền truy cập ==> đi làm mới lại token
+    //Khi lỗi, và lỗi 401 --> ko có quyền truy cập ==> đi làm mới lại token
 
     if (error?.response?.status === 401 && !originalConfig.sent) {
       console.log('Error 🚀', error);
@@ -63,23 +62,23 @@ axiosClient.interceptors.response.use(
         // Trường hợp không có token thì chuyển sang trang LOGIN
         const token = window.localStorage.getItem('token');
         if (!token) {
-          console.log('Token not found',window.location.pathname);
+          console.log('Token not found', window.location.pathname);
           //Nếu trang hiện tại đang đứng không phải là login thì chuyển hướng login
-          if(window.location.pathname !== '/login'){
+          if (window.location.pathname !== '/login') {
             window.location.href = '/login';
           }
           return Promise.reject(error);
         }
         //Nếu tồn tại token, thì làm mới token sau mỗi request
         //Để quá trình login ko bị gián đoạn
-        
+
         const refreshToken = window.localStorage.getItem('refreshToken');
         if (refreshToken) {
           const response = await axiosClient.post('/auth/refresh-token', {
             refreshToken: refreshToken,
           });
 
-          const { token } = response.data.data;
+          const { token } = response.data;
           window.localStorage.setItem('token', token);
 
           originalConfig.headers = {
