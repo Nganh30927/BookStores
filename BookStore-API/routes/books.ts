@@ -61,6 +61,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
 router.get('/list', async (req: Request, res: Response, next: any) => {
   try {
     const categoryId = req.query.categoryId;
+    console.log('categoryId:', categoryId);
 
     const books = await repository
       .createQueryBuilder('book')

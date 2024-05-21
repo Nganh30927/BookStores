@@ -97,7 +97,7 @@ export default function GetNewBookCollection() {
                   </div>
                 </a>
 
-                <a className="absolute top-0 right-0 m-3 inline-block text-white hover:text-red-600 transform duartion-200" href="#">
+                <a className="absolute top-0 right-0 m-3 inline-block text-pink-500 hover:text-red-600 transform duartion-200" href="#">
                   <span className="text-2xl font-bold">
                     <FaHeart />
                   </span>

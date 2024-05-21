@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import styles from './HomePage.module.css';
 import { FaHeart } from 'react-icons/fa';
+import { IoIosArrowDropright } from 'react-icons/io';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -185,76 +186,11 @@ const HomePage = () => {
                 </span>
               </div>
 
-              <p className="text-green-700 font-bold mb-2 text-lg" data-config-id="auto-txt-2-2">
-                Find more 
-              </p>
+              <div className="flex flex-row text-green-700 font-bold mb-2 text-lg" data-config-id="auto-txt-2-2">
+                Find more {<IoIosArrowDropright size={25} />}
+              </div>
             </div>
             <div className="flex flex-wrap -mx-4">
-              {/* <Swiper
-                slidesPerView={5}
-                spaceBetween={10}
-                freeMode={true}
-                pagination={{
-                  clickable: true,
-                }}
-                modules={[FreeMode, Pagination]}
-                className=""
-                breakpoints={{
-                  640: {
-                    slidesPerView: 1,
-                    spaceBetween: 0,
-                  },
-                  768: {
-                    slidesPerView: 3,
-                    spaceBetween: 0,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 0,
-                  },
-                  1280: {
-                    slidesPerView: 5,
-                    spaceBetween: 0,
-                  },
-                }}
-              >
-                <SwiperSlide>
-                  <div className="w-full  px-4 my-4">
-                    <div className="block relative bg-white  rounded-xl overflow-hidden hover:scale-105 ease-in duration-300">
-                      <img
-                        className="block w-full h-80 object-contain rounded-t-xl  "
-                        src="https://dienmaytinphat.com/wp-content/uploads/2022/04/43X75K-6.jpg"
-                        alt=""
-                        data-config-id="auto-img-1-2"
-                      />
-
-                      <a className="group block py-4 ms-3" href="#">
-                        <h6
-                          className="inline-block text-lg font-bold  text-black mb-2 hover:text-red-600 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
-                          data-config-id="auto-txt-9-2"
-                        >
-                          name
-                        </h6>
-                        <div className="flex items-center mb-1">
-                          <span className="mr-2 text-sm font-bold text-black" data-config-id="auto-txt-10-2">
-                            price
-                          </span>
-                          <span className="mr-auto text-xs text-gray-400 line-through" data-config-id="auto-txt-11-2">
-                            discount
-                          </span>
-                          <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
-                        </div>
-                      </a>
-
-                      <a className="absolute top-0 right-0 m-3 inline-block text-white hover:text-red-600 transform duartion-200" href="#">
-                        <span className="text-2xl font-bold">
-                          <FaHeart />
-                        </span>
-                      </a>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              </Swiper> */}
               <GetNewBookCollection />
             </div>
           </div>
