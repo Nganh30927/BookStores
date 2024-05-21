@@ -1,22 +1,14 @@
-import React, { useState } from "react";
-import { Drawer } from "@mui/material";
-import styles from "./header.module.css";
-import { Link } from "react-router-dom";
-import {
-  FaCheck,
-  FaAngleDown,
-  FaRegUser,
-  FaRegHeart,
-  FaAlignJustify,
-  FaComputer,
-} from "react-icons/fa6";
-import { IoBagCheckOutline } from "react-icons/io5";
-import { IoCloseSharp } from "react-icons/io5";
-import { CiMobile1, CiDesktopMouse1, CiSearch } from "react-icons/ci";
-import { PiTelevision } from "react-icons/pi";
-import { FaFireAlt } from "react-icons/fa";
-import { IoIosTabletPortrait, IoMdLaptop } from "react-icons/io";
-
+import React, { useState } from 'react';
+import { Drawer } from '@mui/material';
+import styles from './header.module.css';
+import { Link } from 'react-router-dom';
+import { FaCheck, FaAngleDown, FaRegUser, FaRegHeart, FaAlignJustify, FaComputer } from 'react-icons/fa6';
+import { IoBagCheckOutline } from 'react-icons/io5';
+import { IoCloseSharp } from 'react-icons/io5';
+import { CiMobile1, CiDesktopMouse1, CiSearch } from 'react-icons/ci';
+import { PiTelevision } from 'react-icons/pi';
+import { FaFireAlt } from 'react-icons/fa';
+import { IoIosTabletPortrait, IoMdLaptop } from 'react-icons/io';
 
 const Header = () => {
   const [isDropdownLoginActive, setIsDropdownLoginActive] = useState(false);
@@ -24,7 +16,7 @@ const Header = () => {
   const [activeIndexNavigation, setActiveIndexNavigation] = useState(0);
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [openMenuTablet, setopenMenuTablet] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("main_Menu");
+  const [activeMenu, setActiveMenu] = useState('main_Menu');
 
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
@@ -42,10 +34,9 @@ const Header = () => {
     setopenMenuTablet(isOpenMenuTablet);
   };
 
-
   const handleUserIconClick = () => {
     setIsDropdownLoginActive(!isDropdownLoginActive);
-    console.log("isDropdownLoginActive");
+    console.log('isDropdownLoginActive');
   };
 
   const handleSearchButtonClick = (e: { preventDefault: () => void }) => {
@@ -61,7 +52,7 @@ const Header = () => {
             <div className="left_top_header col-span-6">
               <div>
                 <ul className="flex text-base">
-                  <li className="px-3">
+                  <li className="px-3 md:contents">
                     <Link to="">Contact: fasha.support@gmail.com</Link>
                   </li>
                   <li className="px-3">
@@ -91,15 +82,8 @@ const Header = () => {
               {/* <Link to="/"><img src={Logo} alt="" /></Link> */}
               <h1>FASHA.COM</h1>
             </div>
-            <div
-              className={`col-span-6 relative ms-20 2xl:ms-10 lg:ms-10 ${styles.search}`}
-            >
-              <form
-                onClick={handleSearchButtonClick}
-                className="form"
-                action=""
-                method="get"
-              >
+            <div className={`col-span-6 relative ms-20 2xl:ms-10 lg:ms-10 ${styles.search}`}>
+              <form onClick={handleSearchButtonClick} className="form" action="" method="get">
                 <input type="search" placeholder="Search products..." />
                 <button type="submit">
                   <CiSearch />
@@ -154,7 +138,6 @@ const Header = () => {
                   </a>
                 </div>
               )} */}
-          
             </div>
             <div className={`col-span-3 ${styles.icon}`}>
               <div className="icon_action flex justify-end">
@@ -162,15 +145,10 @@ const Header = () => {
                   <a onClick={handleUserIconClick} href="#">
                     <FaRegUser className="text-xl" />
                   </a>
-                  <div
-                    className={`${styles.accountDropdown} ${isDropdownLoginActive ? styles.active : ""
-                      }`}
-                  >
+                  <div className={`${styles.accountDropdown} ${isDropdownLoginActive ? styles.active : ''}`}>
                     <div className={styles.account_wrap}>
                       <div className={styles.account_inner}>
-                        <div
-                          className={`flex justify-between mb-4 ${styles.account_login_header}`}
-                        >
+                        <div className={`flex justify-between mb-4 ${styles.account_login_header}`}>
                           <span className="text-lg">Sign in</span>
                           <span>
                             <a href="#">Create an Account</a>
@@ -182,24 +160,14 @@ const Header = () => {
                               Email
                               <span className="px-1">*</span>
                             </label>
-                            <input
-                              name="Email"
-                              type="text"
-                              required
-                              placeholder="Email"
-                            />
+                            <input name="Email" type="text" required placeholder="Email" />
                           </p>
                           <p className="mb-5">
                             <label className="flex text-base">
                               Password
                               <span className="px-1">*</span>
                             </label>
-                            <input
-                              name="Password"
-                              type="text"
-                              required
-                              placeholder="Password"
-                            />
+                            <input name="Password" type="text" required placeholder="Password" />
                           </p>
                           <button type="submit">Login</button>
                         </form>
@@ -221,35 +189,18 @@ const Header = () => {
                     <IoBagCheckOutline className="text-xl" />
                     <span className="ms-1 -mt-2">0</span>
                   </a>
-                  <Drawer
-                    anchor="right"
-                    open={openCart}
-                    onClose={toggleDrawerCart(false)}
-                    className={styles.cart}
-                  >
+                  <Drawer anchor="right" open={openCart} onClose={toggleDrawerCart(false)} className={styles.cart}>
                     <div className={styles.shopping_cart}>
-                      <div
-                        className={`py-5 flex justify-between ${styles.title}`}
-                      >
-                        <span className="ps-3 pe-5 font-extrabold text-xl">
-                          SHOPPING CART
-                        </span>
-                        <a
-                          onClick={toggleDrawerCart(false)}
-                          className={`flex ps-16 pe-5 text-sm font-normal pt-1 ${styles.close}`}
-                          href="#"
-                        >
+                      <div className={`py-5 flex justify-between ${styles.title}`}>
+                        <span className="ps-3 pe-5 font-extrabold text-xl">SHOPPING CART</span>
+                        <a onClick={toggleDrawerCart(false)} className={`flex ps-16 pe-5 text-sm font-normal pt-1 ${styles.close}`} href="#">
                           CLOSE <IoCloseSharp className=" font-black text-lg" />
                         </a>
                       </div>
-                     
+
                       <div className={styles.bottom_cart}>
-                        <div
-                          className={`flex justify-between px-2 ${styles.subtotal}`}
-                        >
-                          <strong className="text-lg font-medium">
-                            SUBTOTAL:
-                          </strong>
+                        <div className={`flex justify-between px-2 ${styles.subtotal}`}>
+                          <strong className="text-lg font-medium">SUBTOTAL:</strong>
                           <span className={styles.total_price}>$13212.54</span>
                         </div>
                         <div className={styles.view_cart}>
@@ -269,10 +220,8 @@ const Header = () => {
         <div className={` hidden lg:block  ${styles.bottom_header}`}>
           <div className="main_bottom_header grid grid-cols-12 container mx-auto 2xl:px-28 lg:px-5 text-center justify-center items-center py-2">
             <div className={`col-span-3 relative ${styles.category}`}>
-              <div
-                className={` flex justify-between text-center ${styles.shopby_category}`}
-              >
-                <span>Shop by categories</span>
+              <div className={` flex justify-between text-center ${styles.shopby_category}`}>
+                <span className="text-sm">Shop by categories</span>
                 <p className="text-base">
                   <FaAlignJustify />
                 </p>
@@ -280,55 +229,37 @@ const Header = () => {
               <div className={` hidden absolute ${styles.menu_category}`}>
                 <ul>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <CiMobile1 className="text-lg me-4" />
                       <span className="text-sm">Mobiles</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <IoIosTabletPortrait className="text-lg me-4" />
                       <span className="text-sm">Tablets</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <IoMdLaptop className="text-lg me-4" />
                       <span className="text-sm">Laptops</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <PiTelevision className="text-lg me-4" />
                       <span className="text-sm">Televisions</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <FaComputer className="text-lg me-4" />
                       <span className="text-sm">Computer & Gamming</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex font-medium text-center px-3 py-3"
-                      href="#"
-                    >
+                    <a className="flex font-medium text-center px-3 py-3" href="#">
                       <CiDesktopMouse1 className="text-lg me-4" />
                       <span className="text-sm">Accessories</span>
                     </a>
@@ -336,58 +267,27 @@ const Header = () => {
                 </ul>
               </div>
             </div>
-            <div
-              className={`col-span-6 flex text-xs xl:text-sm ${styles.navigation}`}
-            >
+            <div className={`col-span-6 flex text-xs xl:text-base mx-auto ${styles.navigation}`}>
               <div className={styles.main_navigation}>
                 <ul className="flex">
-                  <li
-                    className={`px-5 font-bold ${activeIndexNavigation === 0 ? styles.active : ""
-                      }`}
-                    onClick={() => handleItemNavigationClick(0)}
-                  >
+                  <li className={`px-5 font-bold ${activeIndexNavigation === 0 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(0)}>
                     <Link to="/">Home</Link>
                   </li>
-                  <li
-                    className={`px-5 font-bold ${activeIndexNavigation === 1 ? styles.active : ""
-                      }`}
-                    onClick={() => handleItemNavigationClick(1)}
-                  >
+                  <li className={`px-5 font-bold ${activeIndexNavigation === 1 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(1)}>
                     <Link to="/Shop">Shop</Link>
                   </li>
-                  <li
-                    className={`px-5 font-bold  ${activeIndexNavigation === 2 ? styles.active : ""
-                      }`}
-                    onClick={() => handleItemNavigationClick(2)}
-                  >
+                  <li className={`px-5 font-bold  ${activeIndexNavigation === 2 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(2)}>
                     <Link to="/Blog">Blog</Link>
                   </li>
-                  <li
-                    className={`px-5 font-bold  ${activeIndexNavigation === 3 ? styles.active : ""
-                      }`}
-                    onClick={() => handleItemNavigationClick(3)}
-                  >
+                  <li className={`px-5 font-bold  ${activeIndexNavigation === 3 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(3)}>
                     <Link to="/Contact">Contact</Link>
                   </li>
-                  <li
-                    className={`px-5 font-bold  ${activeIndexNavigation === 4 ? styles.active : ""
-                      }`}
-                    onClick={() => handleItemNavigationClick(4)}
-                  >
+                  <li className={`px-5 font-bold  ${activeIndexNavigation === 4 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(4)}>
                     <Link to="/About">About</Link>
                   </li>
                 </ul>
               </div>
-              <div className={styles.hot_deals}>
-                <a className="flex font-bold text-xs xl:text-sm" href="#">
-                  <span className="pt-1 lg:pt:0">
-                    <FaFireAlt />
-                  </span>
-                  <span className="ps-1">Hot deals</span>
-                </a>
-              </div>
             </div>
-           
           </div>
         </div>
         <div className={` hidden sm:hidden md:block lg:hidden xl:hidden ${styles.middler_header_tablet}`}>
@@ -397,12 +297,7 @@ const Header = () => {
               <h2>FASHA.COM</h2>
             </div>
             <div className={`title col-span-8  ${styles.search}`}>
-            <form
-                onClick={handleSearchButtonClick}
-                className="form"
-                action=""
-                method="get"
-              >
+              <form onClick={handleSearchButtonClick} className="form" action="" method="get">
                 <input type="search" placeholder="Search products..." />
                 <button type="submit">
                   <CiSearch />
@@ -466,65 +361,71 @@ const Header = () => {
               <a onClick={toggleDrawerMenuTablet(true)} className="flex" href="#">
                 <FaAlignJustify className="text-xl" />
               </a>
-              <Drawer
-                anchor="left"
-                open={openMenuTablet}
-                onClose={toggleDrawerMenuTablet(false)}
-                className={styles.MenuTablet}
-              >
+              <Drawer anchor="left" open={openMenuTablet} onClose={toggleDrawerMenuTablet(false)} className={styles.MenuTablet}>
                 <div className={styles.main_nav}>
-                  <div
-                    className={` py-5 flex justify-between ${styles.title}`}>
+                  <div className={` py-5 flex justify-between ${styles.title}`}>
                     <ul className="flex px-3">
                       <li>
-                        <span className={`${activeMenu === "main_Menu" ? styles.active : ""
-                          }`} onClick={() => handleMenuClick("main_Menu")}>
+                        <span className={`${activeMenu === 'main_Menu' ? styles.active : ''}`} onClick={() => handleMenuClick('main_Menu')}>
                           Main Menu
                         </span>
                       </li>
                       <li>
-                        <span className={`${activeMenu === "shop_By_Categories" ? styles.active : ""
-                          }`} onClick={() => handleMenuClick("shop_By_Categories")}>
+                        <span className={`${activeMenu === 'shop_By_Categories' ? styles.active : ''}`} onClick={() => handleMenuClick('shop_By_Categories')}>
                           Shop By Categories
                         </span>
                       </li>
                     </ul>
-                    <a
-                      onClick={toggleDrawerMenuTablet(false)}
-                      className={` pe-5 text-sm font-normal pt-1 ${styles.close}`}
-                      href="#"
-                    >
+                    <a onClick={toggleDrawerMenuTablet(false)} className={` pe-5 text-sm font-normal pt-1 ${styles.close}`} href="#">
                       <IoCloseSharp className=" font-black text-lg" />
                     </a>
                   </div>
-                  <div className={`${activeMenu === "main_Menu" ? "" : "hidden"} ${styles.main_Menu}`}>
+                  <div className={`${activeMenu === 'main_Menu' ? '' : 'hidden'} ${styles.main_Menu}`}>
                     <ul>
-                      <li><Link to="/">Home</Link></li>
-                      <li><Link to="/Shop">Shop</Link></li>
-                      <li><Link to="/Blog">Blog</Link></li>
-                      <li><Link to="/Contact">Contact</Link></li>
-                      <li><Link to="/About">About</Link></li>
+                      <li>
+                        <Link to="/">Home</Link>
+                      </li>
+                      <li>
+                        <Link to="/Shop">Shop</Link>
+                      </li>
+                      <li>
+                        <Link to="/Blog">Blog</Link>
+                      </li>
+                      <li>
+                        <Link to="/Contact">Contact</Link>
+                      </li>
+                      <li>
+                        <Link to="/About">About</Link>
+                      </li>
                     </ul>
                   </div>
-                  <div className={`${activeMenu === "shop_By_Categories" ? "" : "hidden"} ${styles.shop_By_Categories}`}>
+                  <div className={`${activeMenu === 'shop_By_Categories' ? '' : 'hidden'} ${styles.shop_By_Categories}`}>
                     <ul>
-                      <li><a href="#">Mobiles</a></li>
-                      <li><a href="#">Tablets</a></li>
-                      <li><a href="#">Laptops</a></li>
-                      <li><a href="#">Televisions</a></li>
-                      <li><a href="#">Computer & Gamming</a></li>
-                      <li><a href="#">Accessories</a></li>
+                      <li>
+                        <a href="#">Mobiles</a>
+                      </li>
+                      <li>
+                        <a href="#">Tablets</a>
+                      </li>
+                      <li>
+                        <a href="#">Laptops</a>
+                      </li>
+                      <li>
+                        <a href="#">Televisions</a>
+                      </li>
+                      <li>
+                        <a href="#">Computer & Gamming</a>
+                      </li>
+                      <li>
+                        <a href="#">Accessories</a>
+                      </li>
                     </ul>
                   </div>
-                 
                 </div>
-
               </Drawer>
             </div>
             <div className="ps-16">
-              <div className="logo">
-                {/* <Link to="/"><img src={Logo} alt="" /></Link> */}
-              </div>
+              <div className="logo">{/* <Link to="/"><img src={Logo} alt="" /></Link> */}</div>
             </div>
             <div>
               <div className={` relative ${styles.site_header_cart_tablet}`}>
@@ -532,91 +433,81 @@ const Header = () => {
                   <IoBagCheckOutline className="text-xl" />
                   <span className="ms-1 -mt-2">0</span>
                 </a>
-                <Drawer
-                  anchor="right"
-                  open={openCart}
-                  onClose={toggleDrawerCart(false)}
-                  className={styles.cart}
-                >
+                <Drawer anchor="right" open={openCart} onClose={toggleDrawerCart(false)} className={styles.cart}>
                   <div className={styles.shopping_cart}>
-                    <div
-                      className={`py-5 flex justify-between ${styles.title}`}
-                    >
-                      <span className="ps-3 pe-5 font-extrabold text-xl">
-                        SHOPPING CART
-                      </span>
-                      <a
-                        onClick={toggleDrawerCart(false)}
-                        className={`flex ps-16 pe-5 text-sm font-normal pt-1 ${styles.close}`}
-                        href="#"
-                      >
+                    <div className={`py-5 flex justify-between ${styles.title}`}>
+                      <span className="ps-3 pe-5 font-extrabold text-xl">SHOPPING CART</span>
+                      <a onClick={toggleDrawerCart(false)} className={`flex ps-16 pe-5 text-sm font-normal pt-1 ${styles.close}`} href="#">
                         CLOSE <IoCloseSharp className=" font-black text-lg" />
                       </a>
                     </div>
                     <div className={styles.product}>
-                      <ul>
-                        <li>
-                          <div className={` ps-3 ${styles.product_details}`}>
-                            {/* <img
-                              className="px-1 pt-2"
-                              src={VieNamFlag}
-                              style={{ width: "60px", height: "50px" }}
-                              alt=""
-                            /> */}
-                            <div className={styles.product_name}>
-                              <h5 className="font-bold text-sm cursor-pointer">
-                                Blender Combo with Sin Serve Cups Serve Cups
-                                Serve Cups Serve Cups
-                              </h5>
-                              <div className="flex text-sm">
-                                <span className="pe-1">1</span>X
-                                <span className={` px-1 ${styles.price}`}>
-                                  $385.96
-                                </span>
-                              </div>
+                      <div className="mb-auto pb-10">
+                        <div className="flex pt-4 pb-5 border-t border-gray-800 bg-orange-50">
+                          <div className="w-1/5 px-2">
+                            <img className="block w-full" src='https://cdn0.fahasa.com/media/catalog/product/8/9/8934974176442-1.jpg' alt='' data-config-id="auto-img-1-3" />
+                          </div>
+                          <div className="w-4/5 px-2">
+                            <div className=" mb-2 justify-between">
+                              <h6
+                                className=" font-bold text-sm text-gray-500 overflow-hidden whitespace-nowrap overflow-ellipsis w-64"
+                                data-config-id="auto-txt-2-3"
+                              >
+                                {/* {item.name} */}
+                                My Life And Lessons In Red And White
+                              </h6>
+                              <span className=" text-sm font-bold text-gray-500" data-config-id="auto-txt-3-3">
+                                {/* {item.price} */}
+                                134.850 đ
+                              </span>
                             </div>
-                            <div
-                              className={` ps-9 cursor-pointer ${styles.remove}`}
-                            >
-                              <IoCloseSharp />
+                            <div className="flex items-end justify-between">
+                              <div className="inline-flex px-2 font-bold text-white border border-blueGray-800 bg-slate-600">
+                                <button
+                                  onClick={() => {
+                                    // decreaseQuantity(item.id);
+                                    
+                                  }}
+                                  className="inline-block p-1"
+                                >
+                                  <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-2-3">
+                                    <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                                <input
+                                  className="w-12 text-sm font-bold text-center bg-transparent outline-none"
+                                  // value={item.quantity}
+                                  data-config-id="auto-input-5-3"
+                                />
+                                <button
+                                  onClick={() => {
+                                    // increaseQuantity(item.id);
+                                  }}
+                                  className="inline-block p-1"
+                                >
+                                  <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-3-3">
+                                    <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                              </div>
+                              <a
+                                onClick={() => {
+                                  // removeItem(item.id);
+                                }}
+                                className="inline-block mr-3 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-500 hover:text-black"
+                                href="#"
+                                data-config-id="auto-txt-4-3"
+                              >
+                                Remove
+                              </a>
                             </div>
                           </div>
-                        </li>
-                        <li>
-                          <div className={` ps-3 ${styles.product_details}`}>
-                            {/* <img
-                              className="px-1 pt-2"
-                              src={VieNamFlag}
-                              style={{ width: "60px", height: "50px" }}
-                              alt=""
-                            /> */}
-                            <div className={styles.product_name}>
-                              <h5 className="font-bold text-sm">
-                                Blender Combo with Sin Serve Cups
-                              </h5>
-                              <div className="flex text-sm">
-                                <span className="pe-1">1</span>X
-                                <span className={` px-1 ${styles.price}`}>
-                                  $385.96
-                                </span>
-                              </div>
-                            </div>
-                            <div
-                              className={` ps-9 cursor-pointer ${styles.remove}`}
-                            >
-                              <IoCloseSharp />
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
+                        </div>
+                      </div>
                     </div>
                     <div className={styles.bottom_cart}>
-                      <div
-                        className={`flex justify-between px-2 ${styles.subtotal}`}
-                      >
-                        <strong className="text-lg font-medium">
-                          SUBTOTAL:
-                        </strong>
+                      <div className={`flex justify-between px-2 ${styles.subtotal}`}>
+                        <strong className="text-lg font-medium">SUBTOTAL:</strong>
                         <span className={styles.total_price}>$13212.54</span>
                       </div>
                       <div className={styles.view_cart}>

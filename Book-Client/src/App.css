@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Nunito+Sans:ital,wdth,wght,YTLC@0,75..125,200..1000,440..540;1,75..125,200..1000,440..540&display=swap');
 :root {
   --main-color : #f82222;
   --main_color_hover: #ea1044;

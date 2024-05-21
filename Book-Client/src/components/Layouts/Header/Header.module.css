@@ -599,6 +599,11 @@
   
   
   
+  @media (max-width: 1025px) {
+    .category{
+      margin-left: auto;
+    }
+  }
   
   
   
@@ -611,7 +616,7 @@
       height: 100%;
       position: absolute;
       right: 99px;
-      top: -34.7%;
+      top: -38.4%;
       z-index: 3;
       background: transparent;
       border: none;

@@ -4,17 +4,17 @@ import { axiosClient } from '../library/axiosClient';
 import config from '../constants/config';
 
 interface CartItem {
-  id: string;
+  id: number;
   name: string;
   price: number;
   quantity: number;
-  thumb: string;
-  // shippedDate: Date;
-  // shippingAddress: string;
-  // email: string;
-  // phoneNumber: string;
-  // status: string;
-  // paymentType: string;
+  imageURL: string;
+  shippedday: Date;
+  shippingaddress: string;
+  email: string;
+  contact: number;
+  status: string;
+  paymenttype: string;
 }
 
 interface CartStore {
@@ -22,9 +22,9 @@ interface CartStore {
   total: number; //Tổng tiền
   itemCount: number; //Tổng items có trong giỏ
   addItem: (item: CartItem) => void; //phương thức thêm item
-  removeItem: (id: string) => void; //phương thức xóa item
-  increaseQuantity: (id: string) => void; //tăng số lượng của item
-  decreaseQuantity: (id: string) => void; //giảm số lượng của item
+  removeItem: (id: number) => void; //phương thức xóa item
+  increaseQuantity: (id: number) => void; //tăng số lượng của item
+  decreaseQuantity: (id: number) => void; //giảm số lượng của item
   placeOrder:(payload: any)=> Promise<{ok: boolean, message: string}>;
   isLoading: boolean,
   error: string | null
@@ -104,7 +104,7 @@ export const useCartStore = create(
 
           try {
             set({isLoading: true });
-            const {data} = await axiosClient.post(config.urlAPI+'/v1/orders', payload);
+            const {data} = await axiosClient.post(config.urlAPI+'/orders', payload);
             console.log('placeOrder ok',data);
             /*
             if gui don hanh cong

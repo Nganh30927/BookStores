@@ -1,28 +1,25 @@
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from '@tanstack/react-query';
-import { ICategory } from '../../constants/types';
+
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 type queryType = {
-    page?: number;
-    category?: number;
+    categoryId?: number;
 }
 
 type ProductFilterType = {
     queryString: queryType;
     currentCategoryId: number;
-    currentPage: number;
-    setCurrentPage: (page: number) => void;
 }
 
-const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrentPage }: ProductFilterType) =>{
+const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>{
 
     const navigate = useNavigate();
 
     const getCategories = async () => {
-        return axios.get(`http://localhost:9494/api/v1/categories`);
+        return axios.get(`http://localhost:9000/categories`);
     };
 
     const queryCategory = useQuery({
@@ -30,7 +27,7 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
         queryFn: ()=> getCategories(),
         onSuccess: (data)=>{
             //Thành công thì trả lại data
-            console.log(data?.data.data.categories);
+            console.log('get categories',data?.data);
           },
           onError: (error)=>{
             console.log(error);
@@ -52,8 +49,7 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
                   <li className='list-none'>
                     <button
                        onClick={() => {
-                        setCurrentPage(1);
-                        navigate(`/products`);
+                        navigate(`/books`);
                       }}
                       className={currentCategoryId === 0 ? `hover:text-indigo-500 font-bold text-indigo-500 btn-empty` : `btn-empty hover:text-indigo-500`}
                     >
@@ -62,16 +58,16 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
                     </li>
                       <>
                       {
-                    queryCategory.data && queryCategory.data?.data.data.categories ?  queryCategory.data?.data.data.categories.map((item: ICategory) =>{
+                    queryCategory.data && queryCategory.data?.data ?  queryCategory.data?.data.map((item: any) =>{
                       
                       return(
                         <ul className="list-unstyled mb-0">
-                          <li key={`queryCategory${item._id}`} className="mb-4"><a  onClick={() => {
-                        setCurrentPage(1);
-                        navigate(`/products?category=${item._id}`);
+                         {/* http://localhost:9000/books/list?categoryId=1010 */}
+                          <li key={`queryCategory${item.id}`} className="mb-4"><a  onClick={() => {
+                        navigate(`/books/list?categoryId=${item.id}`);
                       }}
                           
-                          className={ currentCategoryId === item._id ? `inline-block font-medium text-gray-600` : `hover:text-gray-400`}>{item.name}</a></li>
+                          className={ currentCategoryId === item.id ? `inline-block font-medium text-gray-600` : `hover:text-gray-400`}>{item.name}</a></li>
                         </ul>
                       )
                     }):null

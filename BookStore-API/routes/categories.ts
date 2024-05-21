@@ -2,13 +2,12 @@ import express, { NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/category.entity';
-import categoryORM from '../controllers/categoryORM';
-
+import { Book } from '../entities/book.entity';
+const bookRepository = AppDataSource.getRepository(Book);
 const repository = AppDataSource.getRepository(Category);
 
 const router = express.Router();
 
-router.get('/typeorm/:id', categoryORM.getItemById);
 
 /* GET categories */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -35,6 +34,20 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
       return res.status(410).json({ error: 'Not found' });
     }
     res.json(category);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.get('/:id/books', async (req: Request, res: Response, next: any) => {
+  try {
+    const books = await bookRepository.findBy({ categoryId: parseInt(req.params.id) });
+    if (!books) {
+      return res.status(410).json({ error: 'Not found' });
+    }
+    res.json(books);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

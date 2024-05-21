@@ -104,7 +104,7 @@ router.get('/search', async (req: Request, res: Response, next: any) => {
 });
 
 /* GET book by id */
-router.get('/detail/:id', async (req: Request, res: Response, next: any) => {
+router.get('/:id', async (req: Request, res: Response, next: any) => {
   try {
     const book = await repository
       .createQueryBuilder('book')

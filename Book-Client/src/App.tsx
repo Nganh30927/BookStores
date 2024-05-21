@@ -2,8 +2,8 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage';
 import NoPage from './pages/NoPage';
-import ProductsPage from './pages/ProductsPage';
-import ProductDetailsPage from './pages/ProductDetailsPage';
+import ProductsPage from './pages/BooksPage';
+import ProductDetailsPage from './pages/BooksDetailsPage';
 import Login from './pages/LoginPage';
 import DefaultLayout from './components/Layouts/DefaultLayout';
 import EmptyLayout from './components/Layouts/EmptyLayout';
@@ -21,6 +21,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import BooksPage from './pages/BooksPage';
+import BooksDetailsPage from './pages/BooksDetailsPage';
 
 // Create a client
 const queryClient = new QueryClient()
@@ -35,9 +37,9 @@ function App() {
            {/* DefaultLayout */}
           <Route path='/' element={<DefaultLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="products" element={<ProductsPage />} />
-              <Route path="products/:slug" element={<ProductDetailsPage />} />
-              <Route path="productdetail" element={<ProductDetailsPage />} />
+              <Route path="books" element={<BooksPage />} />
+              <Route path="books/:id" element={<BooksDetailsPage />} />
+              <Route path="booksdetail" element={<BooksDetailsPage />} />
               
           </Route>
           

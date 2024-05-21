@@ -8,31 +8,31 @@ import axios from 'axios';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../hooks/useCartStore';
 import Pagination from '../../components/Pagination';
-import {IProduct} from '../../constants/types'
 import ProductFilter from '../../components/ProductFilter';
 import { RiShoppingCartLine } from "react-icons/ri";
 
 
 type FiltersType = {
-  category?: number;
+  categoryId?: number;
   
 };
 
-const ProductsPage = () => {
+const BooksPage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const page = params.get('page');
   const limit = 2;
   const int_page = page ? parseInt(page) : 1;
 
-  const cid = params.get('category');
+  const cid = params.get('categoryId');
   const int_cid = cid ? parseInt(cid) : 0;
-  console.log('<<=== 🚀 page ===>>', page, params);
+
   let newParams = {};
 
   if(cid){
-    newParams = {...newParams,category: int_cid}
+    newParams = {...newParams,categoryId: int_cid}
   }
+
 
    if(page){
     newParams = {...newParams,page: int_page}
@@ -43,27 +43,27 @@ const ProductsPage = () => {
   const { addItem } = useCartStore();
 
   //Hàm fetch products
-  const getProducts = async (page: number ,filters: FiltersType)=> {
+  const getBooks = async (filters: FiltersType)=> {
     // let url = config.urlAPI+'/v1/products?';
-    const offset = (page - 1) * 12;
-    let url = `http://localhost:9494/api/v1/products?offset=${offset}&limit=12`;
+    {/* http://localhost:9000/books/list?categoryId=1010 */}
+    let url = `http://localhost:9000/books`;
     
-    if (filters.category && filters.category > 0) {
-      url += `&category=${filters.category}`;
+    if (filters.categoryId && filters.categoryId > 0) {
+      url = `http://localhost:9000/books/list?categoryId=${filters.categoryId}`;
     }
-    // return axios.get(url);
     return axios.get(url);
+
 }
 
-//config.urlAPI+`/categories?category=${category}&page=${page}&limit=${limit}`
+
 
 // Truy vấn
-const queryProducts = useQuery({ 
-  queryKey: ['products', { int_page, int_cid }],
-  queryFn: ()=> getProducts(int_page, {category: int_cid}),
+const queryBooks = useQuery({ 
+  queryKey: ['products', { int_cid }],
+  queryFn: ()=> getBooks({categoryId: int_cid}),
   onSuccess: (data)=>{
     //Thành công thì trả lại data
-    console.log(data?.data.data.products);
+    console.log('getBooks:',data?.data);
   },
   onError: (error)=>{
     console.log(error);
@@ -71,10 +71,10 @@ const queryProducts = useQuery({
 })
 
 //const totalPages = Math.ceil(data.length / recordsPerPage);
-const totalPages = 12; //Tổng số trang
+
 
   // Handle lỗi khi ko fetch được API
-  if(queryProducts.isError){
+  if(queryBooks.isError){
     return (
       <h1>Error Processing</h1>
     )
@@ -91,7 +91,7 @@ const totalPages = 12; //Tổng số trang
         <div className="container px-4 mx-auto">
           <div className=" flex flex-wrap -mx-4">
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
-           <ProductFilter queryString={newParams} currentPage={int_page} setCurrentPage={setCurrentPage} currentCategoryId={int_cid} />
+           <ProductFilter queryString={newParams} currentCategoryId={int_cid} />
             </div>
             <div className="w-full lg:w-8/12 xl:9/12 px-4">
               <div className="flex flex-col lg:hidden sm:flex-row mb-6 sm:items-center pb-6 border-b border-gray-400  ">
@@ -138,31 +138,24 @@ const totalPages = 12; //Tổng số trang
               </div>
               <div className="flex flex-wrap mb-20">
                 {
-                  queryProducts.data && queryProducts.data?.data.data.products ? queryProducts.data?.data.data.products.map((product: any)=>{
+                  queryBooks.data && queryBooks.data?.data ? queryBooks.data?.data.map((book: any)=>{
                    return(
-                    <div key={`queryProducts${product._id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
-                    <Link to={`/products/${product.slug}`} className="block p-5 ">
-                      <img className="block w-full h-80 mb-8 object-contain  transition-all group-hover:scale-105" src={`../../../public/images/${product.thumbnail}`} alt={product.name} data-config-id="auto-img-1-9" />
+                    <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
+                    <Link to={`/books/${book.id}`} className="block p-5 ">
+                      <img className="block w-full h-80 mb-8 object-contain  transition-all group-hover:scale-105" src={`../../../../BookStore-API/public/${book.imageURL}`} alt={book.name} data-config-id="auto-img-1-9" />
                       <div className="">
 
-                        <h6 className="font-bold text-black mt-2 mb-5" data-config-id="auto-txt-2-9">{product.name}</h6>
+                        <h6 className="font-bold text-black mt-2 mb-5" data-config-id="auto-txt-2-9">{book.name}</h6>
 
                         <div className="flex justify-between items-center mb-3">
                           <div>
-                            <span className="font-bold text-black" data-config-id="auto-txt-1-9">{product.price}</span>
-                            <del className="ms-2 font-semibold text-red-600">{product.discount}</del>
+                            <span className="font-bold text-black" data-config-id="auto-txt-1-9">{book.price}</span>
+                            <del className="ms-2 font-semibold text-red-600">{book.discount}</del>
                           </div>
                           <div className="w-12 h-12  text-sky-500 hover:bg-sky-600 hover:text-white rounded-3xl border border-sky-500 flex items-center justify-center"><a  onClick={() => {
                         console.log('Thêm giỏ hàng ID');
-                        const item = product?.data?.data;
-  
-                        addItem({
-                          id: item._id,
-                          price: item.price,
-                          name: item.name,
-                          quantity: 0,
-                          thumb: item.thumbnail
-                        });
+                       
+                  
                       }}><RiShoppingCartLine /></a></div>
                         </div>
                       </div>
@@ -173,13 +166,7 @@ const totalPages = 12; //Tổng số trang
                 }
 
               </div>
-              {
-                queryProducts.data && queryProducts.data.data.lenght > 0 ? (
-                  <nav className="pt-10 mt-14 border-t border-blueGray-800">
-                    <Pagination queryString={newParams} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-                  </nav>
-                ):null
-              }
+             
             </div>
           </div>
         </div>
@@ -189,4 +176,4 @@ const totalPages = 12; //Tổng số trang
   )
 }
 
-export default ProductsPage
+export default BooksPage
