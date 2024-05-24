@@ -11,7 +11,10 @@ import { FaFireAlt } from 'react-icons/fa';
 import { useCartStore } from '../../../hooks/useCartStore';
 import useAuth from '../../../hooks/useAuth';
 import { IoIosTabletPortrait, IoMdLaptop } from 'react-icons/io';
-
+import HeaderCategory from '../../Navbar/HeaderCategory';
+import MobileMenu from '../../Navbar/MobileMenu';
+import { useQuery } from '@tanstack/react-query';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 const Header = () => {
   const [isDropdownLoginActive, setIsDropdownLoginActive] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -19,6 +22,16 @@ const Header = () => {
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [openMenuTablet, setopenMenuTablet] = useState(false);
   const [activeMenu, setActiveMenu] = useState('main_Menu');
+
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const page = params.get('page');
+
+  const int_page = page ? parseInt(page) : 1;
+
+  const cid = params.get('categoryId');
+  console.log('cid:', cid);
+  const int_cid = cid ? parseInt(cid) : 0;
 
   const { user, logout } = useAuth();
   const { items, total, itemCount, removeItem, decreaseQuantity, increaseQuantity } = useCartStore();
@@ -49,6 +62,7 @@ const Header = () => {
     setShowSearchResult(!showSearchResult);
   };
 
+
   return (
     <header>
       <div className={styles.header}>
@@ -58,10 +72,10 @@ const Header = () => {
               <div>
                 <ul className="flex text-base">
                   <li className="px-3 md:contents">
-                    <Link to="">Contact: fasha.support@gmail.com</Link>
+                    <span >Contact: fasha.support@gmail.com</span>
                   </li>
                   <li className="px-3">
-                    <Link to="">Tel: +8432434234</Link>
+                    <span >Tel: +8432434234</span>
                   </li>
                 </ul>
               </div>
@@ -231,46 +245,7 @@ const Header = () => {
                   <FaAlignJustify />
                 </p>
               </div>
-              <div className={` hidden absolute ${styles.menu_category}`}>
-                <ul>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <CiMobile1 className="text-lg me-4" />
-                      <span className="text-sm">Mobiles</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <IoIosTabletPortrait className="text-lg me-4" />
-                      <span className="text-sm">Tablets</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <IoMdLaptop className="text-lg me-4" />
-                      <span className="text-sm">Laptops</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <PiTelevision className="text-lg me-4" />
-                      <span className="text-sm">Televisions</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <FaComputer className="text-lg me-4" />
-                      <span className="text-sm">Computer & Gamming</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="flex font-medium text-center px-3 py-3" href="#">
-                      <CiDesktopMouse1 className="text-lg me-4" />
-                      <span className="text-sm">Accessories</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
+             <HeaderCategory currentCategoryId={int_cid}/>
             </div>
             <div className={`col-span-6 flex text-xs xl:text-base mx-auto ${styles.navigation}`}>
               <div className={styles.main_navigation}>
@@ -406,26 +381,7 @@ const Header = () => {
                     </ul>
                   </div>
                   <div className={`${activeMenu === 'shop_By_Categories' ? '' : 'hidden'} ${styles.shop_By_Categories}`}>
-                    <ul>
-                      <li>
-                        <a href="#">Mobiles</a>
-                      </li>
-                      <li>
-                        <a href="#">Tablets</a>
-                      </li>
-                      <li>
-                        <a href="#">Laptops</a>
-                      </li>
-                      <li>
-                        <a href="#">Televisions</a>
-                      </li>
-                      <li>
-                        <a href="#">Computer & Gamming</a>
-                      </li>
-                      <li>
-                        <a href="#">Accessories</a>
-                      </li>
-                    </ul>
+                   <MobileMenu currentCategoryId={int_cid}/>
                   </div>
                 </div>
               </Drawer>
