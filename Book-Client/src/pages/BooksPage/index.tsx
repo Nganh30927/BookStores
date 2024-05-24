@@ -7,10 +7,14 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../hooks/useCartStore';
 import Pagination from '../../components/Pagination';
 import ProductFilter from '../../components/ProductFilter';
+import MobileFilter from '../../components/MobileFillter';
 import { RiShoppingCartLine } from 'react-icons/ri';
+
 
 type FiltersType = {
   categoryId?: number;
+  minPrice?: number;
+  maxPrice?: number;
 };
 
 const BooksPage = () => {
@@ -23,6 +27,12 @@ const BooksPage = () => {
   const cid = params.get('categoryId');
   console.log('cid:', cid);
   const int_cid = cid ? parseInt(cid) : 0;
+
+  const pmin = params.get('minPrice');
+  const int_price_min = pmin ? parseInt(pmin) : 0;
+
+  const pmax = params.get('maxPrice');
+  const int_price_max = pmax ? parseInt(pmax) : 0;
 
   let newParams = {};
 
@@ -47,16 +57,19 @@ const BooksPage = () => {
     let url = `http://localhost:9000/books`;
 
     if (filters.categoryId && filters.categoryId > 0) {
-      let newUrl = `http://localhost:9000/books/list?categoryId=${filters.categoryId}`;
-      return axios.get(newUrl);
+      url = `http://localhost:9000/books/list?categoryId=${filters.categoryId}`;
+    } else if (filters.minPrice && filters.minPrice > 0) {
+      url += `?minPrice=${filters.minPrice}`;
+    } else if (filters.maxPrice && filters.maxPrice > 0) {
+      url += `?maxPrice=${filters.maxPrice}`;
     }
     return axios.get(url);
   };
 
   // Truy vấn
   const queryBooks = useQuery({
-    queryKey: ['books', { int_cid }],
-    queryFn: () => getBooks({ categoryId: int_cid }),
+    queryKey: ['books', { int_cid, int_price_min, int_price_max }],
+    queryFn: () => getBooks({ categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
       //Thành công thì trả lại data
       console.log('getBooks:', data?.data);
@@ -85,59 +98,11 @@ const BooksPage = () => {
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
               <ProductFilter queryString={newParams} currentCategoryId={int_cid} />
             </div>
+            
 
             <div className="w-full lg:w-8/12 xl:9/12 px-4">
               <div className="flex flex-col lg:hidden sm:flex-row mb-6 sm:items-center pb-6 border-b border-gray-400  ">
-                <div className="mb-3 sm:mb-0 sm:mr-5">
-                  <div className="relative border border-gray-600">
-                    <span className="absolute top-1/2 right-0 mr-4 transform -translate-y-1/2" data-config-id="auto-txt-18-2">
-                      <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M0.96967 0.71967C1.26256 0.426777 1.73744 0.426777 2.03033 0.71967L6 4.68934L9.96967 0.71967C10.2626 0.426777 10.7374 0.426777 11.0303 0.71967C11.3232 1.01256 11.3232 1.48744 11.0303 1.78033L6.53033 6.28033C6.23744 6.57322 5.76256 6.57322 5.46967 6.28033L0.96967 1.78033C0.676777 1.48744 0.676777 1.01256 0.96967 0.71967Z"
-                          fill="white"
-                        ></path>
-                      </svg>
-                    </span>
-                    <select
-                      className="relative w-full pl-6 pr-10 py-4 bg-transparent font-medium text-gray-600 outline-none appearance-none"
-                      name=""
-                      id=""
-                      data-config-id="auto-input-7-1"
-                    >
-                      <option value="1">Brand</option>
-                      <option value="2">Price</option>
-                      <option value="3">Ratings</option>
-                      <option value="4">Popularity</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="mb-3 sm:mb-0 sm:mr-5">
-                  <div className="relative border border-gray-600">
-                    <span className=" absolute top-1/2 right-0 mr-4 transform -translate-y-1/2" data-config-id="auto-txt-19-2">
-                      <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M0.96967 0.71967C1.26256 0.426777 1.73744 0.426777 2.03033 0.71967L6 4.68934L9.96967 0.71967C10.2626 0.426777 10.7374 0.426777 11.0303 0.71967C11.3232 1.01256 11.3232 1.48744 11.0303 1.78033L6.53033 6.28033C6.23744 6.57322 5.76256 6.57322 5.46967 6.28033L0.96967 1.78033C0.676777 1.48744 0.676777 1.01256 0.96967 0.71967Z"
-                          fill="white"
-                        ></path>
-                      </svg>
-                    </span>
-                    <select
-                      className="relative w-full pl-6 pr-10 py-4 bg-transparent font-medium text-gray-600 outline-none appearance-none"
-                      name=""
-                      id=""
-                      data-config-id="auto-input-7-1"
-                    >
-                      <option value="1">Category</option>
-                      <option value="2">Clothes</option>
-                      <option value="3">Home</option>
-                      <option value="4">Kids</option>
-                    </select>
-                  </div>
-                </div>
+                <MobileFilter queryString={newParams} currentCategoryId={int_cid} />
               </div>
               <div className="flex flex-wrap mb-20">
                 {queryBooks.data && queryBooks.data?.data

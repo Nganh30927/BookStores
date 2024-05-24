@@ -249,7 +249,7 @@ export default function Orders({}: Props) {
 
   const getOrderbyId = async (orderId: any) => {
     try {
-      const response: any = await axiosClient.get(`/orders/${orderId}`);
+      const response = await axiosClient.get(`/orders/${orderId}`);
       setOrder([response.data]);
       setOrderDetails(response.data.orderDetails);
       setRefresh(!refresh);

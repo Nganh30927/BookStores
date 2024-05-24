@@ -10,11 +10,16 @@ GET http://localhost:9000/books/search?keyword=những
 ###
 
 
-GET http://localhost:9000/books?price=85000
+GET http://localhost:9000/books?maxPrice=100000
 
 ###
 
 GET http://localhost:9000/books
+Nếu em làm theo cách này thì khi dùng code của thầy
+em phải xem response nó trả về như thế nào để
+dùng hợp lý
+
+Dùng axios thì có 1 biến data.
 
 ###
 ## Creat a book

@@ -13,14 +13,14 @@ const CartPage = () => {
       className="pt-12 pb-24 overflow-hidden "
     >
        {/* ====================== */}
-       {itemCount === 0 ? (
+       {itemCount === 1 ? (
         <div className='flex justify-center items-center min-h[300px] mt-10'>
           <strong className='text-2xl'>Empty Cart</strong>
         </div>
       ) : (
         <div className="container px-4 mx-auto">
       
-      <div className="flex flex-wrap justify-between -mx-4 bg-slate-600 py-12 px-4 rounded-lg">
+      <div className="flex flex-wrap justify-between -mx-4 bg-slate-100 py-12 px-4 rounded-lg">
         <div className="w-full xl:w-9/12 2xl:w-8/12 px-4 mb-16 xl:mb-0">
           
         {
@@ -35,7 +35,7 @@ const CartPage = () => {
                     <a className="block mx-auto max-w-max" href="#">
                       <img
                         className="w-24 h-full object-contain"
-                        src={`../../../public/images/${item.thumb}`} alt={item.name}
+                        src={`http://localhost:9000` + `${item.imageURL}`} alt={item.name}
                         data-config-id="auto-img-1-2"
                       />
                     </a>
@@ -240,7 +240,7 @@ const CartPage = () => {
         
         </div>
         <div className="w-full xl:w-3/12 px-4">
-          <div className="py-10 bg-purple-500 rounded-3xl">
+          <div className="py-10 bg-blue-300 rounded-3xl">
             <div className="px-10 pb-8 mb-6 border-b border-white border-opacity-20">
               <h2
                 className="mb-5 text-2xl font-heading font-medium text-white"

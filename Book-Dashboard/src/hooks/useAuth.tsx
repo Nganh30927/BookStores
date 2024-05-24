@@ -42,6 +42,7 @@ const useAuth = create(
         if (response && response.status === 200) {
           const isAuthenticated = response.status === 200; //==> TRUE
           //Gọi tiếp API lấy thông tin User
+          
           const {data} = await axiosClient.get(config.urlAPI+'/auth/profile');
           
           //cập nhật lại state

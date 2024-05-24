@@ -16,11 +16,11 @@ const DefaultLayout = () => {
 
   const { isAuthenticated, logout, user } = useAuth();
   /* Check xem trang thai dang nhap */
-  // React.useEffect(()=>{
-  //   if(!isAuthenticated){
-  //     navigate('/login');
-  //   }
-  // },[isAuthenticated,navigate])
+  React.useEffect(()=>{
+    if(!isAuthenticated){
+      navigate('/login');
+    }
+  },[isAuthenticated,navigate])
 
   const {
     token: { colorBgContainer },

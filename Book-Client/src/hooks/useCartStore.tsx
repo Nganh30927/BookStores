@@ -9,12 +9,7 @@ interface CartItem {
   price: number;
   quantity: number;
   imageURL: string;
-  shippedday: Date;
-  shippingaddress: string;
-  email: string;
-  contact: number;
-  status: string;
-  paymenttype: string;
+  
 }
 
 interface CartStore {

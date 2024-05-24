@@ -11,12 +11,17 @@ const login = async(req:Request, res: Response, next: NextFunction)=>{
       console.log('Received login request with payload:', payload);
       const result = await authService.login(payload);
       console.log('<<=== 🚀 login result ===>>',payload,result);
-      sendJsonSuccess(res)(result);
+      //sendJsonSuccess(res)(result);
+      res.status(200).json({
+        message: 'success',
+        token: result.token,
+        freshToken: result.refreshToken
+      })
     } catch (error) {
       next(error)
     }
   }
-  
+  //server chay o dau
   
   const getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {

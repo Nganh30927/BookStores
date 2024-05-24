@@ -72,7 +72,9 @@ const BooksPage = () => {
   const queryClient = useQueryClient();
 
   const fetchBooks = async () => {
-    return axiosClient.get(config.urlAPI + `/books`);
+    const response = await axiosClient.get(config.urlAPI + `/books`);
+    //console.log('fetchBooks',response)
+    return response;
   };
 
   const queryBooks = useQuery({
@@ -80,7 +82,7 @@ const BooksPage = () => {
     queryFn: () => fetchBooks(),
   });
 
-  console.log('queryBooks', queryBooks.data?.data);
+  console.log('queryBooks', queryBooks.data);
 
   //======= lấy danh mục  =====//
   const queryCategories = useQuery({

@@ -8,6 +8,8 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { CiMobile1, CiDesktopMouse1, CiSearch } from 'react-icons/ci';
 import { PiTelevision } from 'react-icons/pi';
 import { FaFireAlt } from 'react-icons/fa';
+import { useCartStore } from '../../../hooks/useCartStore';
+import useAuth from '../../../hooks/useAuth';
 import { IoIosTabletPortrait, IoMdLaptop } from 'react-icons/io';
 
 const Header = () => {
@@ -17,6 +19,9 @@ const Header = () => {
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [openMenuTablet, setopenMenuTablet] = useState(false);
   const [activeMenu, setActiveMenu] = useState('main_Menu');
+
+  const { user, logout } = useAuth();
+  const { items, total, itemCount, removeItem, decreaseQuantity, increaseQuantity } = useCartStore();
 
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
@@ -187,9 +192,9 @@ const Header = () => {
                 <div className="site_header_cart relative mx-3">
                   <a onClick={toggleDrawerCart(true)} className="flex" href="#">
                     <IoBagCheckOutline className="text-xl" />
-                    <span className="ms-1 -mt-2">0</span>
+                    <span className="ms-1 -mt-2">{itemCount}</span>
                   </a>
-                  <Drawer anchor="right" open={openCart} onClose={toggleDrawerCart(false)} className={styles.cart}>
+                  {/* <Drawer anchor="right" open={openCart} onClose={toggleDrawerCart(false)} className={styles.cart}>
                     <div className={styles.shopping_cart}>
                       <div className={`py-5 flex justify-between ${styles.title}`}>
                         <span className="ps-3 pe-5 font-extrabold text-xl">SHOPPING CART</span>
@@ -211,7 +216,7 @@ const Header = () => {
                         </div>
                       </div>
                     </div>
-                  </Drawer>
+                  </Drawer> */}
                 </div>
               </div>
             </div>
@@ -355,8 +360,9 @@ const Header = () => {
             </div>
           </div>
         </div>
+        {/* mobile toggle */}
         <div className={` block lg:hidden md:block sm:block ${styles.bottom_header_tablet}`}>
-          <div className="main_bottom_header_tablet flex justify-between px-5  items-center py-4">
+          <div className="main_bottom_header_tablet flex justify-between px-5  items-center py-4 border-b border-gray-100">
             <div>
               <a onClick={toggleDrawerMenuTablet(true)} className="flex" href="#">
                 <FaAlignJustify className="text-xl" />
@@ -431,7 +437,7 @@ const Header = () => {
               <div className={` relative ${styles.site_header_cart_tablet}`}>
                 <a onClick={toggleDrawerCart(true)} className="flex" href="#">
                   <IoBagCheckOutline className="text-xl" />
-                  <span className="ms-1 -mt-2">0</span>
+                  <span className="ms-1 -mt-2">{itemCount}</span>
                 </a>
                 <Drawer anchor="right" open={openCart} onClose={toggleDrawerCart(false)} className={styles.cart}>
                   <div className={styles.shopping_cart}>
@@ -441,82 +447,117 @@ const Header = () => {
                         CLOSE <IoCloseSharp className=" font-black text-lg" />
                       </a>
                     </div>
-                    <div className={styles.product}>
-                      <div className="mb-auto pb-10">
-                        <div className="flex pt-4 pb-5 border-t border-gray-800 bg-orange-50">
-                          <div className="w-1/5 px-2">
-                            <img className="block w-full" src='https://cdn0.fahasa.com/media/catalog/product/8/9/8934974176442-1.jpg' alt='' data-config-id="auto-img-1-3" />
-                          </div>
-                          <div className="w-4/5 px-2">
-                            <div className=" mb-2 justify-between">
-                              <h6
-                                className=" font-bold text-sm text-gray-500 overflow-hidden whitespace-nowrap overflow-ellipsis w-64"
-                                data-config-id="auto-txt-2-3"
-                              >
-                                {/* {item.name} */}
-                                My Life And Lessons In Red And White
-                              </h6>
-                              <span className=" text-sm font-bold text-gray-500" data-config-id="auto-txt-3-3">
-                                {/* {item.price} */}
-                                134.850 đ
-                              </span>
-                            </div>
-                            <div className="flex items-end justify-between">
-                              <div className="inline-flex px-2 font-bold text-white border border-blueGray-800 bg-slate-600">
-                                <button
-                                  onClick={() => {
-                                    // decreaseQuantity(item.id);
-                                    
-                                  }}
-                                  className="inline-block p-1"
-                                >
-                                  <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-2-3">
-                                    <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                </button>
-                                <input
-                                  className="w-12 text-sm font-bold text-center bg-transparent outline-none"
-                                  // value={item.quantity}
-                                  data-config-id="auto-input-5-3"
-                                />
-                                <button
-                                  onClick={() => {
-                                    // increaseQuantity(item.id);
-                                  }}
-                                  className="inline-block p-1"
-                                >
-                                  <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-3-3">
-                                    <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                </button>
+                    {itemCount === 0 ? (
+                      <h2>null</h2>
+                    ) : (
+                      <>
+                        {items.map((item) => {
+                          return (
+                            <>
+                              <div className={styles.product}>
+                                <div className="mb-auto pb-10">
+                                  <div className="flex pt-4 pb-5 border-t border-gray-800 bg-orange-50">
+                                    <div className="w-1/5 px-2">
+                                      <img
+                                        className="block w-full"
+                                        src={`http://localhost:9000` + `${item.imageURL}`}
+                                        alt=""
+                                        data-config-id="auto-img-1-3"
+                                      />
+                                    </div>
+                                    <div className="w-4/5 px-2">
+                                      <div className=" mb-2 justify-between">
+                                        <h6
+                                          className=" font-bold text-sm text-gray-500 overflow-hidden whitespace-nowrap overflow-ellipsis w-64"
+                                          data-config-id="auto-txt-2-3"
+                                        >
+                                          {item.name}
+                                        
+                                        </h6>
+                                        <span className=" text-sm font-bold text-gray-500" data-config-id="auto-txt-3-3">
+                                          {item.price} đ
+                                        </span>
+                                      </div>
+                                      <div className="flex items-end justify-between">
+                                        <div className="inline-flex px-2 font-bold text-white border border-blueGray-800 bg-slate-600">
+                                          <button
+                                            onClick={() => {
+                                              decreaseQuantity(item.id);
+                                            }}
+                                            className="inline-block p-1"
+                                          >
+                                            <svg
+                                              width={8}
+                                              height={2}
+                                              viewBox="0 0 8 2"
+                                              fill="none"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              data-config-id="auto-svg-2-3"
+                                            >
+                                              <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                          </button>
+                                          <input
+                                            className="w-12 text-sm font-bold text-center bg-transparent outline-none"
+                                            value={item.quantity}
+                                            data-config-id="auto-input-5-3"
+                                          />
+                                          <button
+                                            onClick={() => {
+                                              increaseQuantity(item.id);
+                                            }}
+                                            className="inline-block p-1"
+                                          >
+                                            <svg
+                                              width={8}
+                                              height={8}
+                                              viewBox="0 0 8 8"
+                                              fill="none"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              data-config-id="auto-svg-3-3"
+                                            >
+                                              <path
+                                                d="M4 1V4M4 4V7M4 4H7M4 4L1 4"
+                                                stroke="white"
+                                                strokeWidth="0.8"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                              />
+                                            </svg>
+                                          </button>
+                                        </div>
+                                        <a
+                                          onClick={() => {
+                                            removeItem(item.id);
+                                          }}
+                                          className="inline-block mr-3 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-500 hover:text-black"
+                                          href="#"
+                                          data-config-id="auto-txt-4-3"
+                                        >
+                                          Remove
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                              <a
-                                onClick={() => {
-                                  // removeItem(item.id);
-                                }}
-                                className="inline-block mr-3 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-500 hover:text-black"
-                                href="#"
-                                data-config-id="auto-txt-4-3"
-                              >
-                                Remove
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.bottom_cart}>
-                      <div className={`flex justify-between px-2 ${styles.subtotal}`}>
-                        <strong className="text-lg font-medium">SUBTOTAL:</strong>
-                        <span className={styles.total_price}>$13212.54</span>
-                      </div>
-                      <div className={styles.view_cart}>
-                        <a href="#">View cart</a>
-                      </div>
-                      <div className={styles.checkout}>
-                        <a href="#">Checkout</a>
-                      </div>
-                    </div>
+                              <div className={styles.bottom_cart}>
+                                <div className={`flex justify-between px-2 ${styles.subtotal}`}>
+                                  <strong className="text-lg font-medium">SUBTOTAL:</strong>
+                                  <span className={styles.total_price}>{total}</span>
+                                </div>
+                                <div className={styles.view_cart}>
+                                  <a href="#">View cart</a>
+                                </div>
+                                <div className={styles.checkout}>
+                                  <a href="#">Checkout</a>
+                                </div>
+                              </div>
+                            </>
+                          );
+                        })}
+                      </>
+                    )}
                   </div>
                 </Drawer>
               </div>

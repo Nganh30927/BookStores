@@ -65,6 +65,7 @@ const BooksDetailsPage = () => {
     },
   });
 
+  const { addItem, items, itemCount, increaseQuantity, decreaseQuantity } = useCartStore();
   //========================================//
 
   return (
@@ -124,26 +125,51 @@ const BooksDetailsPage = () => {
                       <span className="block mr-auto font-bold " data-config-id="auto-txt-4-3">
                         Quantity
                       </span>
-                      <div className="inline-flex p-1 mb-1  font-bold text-gray-400 border border-gray-600 bg-slate-800">
-                        <button className="inline-block p-1">
-                          <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-8-3">
-                            <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                        <input
-                          className="w-12 text-sm font-bold text-center bg-transparent outline-none"
-                          type="number"
-                          placeholder={'1'}
-                          data-config-id="auto-input-8-3"
-                        />
-                        <button className="inline-block p-1">
-                          <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-9-3">
-                            <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                      </div>
+                      {items.map((item) => {
+                        return (
+                          <div className="inline-flex p-1 mb-1  font-bold text-gray-400 border border-gray-600 bg-slate-800">
+                            <button onClick={() => {
+                              decreaseQuantity(item.id);
+                            }}
+                             className="inline-block p-1">
+                              <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-8-3">
+                                <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                            <input
+                              className="w-12 text-sm font-bold text-center bg-transparent outline-none"
+                              type="text"
+                             value={item.quantity}
+                              data-config-id="auto-input-8-3"
+                            />
+                            <button onClick={() => {
+                              increaseQuantity(item.id);
+                            }}
+                             className="inline-block p-1">
+                              <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-9-3">
+                                <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <a className="relative group block w-full h-12 mb-4 px-8 py-3 text-center font-bold text-yellow-50 bg-red-800 overflow-hidden" href="#">
+                    <a
+                      onClick={() => {
+                        console.log('Thêm giỏ hàng:', id);
+                        const item = books?.data;
+
+                        addItem({
+                          id: item.id,
+                          price: item.price,
+                          name: item.name,
+                          quantity: 1,
+                          imageURL: item.imageURL,
+                        });
+                      }}
+                      className="relative group block w-full h-12 mb-4 px-8 py-3 text-center font-bold text-yellow-50 bg-red-800 overflow-hidden"
+                      href="#"
+                    >
                       <div className="absolute top-0 right-full w-full h-full bg-red-600 transform group-hover:translate-x-full group-hover:scale-102 transition duration-500" />
                       <span className="relative" data-config-id="auto-txt-5-3">
                         Add to Cart
