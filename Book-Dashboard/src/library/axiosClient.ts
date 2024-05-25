@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:9000/auth/login';
+const API_URL = 'http://localhost:9000';
 
 const axiosClient = axios.create({
   baseURL: API_URL,
@@ -32,17 +32,14 @@ axiosClient.interceptors.response.use(
      * Tùy vào response của BACKEND API trả về với cấu trúc như thế nào
      * bạn điều chỉnh lại cho đúng với cách code của bạn
      */
-    console.log('<<=== 🚀 axiosClient response.data axiosClient  ===>>', response);
-    const { token, freshToken } = response.data;
-
-    console.log(token, freshToken);// copy qua , ma ko đỏi leij tên, áp dụng hơi máy móc
-    
-    //khi LOGIN oK ==> LƯU token và freshTOken xuống localStorage
+    console.log('<<=== 🚀 axiosClient response.data axiosClient  ===>>', response.data);
+    const { token, refreshToken } = response.data;
+    // khi LOGIN oK ==> LƯU token và freshTOken xuống localStorage
     if (token) {
       window.localStorage.setItem('token', token);
     }
-    if (freshToken) {
-      window.localStorage.setItem('freshToken', freshToken);
+    if (refreshToken) {
+      window.localStorage.setItem('refreshToken', refreshToken);
     }
 
     return response;

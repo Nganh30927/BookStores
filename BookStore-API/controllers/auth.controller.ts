@@ -28,7 +28,8 @@ const login = async(req:Request, res: Response, next: NextFunction)=>{
       const {id} = res.locals.user;
       console.log(`res.locals`,res.locals);
       const userProfile = await authService.getProfile(id);
-      sendJsonSuccess(res)(userProfile);
+      // sendJsonSuccess(res)(userProfile);
+      res.status(200).json(userProfile)
     } catch (error) {
       next(error)
     }
@@ -39,7 +40,8 @@ const login = async(req:Request, res: Response, next: NextFunction)=>{
     try {
       const user = res.locals.user;
       const tokens = await authService.refreshToken(user);
-      sendJsonSuccess(res)(tokens);
+      // sendJsonSuccess(res)(tokens);
+      res.status(200).json(tokens)
     } catch (error) {
       next(error)
     }

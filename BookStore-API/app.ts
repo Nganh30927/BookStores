@@ -3,7 +3,7 @@ import cors from 'cors';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import logger from 'morgan';
 import path from 'path';
-
+import createError from 'http-errors';
 
 import { AppDataSource } from './data-source';
 import categoriesRouter from './routes/categories'
@@ -47,7 +47,7 @@ AppDataSource.initialize().then(async () => {
   // catch 404 and forward to error handler
   app.use(function (req: Request, res: Response, next: NextFunction) {
     res.status(404).send('Not found');
-    // next(createError(404));
+    next(createError(404));
   });
 
   // error handler
