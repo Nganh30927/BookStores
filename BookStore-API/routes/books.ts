@@ -32,9 +32,13 @@ router.get('/', async (req: Request, res: Response, next: any) => {
   try {
     const minPrice = req.query.minPrice; // Giả sử bạn nhận giá tối thiểu từ query parameter
     const maxPrice = req.query.maxPrice; // Giả sử bạn nhận giá tối đa từ query parameter
+    const take = req.query.limit ? parseInt(req.query.limit as string) : 10 //  giới hạn từ query parameter
+    const skip = req.query.page ? parseInt(req.query.page as string) : 1; // n số lượng bản ghi cần bỏ qua từ query parameter
 
-    const query = repository.createQueryBuilder('book').leftJoinAndSelect('book.category', 'category').leftJoinAndSelect('book.publisher', 'publisher');
-
+    const query = repository.createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .leftJoinAndSelect('book.publisher', 'publisher');
+    
     // http://localhost:9000/books?minPrice=&maxPrice=
     if (minPrice) {
       query.andWhere('book.price >= :minPrice', { minPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có minPrice
@@ -44,11 +48,25 @@ router.get('/', async (req: Request, res: Response, next: any) => {
       query.andWhere('book.price <= :maxPrice', { maxPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có maxPrice
     }
 
+    if (take) {
+      query.take(take); // Giới hạn số lượng bản ghi được trả về
+    }
+
+    if (skip) {
+      query.skip((skip - 1) * take); // Bỏ qua một số lượng nhất định các bản ghi đầu tiên
+    }
+
+    
     const books = await query.getMany();
 
     if (books.length === 0) {
       res.status(204).send();
     } else {
+      // res.json({message: 'success',
+      //   books,
+      //   currentPage: skip,
+      //   recordsPerPage: take
+      // });
       res.json(books);
     }
   } catch (error) {
@@ -56,6 +74,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // SELECT o FROM Book o WHERE o.category.id=?1
 router.get('/list', async (req: Request, res: Response, next: any) => {

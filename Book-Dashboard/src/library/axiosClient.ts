@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:9000';
+const API_URL = 'http://localhost:9000/auth/login';
 
 const axiosClient = axios.create({
   baseURL: API_URL,

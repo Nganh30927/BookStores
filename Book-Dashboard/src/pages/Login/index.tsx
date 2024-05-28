@@ -75,7 +75,8 @@ const Login = () => {
 
               <Form.Item>
                 {/* Khóa nút nhấn khi form đang submit để tránh nhấp chuột nhiều lần */}
-                <Button className={styles.btn_submit} htmlType="submit">
+                <Button className={styles.btn_submit} htmlType="submit" >
+                  <span className={styles.namebtn}>login</span>
                   {/* <span className={styles.namebtn}>{isLoading ? 'Submitting...' : 'Login'}</span> */}
                 </Button>
               </Form.Item>

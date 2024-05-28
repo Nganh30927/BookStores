@@ -34,6 +34,8 @@ const BooksPage = () => {
   const pmax = params.get('maxPrice');
   const int_price_max = pmax ? parseInt(pmax) : 0;
 
+  console.log('<<=== 🚀 page ===>>', page, params);
+
   let newParams = {};
 
   if (cid) {
@@ -49,12 +51,12 @@ const BooksPage = () => {
   const { addItem } = useCartStore();
 
   //Hàm fetch products
-  const getBooks = async (filters: FiltersType) => {
-    // let url = config.urlAPI+'/v1/products?';
+  const getBooks = async (page: number,filters: FiltersType) => {
+    const offset = (page - 1) * 5;
     {
       /* http://localhost:9000/books/list?categoryId=1010 */
     }
-    let url = `http://localhost:9000/books`;
+    let url = `http://localhost:9000/books?offset=${offset}&limit=6`;
 
     if (filters.categoryId && filters.categoryId > 0) {
       url = `http://localhost:9000/books/list?categoryId=${filters.categoryId}`;
@@ -68,8 +70,8 @@ const BooksPage = () => {
 
   // Truy vấn
   const queryBooks = useQuery({
-    queryKey: ['books', { int_cid, int_price_min, int_price_max }],
-    queryFn: () => getBooks({ categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
+    queryKey: ['books', { int_page,int_cid, int_price_min, int_price_max }],
+    queryFn: () => getBooks(int_page, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
       //Thành công thì trả lại data
       console.log('getBooks:', data?.data);
@@ -80,6 +82,7 @@ const BooksPage = () => {
   });
 
   //const totalPages = Math.ceil(data.length / recordsPerPage);
+  const totalPages = 12; //Tổng số trang
 
   // Handle lỗi khi ko fetch được API
   if (queryBooks.isError) {
@@ -147,8 +150,15 @@ const BooksPage = () => {
               </div>
             </div>
           </div>
+          {queryBooks.data && queryBooks.data?.data.lenght > 0 ? (
+              <div className='text-center mt-10'>
+                <Pagination queryString={newParams} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+              </div>
+            ) : null}
         </div>
       </section>
+     
+
     </>
   );
 };

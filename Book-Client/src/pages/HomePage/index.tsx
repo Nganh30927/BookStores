@@ -12,7 +12,7 @@ import config from '../../constants/config';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import GetNewBookCollection from '../../components/GetNewBookCollection';
+// import GetNewBookCollection from '../../components/GetNewBookCollection';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -131,7 +131,7 @@ const HomePage = () => {
               </div>
             </div>
             <div className="flex flex-wrap -mx-4">
-              <GetNewBookCollection />
+              {/* <GetNewBookCollection /> */}
             </div>
           </div>
         </div>

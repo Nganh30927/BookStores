@@ -29,6 +29,7 @@ import config from '../../constants/config';
 import React, { useState } from 'react';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType } from 'antd/es/table';
+import type { TableColumnsType } from 'antd';
 import numeral from 'numeral';
 import { CloseOutlined, DeleteOutlined, EditOutlined, QuestionCircleOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -72,9 +73,7 @@ const BooksPage = () => {
   const queryClient = useQueryClient();
 
   const fetchBooks = async () => {
-    const response = await axiosClient.get(config.urlAPI + `/books`);
-    //console.log('fetchBooks',response)
-    return response;
+    return axiosClient.get(config.urlAPI + `/books`);
   };
 
   const queryBooks = useQuery({
@@ -274,12 +273,22 @@ const BooksPage = () => {
   //   },
   // });
 
-  const columns: ColumnsType<DataType> = [
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: 'No.',
+      dataIndex: 'index',
+      key: 'index',
+      width: 60,
+      fixed: 'left',
+      render: (text: string, record: any, index: number) => {
+        return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
+      },
+    },
     {
       title: 'Picture',
       key: 'imageURL',
       dataIndex: 'imageURL',
-      width: '1%',
+      width: 100,
       render: (text: string, record: any, index: number) => {
         return <img src={'http://localhost:9000' + text} style={{ height: 60 }} alt="" />;
       },
@@ -288,17 +297,20 @@ const BooksPage = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      width: 150,
       render: (text) => <strong>{text}</strong>,
     },
     {
       title: 'Author',
       dataIndex: 'author',
       key: 'author',
+      width: 120,
     },
     {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      width: 120,
       render: (text) => {
         // Kiểm tra nếu mô tả không tồn tại
         if (!text) {
@@ -306,7 +318,7 @@ const BooksPage = () => {
         }
 
         // Truncate the string to 3 characters and append "..."
-        const truncatedText = text.length > 2 ? text.substring(0, 2) + '...' : text;
+        const truncatedText = text.length > 6 ? text.substring(0, 100) + '...' : text;
         return <span>{truncatedText}</span>;
       },
     },
@@ -314,17 +326,21 @@ const BooksPage = () => {
       title: 'Quantity',
       dataIndex: 'quantity',
       key: 'quantity',
+      width: 100
     },
     {
       title: 'Category',
       dataIndex: 'category',
       key: 'category',
+      width: 150,
       render: (_, record: any) => <span>{record.category.name}</span>,
     },
+   
     {
       title: 'Publisher',
       dataIndex: 'publisher',
       key: 'publisher',
+      width: 150,
       render: (_, record: any) => <span>{record.publisher.name}</span>,
     },
     {
@@ -334,15 +350,27 @@ const BooksPage = () => {
       render: (text) => <strong>${text}</strong>,
     },
     {
-      title: 'Serial number',
+      title: 'Serial',
       dataIndex: 'serialnumber',
       key: 'serialnumber',
+      width: 150
     },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
+    // {
+    //   title: 'Description',
+    //   dataIndex: 'description',
+    //   key: 'description',
+    //   width: 200,
+    //   render: (text) => {
+    //     // Kiểm tra nếu mô tả không tồn tại
+    //     if (!text) {
+    //       return <span>Null...</span>;
+    //     }
+
+    //     // Truncate the string to 3 characters and append "..."
+    //     const truncatedText = text.length > 20 ? text.substring(0, 100) + '...' : text;
+    //     return <span>{truncatedText}</span>;
+    //   },
+    // },
     {
       title: 'Discount',
       dataIndex: 'discount',
@@ -354,13 +382,15 @@ const BooksPage = () => {
           color = '#ff4d4f';
         }
 
-        return <div style={{ textAlign: 'right', color: color }}>{numeral(text).format('0,0.0')}%</div>;
+        return <div style={{ textAlign: 'center', color: color }}>{numeral(text).format('0,0.0')}%</div>;
       },
     },
 
     {
       title: 'Action',
       key: 'action',
+      fixed: 'right',
+      width: 220,
       render: (_, record) => (
         <Space size="middle">
           <Button
@@ -370,8 +400,32 @@ const BooksPage = () => {
               updateForm.setFieldsValue({ ...record });
             }}
           >
-            Edit
+             <EditOutlined />Edit
           </Button>
+
+          {/* <Popconfirm
+            title="Are you sure to delete?"
+            onConfirm={() => {
+              // DELETE
+              console.log("DELETE", record);
+              mutationDelete.mutate(record.id);
+            }}
+            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            onCancel={() => {}}
+            okText="Đồng ý"
+            okType="danger"
+            cancelText="Đóng"
+          >
+            <Button
+            danger
+            onClick={() => {
+              console.log('Delete this item', record);
+              mutationDelete.mutate(record.id);
+            }}
+          >
+            <DeleteOutlined />Delete
+          </Button>
+          </Popconfirm> */}
 
           <Button
             danger
@@ -380,7 +434,7 @@ const BooksPage = () => {
               mutationDelete.mutate(record.id);
             }}
           >
-            Delete
+            <DeleteOutlined />Delete
           </Button>
         </Space>
       ),
@@ -389,6 +443,7 @@ const BooksPage = () => {
 
   return (
     <>
+   
       {contextHolder}
       <Button
         type="primary"
@@ -400,13 +455,14 @@ const BooksPage = () => {
       >
         Create a new Product
       </Button>
+      <div style={{
+        marginBottom: '25px'
+      }}>
 
-      <Table pagination={{ pageSize: 5 }} columns={columns} key={'id'} dataSource={queryBooks.data?.data} />
-      <div
-        style={{
-          marginTop: '20px',
-        }}
-      ></div>
+      </div>
+
+      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data}  scroll={{ x: 1500 }} />
+
       {/* begin Edit Modal */}
       <Modal width={960} title="Edit Product" okText="Update Product" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
         <Form
@@ -476,7 +532,7 @@ const BooksPage = () => {
               },
             ]}
           >
-            <InputNumber min={0} defaultValue={0} />
+            <InputNumber min={0} defaultValue={0} style={{ width: 200 }}/>
           </Form.Item>
 
           {/* Xem Rules https://ant.design/components/form#rule */}
@@ -606,7 +662,7 @@ const BooksPage = () => {
               },
             ]}
           >
-            <InputNumber min={0} defaultValue={0} />
+            <InputNumber min={0} defaultValue={0} style={{ width: 200 }}/>
           </Form.Item>
 
           <Form.Item<DataType>
