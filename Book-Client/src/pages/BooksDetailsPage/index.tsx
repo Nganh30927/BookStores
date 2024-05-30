@@ -157,7 +157,7 @@ const BooksDetailsPage = () => {
                     <a
                       onClick={() => {
                         console.log('Thêm giỏ hàng:', id);
-                        const item = books?.data;
+                        const item = books?.data?.data;
 
                         addItem({
                           id: item.id,

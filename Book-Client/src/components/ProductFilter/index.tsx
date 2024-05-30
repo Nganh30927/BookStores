@@ -65,7 +65,7 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
                     <li key={`queryCategory${item.id}`} className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
                       <button
                         onClick={() => {
-                          navigate(`/books/list?categoryId=${item.id}`);
+                          navigate(`/books?categoryId=${item.id}`);
                         }}
                         className={
                           currentCategoryId === item.id ? `hover:text-indigo-500 font-bold text-indigo-500 btn-empty` : `btn-empty hover:text-indigo-500`

@@ -10,7 +10,6 @@ import ProductFilter from '../../components/ProductFilter';
 import MobileFilter from '../../components/MobileFillter';
 import { RiShoppingCartLine } from 'react-icons/ri';
 
-
 type FiltersType = {
   categoryId?: number;
   minPrice?: number;
@@ -21,11 +20,12 @@ const BooksPage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const page = params.get('page');
+  const limit = params.get('limit');
 
   const int_page = page ? parseInt(page) : 1;
+  const int_limit = limit ? parseInt(limit) : 6;
 
   const cid = params.get('categoryId');
-  console.log('cid:', cid);
   const int_cid = cid ? parseInt(cid) : 0;
 
   const pmin = params.get('minPrice');
@@ -33,9 +33,6 @@ const BooksPage = () => {
 
   const pmax = params.get('maxPrice');
   const int_price_max = pmax ? parseInt(pmax) : 0;
-
-  console.log('<<=== 🚀 page ===>>', page, params);
-
   let newParams = {};
 
   if (cid) {
@@ -45,35 +42,34 @@ const BooksPage = () => {
   if (page) {
     newParams = { ...newParams, page: int_page };
   }
-
   const [currentPage, setCurrentPage] = React.useState(int_page);
-
   const { addItem } = useCartStore();
 
   //Hàm fetch products
-  const getBooks = async (page: number,filters: FiltersType) => {
-    const offset = (page - 1) * 5;
-    {
-      /* http://localhost:9000/books/list?categoryId=1010 */
-    }
-    let url = `http://localhost:9000/books?offset=${offset}&limit=6`;
-
+  const getBooks = async (page: number, limit: number, filters: FiltersType) => {
+    const offset = (page - 1) * limit;
+  
+    let url = new URL('http://localhost:9000/books');
+    url.searchParams.append('offset', String(offset));
+    url.searchParams.append('limit', String(limit));
+  
     if (filters.categoryId && filters.categoryId > 0) {
-      url = `http://localhost:9000/books/list?categoryId=${filters.categoryId}`;
-    } else if (filters.minPrice && filters.minPrice > 0) {
-      url += `?minPrice=${filters.minPrice}`;
-    } else if (filters.maxPrice && filters.maxPrice > 0) {
-      url += `?maxPrice=${filters.maxPrice}`;
+      url.searchParams.append('categoryId', String(filters.categoryId));
     }
-    return axios.get(url);
+    if (filters.minPrice && filters.minPrice > 0) {
+      url.searchParams.append('minPrice', String(filters.minPrice));
+    }
+    if (filters.maxPrice && filters.maxPrice > 0) {
+      url.searchParams.append('maxPrice', String(filters.maxPrice));
+    }
+    return axios.get(url.toString());
   };
-
+  
   // Truy vấn
   const queryBooks = useQuery({
-    queryKey: ['books', { int_page,int_cid, int_price_min, int_price_max }],
-    queryFn: () => getBooks(int_page, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
+    queryKey: ['books', { int_page, int_limit, int_cid, int_price_min, int_price_max }],
+    queryFn: () => getBooks(int_page, int_limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
-      //Thành công thì trả lại data
       console.log('getBooks:', data?.data);
     },
     onError: (error) => {
@@ -81,8 +77,7 @@ const BooksPage = () => {
     },
   });
 
-  //const totalPages = Math.ceil(data.length / recordsPerPage);
-  const totalPages = 12; //Tổng số trang
+  // const totalPages = 12; //Tổng số trang
 
   // Handle lỗi khi ko fetch được API
   if (queryBooks.isError) {
@@ -101,7 +96,6 @@ const BooksPage = () => {
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
               <ProductFilter queryString={newParams} currentCategoryId={int_cid} />
             </div>
-            
 
             <div className="w-full lg:w-8/12 xl:9/12 px-4">
               <div className="flex flex-col lg:hidden sm:flex-row mb-6 sm:items-center pb-6 border-b border-gray-400  ">
@@ -109,7 +103,7 @@ const BooksPage = () => {
               </div>
               <div className="flex flex-wrap mb-20">
                 {queryBooks.data && queryBooks.data?.data
-                  ? queryBooks.data?.data.map((book: any) => {
+                  ? queryBooks.data?.data.books.map((book: any) => {
                       return (
                         <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
                           <Link to={`/booksdetail/${book.id}`} className="block p-5 ">
@@ -148,17 +142,23 @@ const BooksPage = () => {
                     })
                   : null}
               </div>
-            </div>
-          </div>
-          {queryBooks.data && queryBooks.data?.data.lenght > 0 ? (
+              <nav>
+              {
+          queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
               <div className='text-center mt-10'>
-                <Pagination queryString={newParams} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                <Pagination queryString={newParams} totalPages={queryBooks?.data.data.totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             ) : null}
+            </nav>
+
+        
+            </div>
+           
+          </div>
+         
+          
         </div>
       </section>
-     
-
     </>
   );
 };
