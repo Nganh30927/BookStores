@@ -73,7 +73,7 @@ const BooksPage = () => {
   const queryClient = useQueryClient();
 
   const fetchBooks = async () => {
-    return axiosClient.get(config.urlAPI + `/books`);
+    return axiosClient.get(config.urlAPI + `/books?limit=100`);
   };
 
   const queryBooks = useQuery({
@@ -81,7 +81,7 @@ const BooksPage = () => {
     queryFn: () => fetchBooks(),
   });
 
-  console.log('queryBooks', queryBooks.data);
+  console.log('queryBooks', queryBooks.data?.data.books);
 
   //======= lấy danh mục  =====//
   const queryCategories = useQuery({
@@ -461,7 +461,7 @@ const BooksPage = () => {
 
       </div>
 
-      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data}  scroll={{ x: 1500 }} />
+      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data.books}  scroll={{ x: 1500 }} />
 
       {/* begin Edit Modal */}
       <Modal width={960} title="Edit Product" okText="Update Product" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
