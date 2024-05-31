@@ -48,11 +48,11 @@ const BooksPage = () => {
   //Hàm fetch products
   const getBooks = async (page: number, limit: number, filters: FiltersType) => {
     const offset = (page - 1) * limit;
-  
+
     let url = new URL('http://localhost:9000/books');
     url.searchParams.append('offset', String(offset));
     url.searchParams.append('limit', String(limit));
-  
+
     if (filters.categoryId && filters.categoryId > 0) {
       url.searchParams.append('categoryId', String(filters.categoryId));
     }
@@ -64,7 +64,7 @@ const BooksPage = () => {
     }
     return axios.get(url.toString());
   };
-  
+
   // Truy vấn
   const queryBooks = useQuery({
     queryKey: ['books', { int_page, int_limit, int_cid, int_price_min, int_price_max }],
@@ -143,20 +143,19 @@ const BooksPage = () => {
                   : null}
               </div>
               <nav>
-              {
-          queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
-              <div className='text-center mt-10'>
-                <Pagination queryString={newParams} totalPages={queryBooks?.data.data.totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-              </div>
-            ) : null}
-            </nav>
-
-        
+                {queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
+                  <div className="text-center mt-10">
+                    <Pagination
+                      queryString={newParams}
+                      totalPages={queryBooks?.data.data.totalPages}
+                      currentPage={currentPage}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
+                ) : null}
+              </nav>
             </div>
-           
           </div>
-         
-          
         </div>
       </section>
     </>
