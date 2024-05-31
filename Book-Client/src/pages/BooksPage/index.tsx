@@ -20,10 +20,11 @@ const BooksPage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const page = params.get('page');
-  const limit = params.get('limit');
+  // const limit = params.get('limit');
 
   const int_page = page ? parseInt(page) : 1;
-  const int_limit = limit ? parseInt(limit) : 6;
+  const limit = 6;
+  // const int_limit = limit ? parseInt(limit) : 6;
 
   const cid = params.get('categoryId');
   const int_cid = cid ? parseInt(cid) : 0;
@@ -39,19 +40,19 @@ const BooksPage = () => {
     newParams = { ...newParams, categoryId: int_cid };
   }
 
-  if (page) {
-    newParams = { ...newParams, page: int_page };
-  }
+  // if (page) {
+  //   newParams = { ...newParams, page: int_page };
+  // }
   const [currentPage, setCurrentPage] = React.useState(int_page);
   const { addItem } = useCartStore();
 
   //Hàm fetch products
-  const getBooks = async (page: number, limit: number, filters: FiltersType) => {
-    const offset = (page - 1) * limit;
+  const getBooks = async (page= 1, limit= 6, filters: FiltersType) => {
+    // const offset = (page - 1) * limit;
 
-    let url = new URL('http://localhost:9000/books');
-    url.searchParams.append('offset', String(offset));
-    url.searchParams.append('limit', String(limit));
+    let url = new URL(`http://localhost:9000/books?page=${page}&limit=${limit}`);
+    // url.searchParams.append('offset', String(offset));
+    // url.searchParams.append('limit', String(limit));
 
     if (filters.categoryId && filters.categoryId > 0) {
       url.searchParams.append('categoryId', String(filters.categoryId));
@@ -67,8 +68,8 @@ const BooksPage = () => {
 
   // Truy vấn
   const queryBooks = useQuery({
-    queryKey: ['books', { int_page, int_limit, int_cid, int_price_min, int_price_max }],
-    queryFn: () => getBooks(int_page, int_limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
+    queryKey: ['books', { int_page, limit, int_cid, int_price_min, int_price_max }],
+    queryFn: () => getBooks(int_page, limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
       console.log('getBooks:', data?.data);
     },
@@ -146,7 +147,7 @@ const BooksPage = () => {
                 {queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
                   <div className="text-center mt-10">
                     <Pagination
-                      queryString={newParams}
+                      
                       totalPages={queryBooks?.data.data.totalPages}
                       currentPage={currentPage}
                       setCurrentPage={setCurrentPage}

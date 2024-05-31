@@ -6,34 +6,39 @@ type queryType = {
 }
 
 type TPagination = {
-    queryString: queryType,
+    
     totalPages: number,
     currentPage: number,
     setCurrentPage: (page: number) => void
 }
 
-function encodeQueryData(data: Record<string, any>) {
-    const ret = [];
-    for (const d in data)
-        ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
-    return ret.join('&');
-}
-
-
-
-const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TPagination) => {
+const Pagination = ({ totalPages, currentPage, setCurrentPage }: TPagination) => {
     const navigate = useNavigate();
   
     const pageNumbers = [...Array(totalPages + 1).keys()].slice(1);
   
     console.log(pageNumbers);
 
+    // const goToNextPage = () => {
+    //         if(currentPage !== totalPages) setCurrentPage(currentPage + 1)
+    // }
+    // const goToPrevPage = () => {
+    //     if(currentPage !== 1) setCurrentPage(currentPage - 1)
+    // }
+
     const goToNextPage = () => {
-            if(currentPage !== totalPages) setCurrentPage(currentPage + 1)
+      if(currentPage !== totalPages) {
+        setCurrentPage(currentPage + 1);
+        navigate(`/books?page=${currentPage + 1}`);
+      }
     }
     const goToPrevPage = () => {
-        if(currentPage !== 1) setCurrentPage(currentPage - 1)
+      if(currentPage !== 1) {
+        setCurrentPage(currentPage - 1);
+        navigate(`/books?page=${currentPage - 1}`);
+      }
     }
+    
   
     return (
 
@@ -57,10 +62,8 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
                     <a key={pgNumber}
                       className={pgNumber === currentPage ? "relative z-10 inline-flex bg-yellow-400  w-9 h-9 items-center justify-center border border-gray-800 font-bold text-white hover:bg-yellow-400 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400 ": " relative z-10 inline-flex  w-9 h-9 items-center justify-center text-gray-900 border border-gray-800 hover:bg-gray-50 focus:outline-offset-0"}
                       onClick={()=>{
-                                  setCurrentPage(pgNumber);
-                                  queryString = {...queryString, page: pgNumber};
-                                  const pageUrl = `/books?`+encodeQueryData(queryString);
-                                  navigate(pageUrl);
+                        setCurrentPage(pgNumber);
+                        navigate(`/books?page=${pgNumber}`);
                                 }}
                     >
                      {pgNumber}
@@ -85,3 +88,7 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
   
   export default Pagination
   
+  // setCurrentPage(pgNumber);
+  // queryString = {...queryString, page: pgNumber};
+  // const pageUrl = `/books?`+encodeQueryData(queryString);
+  // navigate(pageUrl);
