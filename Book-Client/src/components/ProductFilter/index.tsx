@@ -6,12 +6,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 type queryType = {
+  page?: number;
   categoryId?: number;
 };
 
 type ProductFilterType = {
   queryString: queryType;
   currentCategoryId: number;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 };
 
 function encodeQueryData(data: Record<string, any>) {
@@ -20,7 +23,7 @@ function encodeQueryData(data: Record<string, any>) {
   return ret.join('&');
 }
 
-const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) => {
+const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrentPage }: ProductFilterType) => {
   const navigate = useNavigate();
 
 
@@ -65,6 +68,7 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
                     <li key={`queryCategory${item.id}`} className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
                       <button
                         onClick={() => {
+                          setCurrentPage(1);
                           navigate(`/books?categoryId=${item.id}`);
                         }}
                         className={
@@ -91,7 +95,7 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  navigate(`/books?maxPrice=100000`);
+                  navigate(`/books?page=${currentPage}&maxPrice=100000`);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
               >
@@ -102,8 +106,8 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`minPrice=100000&maxPrice=200000`;
+                  queryString = {...queryString,page: currentPage};
+                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=100000&maxPrice=200000`;
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -115,8 +119,8 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`minPrice=200000&maxPrice=250000`;
+                  queryString = {...queryString,page: currentPage};
+                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=200000&maxPrice=250000`;
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -128,8 +132,8 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`minPrice=250000&maxPrice=300000`;
+                  queryString = {...queryString,page: currentPage};
+                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=250000&maxPrice=300000`;
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -141,8 +145,8 @@ const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) =>
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`minPrice=300000`;
+                  queryString = {...queryString,page: currentPage};
+                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=300000`;
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}

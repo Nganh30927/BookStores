@@ -34,15 +34,17 @@ const BooksPage = () => {
 
   const pmax = params.get('maxPrice');
   const int_price_max = pmax ? parseInt(pmax) : 0;
+
+  console.log('<<=== 🚀 page ===>>', page, params);
   let newParams = {};
 
   if (cid) {
     newParams = { ...newParams, categoryId: int_cid };
   }
 
-  // if (page) {
-  //   newParams = { ...newParams, page: int_page };
-  // }
+  if (page) {
+    newParams = { ...newParams, page: int_page };
+  }
   const [currentPage, setCurrentPage] = React.useState(int_page);
   const { addItem } = useCartStore();
 
@@ -95,7 +97,7 @@ const BooksPage = () => {
         <div className="container px-4 mx-auto">
           <div className=" flex flex-wrap -mx-4">
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
-              <ProductFilter queryString={newParams} currentCategoryId={int_cid} />
+              <ProductFilter queryString={newParams} currentPage={int_page} setCurrentPage={setCurrentPage} currentCategoryId={int_cid} />
             </div>
 
             <div className="w-full lg:w-8/12 xl:9/12 px-4">
@@ -147,7 +149,7 @@ const BooksPage = () => {
                 {queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
                   <div className="text-center mt-10">
                     <Pagination
-                      
+                      queryString={newParams}
                       totalPages={queryBooks?.data.data.totalPages}
                       currentPage={currentPage}
                       setCurrentPage={setCurrentPage}
