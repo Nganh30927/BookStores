@@ -68,44 +68,45 @@
 //         modules={[Keyboard, Navigation, Pagination]}
 //         className="mySwiper"
 //       >
-//         {BookData.map((book, index) => (
-//           <SwiperSlide>
-//             <div className="w-full  px-4 my-4">
-//               <div className="block w-full h-full relative bg-white rounded-xl overflow-hidden hover:scale-105 ease-in duration-300">
-//                 <img
-//                   className="block w-full h-72 object-contain rounded-t-xl  "
-//                   src={`http://localhost:9000` + `${book.imageURL}`}
-//                   alt={book.name}
-//                   data-config-id="auto-img-1-2"
-//                 />
+//         {BookData &&
+//           BookData.map((book, index) => (
+//             <SwiperSlide>
+//               <div className="w-full  px-4 my-4">
+//                 <div className="block w-full h-full relative bg-white rounded-xl overflow-hidden hover:scale-105 ease-in duration-300">
+//                   <img
+//                     className="block w-full h-72 object-contain rounded-t-xl  "
+//                     src={`http://localhost:9000` + `${book.imageURL}`}
+//                     alt={book.name}
+//                     data-config-id="auto-img-1-2"
+//                   />
 
-//                 <a className="group block py-4 ms-3" href="#">
-//                   <h6
-//                     className="inline-block text-lg font-bold  text-black mb-2 hover:text-red-600 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
-//                     data-config-id="auto-txt-9-2"
-//                   >
-//                     {book.name}
-//                   </h6>
-//                   <div className="flex items-center mb-1">
-//                     <span className=" text-lg font-bold text-black pa" data-config-id="auto-txt-10-2">
-//                       {book.price}$
-//                     </span>
-//                     <span className="mx-5 text-sm text-red-500 font-bold outline outline-offset-2 outline-1 rounded " data-config-id="auto-txt-11-2">
-//                       - {book.discount}%
-//                     </span>
-//                     <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
-//                   </div>
-//                 </a>
+//                   <a className="group block py-4 ms-3" href="#">
+//                     <h6
+//                       className="inline-block text-lg font-bold  text-black mb-2 hover:text-red-600 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+//                       data-config-id="auto-txt-9-2"
+//                     >
+//                       {book.name}
+//                     </h6>
+//                     <div className="flex items-center mb-1">
+//                       <span className=" text-lg font-bold text-black pa" data-config-id="auto-txt-10-2">
+//                         {book.price}$
+//                       </span>
+//                       <span className="mx-5 text-sm text-red-500 font-bold outline outline-offset-2 outline-1 rounded " data-config-id="auto-txt-11-2">
+//                         - {book.discount}%
+//                       </span>
+//                       <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
+//                     </div>
+//                   </a>
 
-//                 <a className="absolute top-0 right-0 m-3 inline-block text-pink-500 hover:text-red-600 transform duartion-200" href="#">
-//                   <span className="text-2xl font-bold">
-//                     <FaHeart />
-//                   </span>
-//                 </a>
+//                   <a className="absolute top-0 right-0 m-3 inline-block text-pink-500 hover:text-red-600 transform duartion-200" href="#">
+//                     <span className="text-2xl font-bold">
+//                       <FaHeart />
+//                     </span>
+//                   </a>
+//                 </div>
 //               </div>
-//             </div>
-//           </SwiperSlide>
-//         ))}
+//             </SwiperSlide>
+//           ))}
 //       </Swiper>
 //     </>
 //   );

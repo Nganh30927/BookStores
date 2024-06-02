@@ -83,29 +83,27 @@ const HomePage = () => {
         {/* Book Category */}
       </section>
 
-      <section className="mx-auto container" >
+      <section className="mx-auto container">
         <div className="flex justify-center items-center mb-10 sm:mb-16 bg-gray-300 opacity-80">
-          <div className='overflow-x-auto'>
-          <div className="flex space-x-5 md:space-x-4">
-            <div className="text-left flex items-center py-3 pl-5 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/star-icon" alt="Icon - Rated 4.5/5 by customers" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Rated 4.5/5 by customers</h4>
+          <div className="overflow-x-auto">
+            <div className="flex space-x-5 md:space-x-4">
+              <div className="text-left flex items-center py-3 pl-5 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/star-icon" alt="Icon - Rated 4.5/5 by customers" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap">Rated 4.5/5 by customers</h4>
+              </div>
+              <div className="text-left flex items-center py-3 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Buy direct and support your club" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap">Buy direct and support your</h4>
+              </div>
+              <div className="text-left flex items-center py-3 pr-5 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/cannon-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap">Members get 10% off</h4>
+              </div>
             </div>
-            <div className="text-left flex items-center py-3 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Buy direct and support your club" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Buy direct and support your</h4>
-            </div>
-            <div className="text-left flex items-center py-3 pr-5 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/cannon-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Members get 10% off</h4>
-            </div>
-          </div>
           </div>
         </div>
       </section>
 
-
-    
       <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
         <picture className="relative">
           <img className="opacity-80 object-cover w-full" src="../../../public/images/image_books.jpg" alt="" />
@@ -130,9 +128,7 @@ const HomePage = () => {
                 Find more {<IoIosArrowDropright size={25} />}
               </div>
             </div>
-            <div className="flex flex-wrap -mx-4">
-              {/* <GetNewBookCollection /> */}
-            </div>
+            <div className="flex flex-wrap -mx-4">{/* <GetNewBookCollection /> */}</div>
           </div>
         </div>
       </section>
@@ -253,7 +249,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
     </div>
   );
 };

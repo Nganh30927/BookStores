@@ -16,13 +16,18 @@ type FiltersType = {
   maxPrice?: number;
 };
 
+type booksType = {
+  books: any[];
+};
+
 const BooksPage = () => {
   const navigate = useNavigate();
+  const [books, setBooks] = React.useState<booksType>(); //Danh sách sản phẩm
   const [params] = useSearchParams();
   const page = params.get('page');
-  const limit = params.get('limit');
-
   const int_page = page ? parseInt(page) : 1;
+
+  const limit = params.get('limit');
   const int_limit = limit ? parseInt(limit) : 6;
 
   const cid = params.get('categoryId');
@@ -33,6 +38,7 @@ const BooksPage = () => {
 
   const pmax = params.get('maxPrice');
   const int_price_max = pmax ? parseInt(pmax) : 0;
+
   let newParams = {};
 
   if (cid) {
@@ -42,17 +48,20 @@ const BooksPage = () => {
   if (page) {
     newParams = { ...newParams, page: int_page };
   }
+
+  console.log('newParams:', newParams);
+
   const [currentPage, setCurrentPage] = React.useState(int_page);
   const { addItem } = useCartStore();
 
   //Hàm fetch products
   const getBooks = async (page: number, limit: number, filters: FiltersType) => {
     const offset = (page - 1) * limit;
-  
-    let url = new URL('http://localhost:9000/books');
+
+    let url = new URL('http://localhost:9000/books/filter?');
     url.searchParams.append('offset', String(offset));
     url.searchParams.append('limit', String(limit));
-  
+
     if (filters.categoryId && filters.categoryId > 0) {
       url.searchParams.append('categoryId', String(filters.categoryId));
     }
@@ -62,14 +71,16 @@ const BooksPage = () => {
     if (filters.maxPrice && filters.maxPrice > 0) {
       url.searchParams.append('maxPrice', String(filters.maxPrice));
     }
+    console.log('url:', url.toString());
     return axios.get(url.toString());
   };
-  
+
   // Truy vấn
   const queryBooks = useQuery({
     queryKey: ['books', { int_page, int_limit, int_cid, int_price_min, int_price_max }],
     queryFn: () => getBooks(int_page, int_limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
+      setBooks(data?.data);
       console.log('getBooks:', data?.data);
     },
     onError: (error) => {
@@ -98,12 +109,12 @@ const BooksPage = () => {
             </div>
 
             <div className="w-full lg:w-8/12 xl:9/12 px-4">
-              <div className="flex flex-col lg:hidden sm:flex-row mb-6 sm:items-center pb-6 border-b border-gray-400  ">
+              {/* <div className="flex flex-col lg:hidden sm:flex-row mb-6 sm:items-center pb-6 border-b border-gray-400  ">
                 <MobileFilter queryString={newParams} currentCategoryId={int_cid} />
-              </div>
+              </div> */}
               <div className="flex flex-wrap mb-20">
-                {queryBooks.data && queryBooks.data?.data
-                  ? queryBooks.data?.data.books.map((book: any) => {
+                {books && books?.books
+                  ? books?.books.map((book: any) => {
                       return (
                         <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
                           <Link to={`/booksdetail/${book.id}`} className="block p-5 ">
@@ -143,20 +154,19 @@ const BooksPage = () => {
                   : null}
               </div>
               <nav>
-              {
-          queryBooks.data && queryBooks.data?.data.books.length > 0 ? (
-              <div className='text-center mt-10'>
-                <Pagination queryString={newParams} totalPages={queryBooks?.data.data.totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-              </div>
-            ) : null}
-            </nav>
-
-        
+                {queryBooks.data && queryBooks.data?.data.length > 0 ? (
+                  <div className="text-center mt-10">
+                    {/* <Pagination
+                      queryString={newParams}
+                      totalPages={queryBooks?.data.data.totalPages}
+                      currentPage={currentPage}
+                      setCurrentPage={setCurrentPage}
+                    /> */}
+                  </div>
+                ) : null}
+              </nav>
             </div>
-           
           </div>
-         
-          
         </div>
       </section>
     </>
