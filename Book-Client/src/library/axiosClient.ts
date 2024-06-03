@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:9000';
+const API_URL = 'http://localhost:9000/users/login';
 
 const axiosClient = axios.create({
   baseURL: API_URL,
@@ -74,7 +74,7 @@ axiosClient.interceptors.response.use(
 
         const refreshToken = window.localStorage.getItem('refreshToken');
         if (refreshToken) {
-          const response = await axiosClient.post('/auth/refresh-token', {
+          const response = await axiosClient.post('/users/refresh-token', {
             refreshToken: refreshToken,
           });
 

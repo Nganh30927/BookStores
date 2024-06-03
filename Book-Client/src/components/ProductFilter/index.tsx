@@ -6,12 +6,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 type queryType = {
+  page?: number;
   categoryId?: number;
 };
 
 type ProductFilterType = {
   queryString: queryType;
   currentCategoryId: number;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 };
 
 function encodeQueryData(data: Record<string, any>) {
@@ -20,29 +23,19 @@ function encodeQueryData(data: Record<string, any>) {
   return ret.join('&');
 }
 
-const ProductFilter = ({ queryString, currentCategoryId }: ProductFilterType) => {
+const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrentPage }: ProductFilterType) => {
   const navigate = useNavigate();
   const [categories, setCategories] = React.useState<any[]>([]);
   const [params] = useSearchParams();
   const minPrice = params.get('minPrice');
   const maxPrice = params.get('maxPrice');
 
-  const getCategories = async () => {
-    const response = await axios.get(`http://localhost:9000/categories`);
-    return response.data;
-  };
-
-  const queryCategory = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => getCategories(),
-    onSuccess: (data) => {
-      //Thành công thì trả lại data
-      setCategories(data?.data);
-      console.log('get categories', categories);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+  React.useEffect(() => {
+    const getCategories = async () => {
+      const response = await axios.get(`http://localhost:9000/categories`);
+      setCategories(response.data);
+    };
+    getCategories();
   });
 
   return (

@@ -77,7 +77,7 @@ const BooksPage = () => {
 
   // Truy vấn
   const queryBooks = useQuery({
-    queryKey: ['books', { int_page, int_limit, int_cid, int_price_min, int_price_max }],
+    queryKey: ['books', { int_page, limit, int_cid, int_price_min, int_price_max }],
     queryFn: () => getBooks(int_page, int_limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
       setBooks(data?.data);
@@ -105,7 +105,7 @@ const BooksPage = () => {
         <div className="container px-4 mx-auto">
           <div className=" flex flex-wrap -mx-4">
             <div className="w-full lg:w-4/12 xl:w-3/12 px-4">
-              <ProductFilter queryString={newParams} currentCategoryId={int_cid} />
+              <ProductFilter queryString={newParams} currentPage={int_page} setCurrentPage={setCurrentPage} currentCategoryId={int_cid} />
             </div>
 
             <div className="w-full lg:w-8/12 xl:9/12 px-4">

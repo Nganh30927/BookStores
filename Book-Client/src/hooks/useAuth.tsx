@@ -34,13 +34,13 @@ const useAuth = create(
         set({isLoading: true });
 
         //dùng thư viện axiosClient để handle việc check, gửi và lưu token xuống localStorage
-        const response = await axiosClient.post(config.urlAPI+'/auth/login', { email, password });
+        const response = await axiosClient.post(config.urlAPI+'/users/login', { email, password });
         console.log('useAuth',response);
         //Check nếu login thành công
         if (response && response.status === 200) {
           const isAuthenticated = response.status === 200; //==> TRUE
           //Gọi tiếp API lấy thông tin User
-          const {data} = await axiosClient.get(config.urlAPI+'/auth/profile');
+          const {data} = await axiosClient.get(config.urlAPI+'/users/profile');
 
           //cập nhật lại state
           set({user: data.data, isAuthenticated,isLoading: false });

@@ -11,7 +11,6 @@ type TPagination = {
   currentPage: number;
   setCurrentPage: (page: number) => void;
 };
-
 function encodeQueryData(data: Record<string, any>) {
   const ret = [];
   for (const d in data) ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
@@ -25,11 +24,24 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
 
   console.log(pageNumbers);
 
+  // const goToNextPage = () => {
+  //         if(currentPage !== totalPages) setCurrentPage(currentPage + 1)
+  // }
+  // const goToPrevPage = () => {
+  //     if(currentPage !== 1) setCurrentPage(currentPage - 1)
+  // }
+
   const goToNextPage = () => {
-    if (currentPage !== totalPages) setCurrentPage(currentPage + 1);
+    if (currentPage !== totalPages) {
+      setCurrentPage(currentPage + 1);
+      navigate(`/books?page=${currentPage + 1}`);
+    }
   };
   const goToPrevPage = () => {
-    if (currentPage !== 1) setCurrentPage(currentPage - 1);
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+      navigate(`/books?page=${currentPage - 1}`);
+    }
   };
 
   return (
@@ -48,7 +60,7 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
           </a>
         </li>
 
-        {pageNumbers?.map((pgNumber) => (
+        {pageNumbers.map((pgNumber) => (
           <li className="cursor-pointer">
             <a
               key={pgNumber}
@@ -87,3 +99,8 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
 };
 
 export default Pagination;
+
+// setCurrentPage(pgNumber);
+// queryString = {...queryString, page: pgNumber};
+// const pageUrl = `/books?`+encodeQueryData(queryString);
+// navigate(pageUrl);
