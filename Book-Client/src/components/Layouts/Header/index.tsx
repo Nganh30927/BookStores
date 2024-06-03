@@ -403,8 +403,15 @@ const Header = () => {
                       </a>
                     </div>
                     <>
-                      {itemCount === 0 ? (
-                        <h2>NULL</h2>
+                      {
+                     itemCount === 0 ? (
+                      <div className='text-center  h-96 mt-5'>
+                        <span><img src="../../../../public/images/empty-cart.png" alt="" /></span>
+                        <span><h3 className='text-xl text-gray-600 font-bold'>Chưa có sản phẩm nào trong giỏ hàng</h3></span>
+                        <Link to={'/products'}>
+                          <button className='text-white p-2 rounded-md mt-4 bg-red-600 font-semibold hover:bg-red-400' type='button'>VIEW PRODUCTS</button>
+                        </Link>
+                      </div>
                       ) : (
                         <>
                           <div className={styles.product}>

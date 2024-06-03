@@ -6,7 +6,8 @@ import { IoIosArrowDropright } from 'react-icons/io';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+
 import { useQuery } from '@tanstack/react-query';
 import config from '../../constants/config';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
@@ -53,21 +54,19 @@ const HomePage = () => {
         data-share=""
         data-category="newest-products"
         data-component-id="4f76139a_01_awz"
-        className="pt-4  overflow-x-hidden container mx-auto"
+        className="  overflow-x-hidden mx-auto"
       >
         <div className="mx-auto">
           <div className="">
             <div className="w-full h-full lg:mb-0">
               <div className=" w-full h-96 overflow-hidden bg-contain  bg-slate-100 border">
                 <Swiper
-                  slidesPerView={1}
-                  spaceBetween={10}
-                  pagination={{
-                    clickable: true,
-                  }}
-                  navigation={false}
-                  modules={[Navigation]}
-                  className="mySwiper"
+                 slidesPerView={1}
+                 spaceBetween={10}
+                 pagination={{ clickable: true }}
+                 navigation={true}
+                 modules={[Navigation, Pagination]}
+                 className="mySwiper"
                 >
                   <SwiperSlide className="">
                     <img className="w-full h-full object-fill" src="../../../public/images/banner_1.jpg" alt="Slide 1" />
@@ -83,20 +82,20 @@ const HomePage = () => {
         {/* Book Category */}
       </section>
 
-      <section className="mx-auto container" >
-        <div className="flex justify-center items-center mb-10 sm:mb-16 bg-gray-300 opacity-80">
+      <section className="mx-auto " >
+        <div className="flex justify-center items-center mb-10 sm:mb-16 bg-gray-200 opacity-90">
           <div className='overflow-x-auto'>
           <div className="flex space-x-5 md:space-x-4">
             <div className="text-left flex items-center py-3 pl-5 flex-shrink-0">
               <img src="https://arsenal.a.bigcontent.io/v1/static/star-icon" alt="Icon - Rated 4.5/5 by customers" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Rated 4.5/5 by customers</h4>
+              <h4 className="text-base md:text-lg whitespace-nowrap ">Rated 4.5/5 by customers</h4>
             </div>
             <div className="text-left flex items-center py-3 flex-shrink-0">
               <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Buy direct and support your club" className="h-4 mr-2" />
               <h4 className="text-base md:text-lg whitespace-nowrap">Buy direct and support your</h4>
             </div>
             <div className="text-left flex items-center py-3 pr-5 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/cannon-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
+              <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
               <h4 className="text-base md:text-lg whitespace-nowrap">Members get 10% off</h4>
             </div>
           </div>
