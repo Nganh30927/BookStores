@@ -13,10 +13,21 @@ const CartPage = () => {
       className="pt-12 pb-24 overflow-hidden "
     >
        {/* ====================== */}
-       {itemCount === 1 ? (
-        <div className='flex justify-center items-center min-h[300px] mt-10'>
-          <strong className='text-2xl'>Empty Cart</strong>
+       {itemCount === 0 ? (
+        <div className="flex justify-center items-center mx-auto p-5 bg-gray-100 shadow-md rounded-lg">
+        <div className="flex flex-col items-center justify-center">
+          <div className="text-center">
+            <div className="mb-5">
+              <img src="https://cdn0.fahasa.com/skin//frontend/ma_vanese/fahasa/images/checkout_cart/ico_emptycart.svg" className="mx-auto" />
+            </div>
+            <p className="text-base mb-5">Chưa có sản phẩm trong giỏ hàng của bạn.</p>
+            <a href="/flashsale?fhs_campaign=cta_emptycart" className="uppercase">
+              <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700" type="button" title="Mua sắm ngay">Mua sắm ngay</button>
+            </a>
+          </div>
         </div>
+      </div>
+      
       ) : (
         <div className="container px-4 mx-auto">
       
