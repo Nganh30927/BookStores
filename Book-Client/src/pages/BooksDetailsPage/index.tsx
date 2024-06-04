@@ -14,28 +14,30 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export interface IBooks {
- data:{
-  id: number;
-  name: string;
-  author: string;
-  title: string;
-  quantity: number;
-  price: number;
-  serialnumber: number;
-  description: string;
-  discount: number;
-  imageURL: string;
-  publisherId: number;
-  categoryId: number;
-  category: {
-    id: number;
-    name: string;
+  data: {
+    data: {
+      id: number;
+      name: string;
+      author: string;
+      title: string;
+      quantity: number;
+      price: number;
+      serialnumber: number;
+      description: string;
+      discount: number;
+      imageURL: string;
+      publisherId: number;
+      categoryId: number;
+      category: {
+        id: number;
+        name: string;
+      };
+      publisher: {
+        id: number;
+        name: string;
+      };
+    };
   };
-  publisher: {
-    id: number;
-    name: string;
-  };
- }
 }
 
 const BooksDetailsPage = () => {
@@ -46,8 +48,6 @@ const BooksDetailsPage = () => {
 
   const id = params.id ? parseInt(params.id) : 0;
 
-  // const [books, setBooks] = useState<IBooks[]>([]);
-
   //Hàm fetch products
   const getBooks = (id: number): Promise<IBooks> => {
     return axios.get(`http://localhost:9000/books/${id}`);
@@ -55,17 +55,24 @@ const BooksDetailsPage = () => {
 
   // Queries
 
-  const { data: book, isLoading, isError, error } = useQuery<IBooks, Error>({
+  const {
+    data: book,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<IBooks, Error>({
     queryKey: ['book_details', id], // include id in the query key
     queryFn: () => getBooks(id), // pass id to getProduct
     onSuccess: (data) => {
       // Thành công thì trả lại data
+
       console.log('getbooksId', data?.data);
     },
     onError: (error) => {
       console.log(error);
     },
   });
+  console.log('book', book);
 
   const { addItem, items, itemCount, increaseQuantity, decreaseQuantity } = useCartStore();
   //========================================//
@@ -115,10 +122,13 @@ const BooksDetailsPage = () => {
                       <span>Tác giả:</span> <span className="font-semibold">{book?.data?.data.author}</span>
                     </div>
                     <div className="block mb-8" data-config-id="auto-txt-2-3">
-                      <span className="text-lg">Nhà xuất bản:</span> <span className="text-lg font-semibold text-blue-500">{book?.data?.data.publisher.name}</span>
+                      <span className="text-lg">Nhà xuất bản:</span>{' '}
+                      <span className="text-lg font-semibold text-blue-500">{book?.data?.data.publisher.name}</span>
                     </div>
                     <div className="block  mb-6" data-config-id="auto-txt-2-3">
-                      <span className="text-red-600 text-xl font-semibold mr-1"> {book?.data?.data.price * (1 - book?.data?.data.discount / 100)} đ</span>{' '}
+                      <span className="text-red-600 text-xl font-semibold mr-1">
+                        {Number(book?.data?.data.price) * (1 - Number(book?.data?.data.discount) / 100)} đ
+                      </span>{' '}
                       <del className="text-lg mr-1">{book?.data?.data.price} đ</del>
                       <span className="py-1 px-2 bg-red-600 text-white rounded-lg font-medium">{`-${book?.data?.data.discount}%`}</span>
                     </div>
@@ -127,7 +137,7 @@ const BooksDetailsPage = () => {
                       <span className="block mr-auto font-bold " data-config-id="auto-txt-4-3">
                         Quantity
                       </span>
-{/*                      
+                      {/*                      
                           <div className="inline-flex p-1 mb-1  font-bold text-gray-400 border border-gray-600 bg-slate-800">
                             <button onClick={() => {
                               
@@ -153,12 +163,11 @@ const BooksDetailsPage = () => {
                               </svg>
                             </button>
                           </div> */}
-                      
                     </div>
                     <a
                       onClick={() => {
                         console.log('Thêm giỏ hàng:', id);
-                        const item = book?.data?.data;
+                        const item: any = book?.data?.data;
 
                         addItem({
                           id: item.id,

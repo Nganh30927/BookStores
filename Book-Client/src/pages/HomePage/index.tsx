@@ -103,8 +103,6 @@ const HomePage = () => {
         </div>
       </section>
 
-
-    
       <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
         <picture className="relative">
           <img className="opacity-80 object-cover w-full" src="../../../public/images/image_books.jpg" alt="" />
@@ -129,9 +127,7 @@ const HomePage = () => {
                 Find more {<IoIosArrowDropright size={25} />}
               </div>
             </div>
-            <div className="flex flex-wrap -mx-4">
-              {/* <GetNewBookCollection /> */}
-            </div>
+            <div className="flex flex-wrap -mx-4">{/* <GetNewBookCollection /> */}</div>
           </div>
         </div>
       </section>
@@ -252,7 +248,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
     </div>
   );
 };

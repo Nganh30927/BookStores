@@ -36,6 +36,7 @@ import { CloseOutlined, DeleteOutlined, EditOutlined, QuestionCircleOutlined, Up
 import form from 'antd/es/form';
 import axios from 'axios';
 import TextArea from 'antd/es/input/TextArea';
+import { set } from 'react-hook-form';
 
 // import { useNavigate, useSearchParams } from "react-router-dom";
 // import config from "../../constants/config";
@@ -59,6 +60,9 @@ interface DataType {
 }
 
 const BooksPage = () => {
+  const [books, setBooks] = useState<DataType[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [publishers, setPublishers] = useState<any[]>([]);
   const navigate = useNavigate();
   //message edit
   const [messageApi, contextHolder] = message.useMessage();
@@ -73,7 +77,9 @@ const BooksPage = () => {
   const queryClient = useQueryClient();
 
   const fetchBooks = async () => {
-    return axiosClient.get(config.urlAPI + `/books?limit=100`);
+    const response = await axiosClient.get(config.urlAPI + `/books`);
+    setBooks(response.data);
+    return response;
   };
 
   const queryBooks = useQuery({
@@ -81,21 +87,27 @@ const BooksPage = () => {
     queryFn: () => fetchBooks(),
   });
 
-  console.log('queryBooks', queryBooks.data?.data.books);
+  console.log('queryBooks', books);
 
   //======= lấy danh mục  =====//
   const queryCategories = useQuery({
     queryKey: ['categories'],
-    queryFn: async () => await axiosClient.get(config.urlAPI + `/categories`),
+    queryFn: async () => {
+      const response = await axiosClient.get(config.urlAPI + `/categories`);
+      setCategories(response.data);
+    },
   });
-  console.log('queryCategories', queryCategories.data?.data);
+  console.log('queryCategories', categories);
 
   //======= lấy publishers  =====//
   const queryPublishers = useQuery({
     queryKey: ['publishers'],
-    queryFn: async () => await axiosClient.get(config.urlAPI + `/publishers`),
+    queryFn: async () => {
+      const response = await axiosClient.get(config.urlAPI + `/publishers`);
+      setPublishers(response.data);
+    },
   });
-  console.log('queryPublishers', queryPublishers.data?.data);
+  console.log('queryPublishers', publishers);
 
   //======= Sự kiện XÓA =====//
   const fetchDelete = async (id: number) => {
@@ -326,7 +338,7 @@ const BooksPage = () => {
       title: 'Quantity',
       dataIndex: 'quantity',
       key: 'quantity',
-      width: 100
+      width: 100,
     },
     {
       title: 'Category',
@@ -335,7 +347,7 @@ const BooksPage = () => {
       width: 150,
       render: (_, record: any) => <span>{record.category.name}</span>,
     },
-   
+
     {
       title: 'Publisher',
       dataIndex: 'publisher',
@@ -347,13 +359,13 @@ const BooksPage = () => {
       title: 'Price',
       dataIndex: 'price',
       key: 'price',
-      render: (text) => <strong>${text}</strong>,
+      render: (text) => <strong>{text}</strong>,
     },
     {
       title: 'Serial',
       dataIndex: 'serialnumber',
       key: 'serialnumber',
-      width: 150
+      width: 150,
     },
     // {
     //   title: 'Description',
@@ -400,7 +412,8 @@ const BooksPage = () => {
               updateForm.setFieldsValue({ ...record });
             }}
           >
-             <EditOutlined />Edit
+            <EditOutlined />
+            Edit
           </Button>
 
           {/* <Popconfirm
@@ -434,7 +447,8 @@ const BooksPage = () => {
               mutationDelete.mutate(record.id);
             }}
           >
-            <DeleteOutlined />Delete
+            <DeleteOutlined />
+            Delete
           </Button>
         </Space>
       ),
@@ -443,7 +457,6 @@ const BooksPage = () => {
 
   return (
     <>
-   
       {contextHolder}
       <Button
         type="primary"
@@ -455,13 +468,13 @@ const BooksPage = () => {
       >
         Create a new Product
       </Button>
-      <div style={{
-        marginBottom: '25px'
-      }}>
+      <div
+        style={{
+          marginBottom: '25px',
+        }}
+      ></div>
 
-      </div>
-
-      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data.books}  scroll={{ x: 1500 }} />
+      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data} scroll={{ x: 1500 }} />
 
       {/* begin Edit Modal */}
       <Modal width={960} title="Edit Product" okText="Update Product" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
@@ -532,7 +545,7 @@ const BooksPage = () => {
               },
             ]}
           >
-            <InputNumber min={0} defaultValue={0} style={{ width: 200 }}/>
+            <InputNumber min={0} defaultValue={0} style={{ width: 200 }} />
           </Form.Item>
 
           {/* Xem Rules https://ant.design/components/form#rule */}
@@ -555,33 +568,23 @@ const BooksPage = () => {
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={
-                queryCategories &&
-                queryCategories.data &&
-                queryCategories.data.data &&
-                queryCategories.data?.data.map((item: any) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })
-              }
+              options={categories?.map((item: any) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              })}
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-              options={
-                queryPublishers &&
-                queryPublishers.data &&
-                queryPublishers.data.data &&
-                queryPublishers.data?.data.map((item: any) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })
-              }
+              options={publishers?.map((item: any) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              })}
             />
           </Form.Item>
 
@@ -662,7 +665,7 @@ const BooksPage = () => {
               },
             ]}
           >
-            <InputNumber min={0} defaultValue={0} style={{ width: 200 }}/>
+            <InputNumber min={0} defaultValue={0} style={{ width: 200 }} />
           </Form.Item>
 
           <Form.Item<DataType>
@@ -678,7 +681,7 @@ const BooksPage = () => {
               },
             ]}
           >
-            <InputNumber min={0} addonAfter="$" defaultValue={0} />
+            <InputNumber min={0} addonAfter="VND" defaultValue={0} />
           </Form.Item>
 
           {/* Xem Rules https://ant.design/components/form#rule */}
@@ -701,33 +704,23 @@ const BooksPage = () => {
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={
-                queryCategories &&
-                queryCategories.data &&
-                queryCategories.data.data &&
-                queryCategories.data?.data.map((item: any) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })
-              }
+              options={categories?.map((item: any) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              })}
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-              options={
-                queryPublishers &&
-                queryPublishers.data &&
-                queryPublishers.data.data &&
-                queryPublishers.data?.data.map((item: any) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })
-              }
+              options={publishers.map((item: any) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              })}
             />
           </Form.Item>
 

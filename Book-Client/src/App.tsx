@@ -33,6 +33,7 @@ function App() {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<HomePage />} />
               <Route path="/books" element={<BooksPage />} />
+              <Route path="/books/filter" element={<BooksPage />} />
               <Route path="/books/list" element={<BooksPage />} />
               <Route path="booksdetail/:id" element={<BooksDetailsPage />} />
             </Route>
