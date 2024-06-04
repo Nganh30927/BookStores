@@ -474,7 +474,7 @@ const BooksPage = () => {
         }}
       ></div>
 
-      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data} scroll={{ x: 1500 }} />
+      <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={queryBooks.data?.data.books} scroll={{ x: 1500 }} />
 
       {/* begin Edit Modal */}
       <Modal width={960} title="Edit Product" okText="Update Product" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
