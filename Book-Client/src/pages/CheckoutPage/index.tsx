@@ -32,7 +32,9 @@ const CheckoutPage = () => {
 
   return (
     <div className="container p-12 mx-auto">
-      {error ? <div className="p-5 text-red-500 bg-red-100">{error}</div> : null}
+      {
+      error ? <div className="p-5 mb-3 text-red-500 bg-red-100">{error}</div> : null
+      }
       <div className="flex flex-col w-full px-0 mx-auto lg:flex-row">
         <div className="flex flex-col md:w-full">
           <h2 className="mb-4 font-bold md:text-xl text-heading ">Shipping Information</h2>
@@ -42,7 +44,7 @@ const CheckoutPage = () => {
                 <div className="w-full lg:w-1/2">
                   <label className="block mb-3 text-sm font-semibold text-gray-500">Name</label>
                   <input
-                    {...register('name', { required: true, minLength: 2, maxLength: 50 })}
+                    {...register('name', { required: true, minLength: 8, maxLength: 50 })}
                     name="name"
                     type="text"
                     placeholder="Name"
@@ -57,7 +59,7 @@ const CheckoutPage = () => {
                 <div className="w-full lg:w-1/2 ">
                   <label className="block mb-3 text-sm font-semibold text-gray-500">Phone number</label>
                   <input
-                    {...register('contact', { required: true })}
+                    {...register('contact', { required: true, maxLength: 10 })}
                     name="contact"
                     type="text"
                     placeholder="Phone number"
@@ -89,11 +91,16 @@ const CheckoutPage = () => {
                 <div className="w-full lg:w-1/2 ">
                 <label className="block mb-3 text-sm font-semibold text-gray-500"> Address</label>
                 <textarea
-                  {...register('description')}
+                  {...register('shippingaddress')}
                   className="flex items-center w-full px-4 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-600"
                   rows={2}
                   placeholder="Shipping Address"
-                ></textarea>
+                />
+                {errors.shippingaddress?.type === 'required' && (
+                    <p className="text-red-500" role="alert">
+                      Shipping address is required
+                    </p>
+                  )}
                 </div>
               </div>
               
@@ -110,7 +117,7 @@ const CheckoutPage = () => {
               <h2 className="mt-8 font-bold md:text-xl text-heading ">Payment methods</h2>
               <div className="mt-4 flex justify-between">
                 <div className="w-full lg:w-1/2 flex items-center gap-x-4">
-                  <input {...register('paymenttype', { required: true })} className="h-5 w-5" id="paymentCash" type="radio" name="paymentType" value="CASH" />
+                  <input {...register('paymenttype', { required: true })} className="h-5 w-5" id="paymentCash" type="radio" name="paymenttype" value="CASH" />
                   <label htmlFor="paymentCash">Cash</label>
                 </div>
 
@@ -120,8 +127,8 @@ const CheckoutPage = () => {
                     className="h-5 w-5"
                     id="paymentCredit"
                     type="radio"
-                    name="paymentType"
-                    value="CREDIT CARD"
+                    name="paymenttype"
+                    value="CREDIT"
                   />
                   <label htmlFor="paymentCredit">Credit Card</label>
                 </div>
@@ -156,8 +163,8 @@ const CheckoutPage = () => {
                 {items.map((item) => {
                   return (
                     <div className="flex space-x-4">
-                      <div className="w-28">
-                        <img src={item.imageURL} alt={item.name} className="w-full" />
+                      <div className="w-10">
+                        <img src={`http://localhost:9000` + `${item.imageURL}`} alt={item.name} className="w-full" />
                       </div>
                       <div className="flex-1">
                         <h2 className="text-xl">{item.name}</h2>
@@ -178,13 +185,13 @@ const CheckoutPage = () => {
               Subtotal<span className="ml-2">${total}</span>
             </div>
             <div className="flex items-center justify-end w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 text-heading last:border-b-0 last:text-base last:pb-0">
-              Shipping Tax<span className="ml-2">+ $10</span>
+              Shipping Tax<span className="ml-2">+ </span>
             </div>
             <div className="flex items-center justify-end w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 text-heading last:border-b-0 last:text-base last:pb-0">
-              Discount<span className="ml-2">- $0</span>
+              Discount<span className="ml-2">-</span>
             </div>
-            <div className="flex items-center justify-end w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 text-heading last:border-b-0 last:text-base last:pb-0">
-              Total<span className="ml-2"></span>
+            <div className="flex items-center justify-end w-full py-4 text-lg text-red-500 font-semibold border-b border-gray-300 lg:py-5 text-heading last:border-b-0 last:text-lg last:pb-0">
+              Total<span className="ml-2">${total}</span>
             </div>
           </div>
         </div>

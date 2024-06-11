@@ -8,8 +8,9 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
-  imageURL: string;
-  
+  imageURL?: string;
+  discount: number;
+  author?: string;
 }
 
 interface CartStore {

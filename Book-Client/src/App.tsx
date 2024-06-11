@@ -19,6 +19,7 @@ import SignUpPage from './pages/SignUpPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BooksPage from './pages/BooksPage';
 import BooksDetailsPage from './pages/BooksDetailsPage';
+import ContactPage from './pages/ContactPage';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -34,8 +35,9 @@ function App() {
               <Route index element={<HomePage />} />
               <Route path="/books" element={<BooksPage />} />
               <Route path="/books/filter" element={<BooksPage />} />
-              <Route path="/books/list" element={<BooksPage />} />
+              <Route path="/books/search" element={<BooksPage />} />
               <Route path="booksdetail/:id" element={<BooksDetailsPage />} />
+              <Route path="/contact" element={<ContactPage/>}/>
             </Route>
 
             {/* OnlyHeaderLayout */}

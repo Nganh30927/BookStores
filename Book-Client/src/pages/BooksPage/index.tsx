@@ -11,6 +11,7 @@ import MobileFilter from '../../components/MobileFillter';
 import { RiShoppingCartLine } from 'react-icons/ri';
 
 type FiltersType = {
+  keyword?: string
   categoryId?: number;
   minPrice?: number;
   maxPrice?: number;

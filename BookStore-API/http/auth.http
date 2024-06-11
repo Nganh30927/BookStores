@@ -12,7 +12,7 @@ content-type: application/json
 #Get all User
 GET  http://localhost:9000/auth/profile HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTU0NjI2MTUsImV4cCI6MTcxNjc1ODYxNX0.1hwrImPnrTgUpTpVFpGmYG3KudidRBcwNZM6GO7UshI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTgwMjE3MDYsImV4cCI6MTcxOTMxNzcwNn0.AUY1h77rBQwFdlhJi8tOFcriBNioiJIfGnKMSLeMqeI
 
 ###
 GET http://localhost:9000/auth/refresh-token HTTP/1.1

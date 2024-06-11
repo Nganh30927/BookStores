@@ -9,7 +9,7 @@ const UserInfo = () => {
       {
         user ? (
           <>
-            <strong>{user.firstName}</strong>
+            <strong>{user.name}</strong>
             <span onClick={logout}>Đăng xuất</span>
           </>
         ): (

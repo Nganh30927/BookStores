@@ -5,16 +5,30 @@ import { Link } from 'react-router-dom';
 import { FaCheck, FaAngleDown, FaRegUser, FaRegHeart, FaAlignJustify, FaComputer } from 'react-icons/fa6';
 import { IoBagCheckOutline } from 'react-icons/io5';
 import { IoCloseSharp } from 'react-icons/io5';
-import { CiMobile1, CiDesktopMouse1, CiSearch } from 'react-icons/ci';
-import { PiTelevision } from 'react-icons/pi';
-import { FaFireAlt } from 'react-icons/fa';
+import axios from 'axios';
+import { CiSearch } from 'react-icons/ci';
+import { RiLoginCircleLine, RiLogoutCircleLine, RiShieldUserLine, RiProfileLine } from 'react-icons/ri';
 import { useCartStore } from '../../../hooks/useCartStore';
 import useAuth from '../../../hooks/useAuth';
-import { IoIosTabletPortrait, IoMdLaptop } from 'react-icons/io';
 import HeaderCategory from '../../Navbar/HeaderCategory';
 import MobileMenu from '../../Navbar/MobileMenu';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import HomeSearch from '../../Search/HomePageSearch';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import TabletSearch from '../../Search/TabletSearch';
+import MobileSearch from '../../Search/MobileSearch';
+
+const queryClient = new QueryClient();
+
+interface DataType {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+  discount: number;
+  imageURL?: string;
+}
 const Header = () => {
   const [isDropdownLoginActive, setIsDropdownLoginActive] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -33,7 +47,7 @@ const Header = () => {
   console.log('cid:', cid);
   const int_cid = cid ? parseInt(cid) : 0;
 
-  // const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const { items, total, itemCount, removeItem, decreaseQuantity, increaseQuantity } = useCartStore();
 
   const handleMenuClick = (menu: string) => {
@@ -61,6 +75,8 @@ const Header = () => {
     e.preventDefault();
     setShowSearchResult(!showSearchResult);
   };
+
+
 
   return (
     <header>
@@ -101,61 +117,9 @@ const Header = () => {
               <h1>FASHA.COM</h1>
             </div>
             <div className={`col-span-6 relative ms-20 2xl:ms-10 lg:ms-10 ${styles.search}`}>
-              <form onClick={handleSearchButtonClick} className="form" action="" method="get">
-                <input type="search" placeholder="Search products..." />
-                <button type="submit">
-                  <CiSearch />
-                </button>
-              </form>
-              {/* {showSearchResult && (
-                <div className={`absolute ${styles.search_result}`}>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong>$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong>$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong className="text-sm font-bold">$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              )} */}
+            <QueryClientProvider client={queryClient}>
+              <HomeSearch />
+            </QueryClientProvider>
             </div>
             <div className={`col-span-3 ${styles.icon}`}>
               <div className="icon_action flex justify-end">
@@ -164,34 +128,66 @@ const Header = () => {
                     <FaRegUser className="text-xl" />
                   </a>
                   <div className={`${styles.accountDropdown} ${isDropdownLoginActive ? styles.active : ''}`}>
-                    <div className={styles.account_wrap}>
-                      <div className={styles.account_inner}>
-                        <div className={`flex justify-between mb-4 ${styles.account_login_header}`}>
-                          <span className="text-lg">Sign in</span>
-                          <span>
-                            <a href="#">Create an Account</a>
-                          </span>
-                        </div>
-                        <form className={`mb-2 ${styles.accont_form_login}`}>
-                          <p className="mb-5">
-                            <label className="flex text-base">
-                              Email
-                              <span className="px-1">*</span>
-                            </label>
-                            <input name="Email" type="text" required placeholder="Email" />
-                          </p>
-                          <p className="mb-5">
-                            <label className="flex text-base">
-                              Password
-                              <span className="px-1">*</span>
-                            </label>
-                            <input name="Password" type="text" required placeholder="Password" />
-                          </p>
-                          <button type="submit">Login</button>
-                        </form>
-                        <div className={styles.forget_password_account}>
-                          <a href="">Forget your password?</a>
-                        </div>
+                    <div className="group-hover:block absolute top-full -left-52 px-2 pt-10 mt-4 bg-white border border-gray-100 min-w-max z-50">
+                      <div className="px-3 pb-2 border-b border-blueGray-800">
+                        {!isAuthenticated && (
+                          <>
+                            <Link className="group relative flex justify-center p-2 hover:bg-gray-200 transition duration-200" to={'/login'}>
+                              <div className="mr-5 text-xl mt-0.5">
+                                <RiLoginCircleLine />
+                              </div>
+                              <div className="mr-24">
+                                <span className="block font-bold text-gray-600" data-config-id="auto-txt-5-1">
+                                  Đăng nhập
+                                </span>
+                              </div>
+                            </Link>
+                            <a className="group relative flex p-2 hover:bg-gray-200 transition duration-200" href="#">
+                              <div className="mr-5 text-xl mt-0.5">
+                                <RiShieldUserLine />
+                              </div>
+                              <div className="mr-24">
+                                <span className="block font-bold text-gray-600" data-config-id="auto-txt-7-1">
+                                  Đăng ký
+                                </span>
+                              </div>
+                            </a>
+                          </>
+                        )}
+                        {isAuthenticated && (
+                          <>
+                            <span className="group relative flex p-2 hover:bg-gray-200 transition duration-200">
+                              <div className="mr-5 text-xl mt-0.5">
+                                <RiShieldUserLine />
+                              </div>
+                              <div className="mr-24">
+                                <span className="block font-bold text-red-600" data-config-id="auto-txt-7-1">
+                                  {user?.name}
+                                </span>
+                              </div>
+                            </span>
+                            <Link className="group relative flex p-2 hover:bg-gray-200 transition duration-200" to={''}>
+                              <div className="mr-5 text-xl mt-0.5">
+                                <RiProfileLine />
+                              </div>
+                              <div className="mr-24">
+                                <span className="block font-bold text-gray-600" data-config-id="auto-txt-9-1">
+                                  Hồ sơ người dùng
+                                </span>
+                              </div>
+                            </Link>
+                            <a className="group relative flex p-2 hover:bg-gray-200 transition duration-200 cursor-pointer" onClick={logout}>
+                              <div className="mr-5 text-xl mt-0.5">
+                                <RiLogoutCircleLine />
+                              </div>
+                              <div className="mr-24">
+                                <span className="block font-bold text-gray-600" data-config-id="auto-txt-9-1">
+                                  Đăng xuất
+                                </span>
+                              </div>
+                            </a>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -253,13 +249,13 @@ const Header = () => {
                     <Link to="/">Home</Link>
                   </li>
                   <li className={`px-5 font-bold ${activeIndexNavigation === 1 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(1)}>
-                    <Link to="/Shop">Shop</Link>
+                    <Link to="/books">Shop</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 2 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(2)}>
                     <Link to="/Blog">Blog</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 3 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(3)}>
-                    <Link to="/Contact">Contact</Link>
+                    <Link to="/contact">Contact</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 4 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(4)}>
                     <Link to="/About">About</Link>
@@ -276,61 +272,9 @@ const Header = () => {
               <h2>FASHA.COM</h2>
             </div>
             <div className={`title col-span-8  ${styles.search}`}>
-              <form onClick={handleSearchButtonClick} className="form" action="" method="get">
-                <input type="search" placeholder="Search products..." />
-                <button type="submit">
-                  <CiSearch />
-                </button>
-              </form>
-              {/* {showSearchResult && (
-                <div className={`absolute ${styles.search_result}`}>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong>$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong>$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#">
-                    <div className={`flex ${styles.product_item}`}>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={VieNamFlag}
-                        alt=""
-                      />
-                      <div className={styles.product_content}>
-                        <h3 className="text-sm font-normal">
-                          Titlezxccccccccccccccccccccccccccc
-                        </h3>
-                        <strong className="text-sm font-bold">$123.123</strong>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              )} */}
+            <QueryClientProvider client={queryClient}>
+              <TabletSearch/>
+            </QueryClientProvider>
             </div>
           </div>
         </div>
@@ -372,10 +316,10 @@ const Header = () => {
                         <Link to="/Blog">Blog</Link>
                       </li>
                       <li>
-                        <Link to="/Contact">Contact</Link>
+                        <Link to="/contact">Contact</Link>
                       </li>
                       <li>
-                        <Link to="/About">About</Link>
+                        <Link to="/about">About</Link>
                       </li>
                     </ul>
                   </div>
@@ -386,7 +330,12 @@ const Header = () => {
               </Drawer>
             </div>
             <div className="ps-16">
-              <div className="logo">{/* <Link to="/"><img src={Logo} alt="" /></Link> */}</div>
+              <div className="logo">{/* <Link to="/"><img src={Logo} alt="" /></Link> */} <h2>LOGO!</h2> </div>
+            </div>
+            <div className='-mr-28'>
+            <QueryClientProvider client={queryClient}>
+              <MobileSearch />
+            </QueryClientProvider>
             </div>
             <div>
               <div className={` relative ${styles.site_header_cart_tablet}`}>
@@ -403,15 +352,20 @@ const Header = () => {
                       </a>
                     </div>
                     <>
-                      {
-                     itemCount === 0 ? (
-                      <div className='text-center  h-96 mt-5'>
-                        <span><img src="../../../../public/images/empty-cart.png" alt="" /></span>
-                        <span><h3 className='text-xl text-gray-600 font-bold'>Chưa có sản phẩm nào trong giỏ hàng</h3></span>
-                        <Link to={'/products'}>
-                          <button className='text-white p-2 rounded-md mt-4 bg-red-600 font-semibold hover:bg-red-400' type='button'>VIEW PRODUCTS</button>
-                        </Link>
-                      </div>
+                      {itemCount === 0 ? (
+                        <div className="text-center  h-96 mt-5">
+                          <span>
+                            <img src="../../../../public/images/empty-cart.png" alt="" />
+                          </span>
+                          <span>
+                            <h3 className="text-xl text-gray-600 font-bold">Chưa có sản phẩm nào trong giỏ hàng</h3>
+                          </span>
+                          <Link to={'/products'}>
+                            <button className="text-white p-2 rounded-md mt-4 bg-red-600 font-semibold hover:bg-red-400" type="button">
+                              VIEW PRODUCTS
+                            </button>
+                          </Link>
+                        </div>
                       ) : (
                         <>
                           <div className={styles.product}>
@@ -437,7 +391,7 @@ const Header = () => {
                                             {item.name}
                                           </h6>
                                           <span className="block text-sm font-bold text-red-600 mt-2" data-config-id="auto-txt-3-3">
-                                          {item.price} đ
+                                            {item.price} đ
                                           </span>
                                         </div>
                                         <div className="flex items-end justify-between">
@@ -512,10 +466,10 @@ const Header = () => {
                               <span className={styles.total_price}>{total}</span>
                             </div>
                             <div className={styles.view_cart}>
-                              <a href="#">View cart</a>
+                              <Link to={'/cart'}>View cart</Link>
                             </div>
                             <div className={styles.checkout}>
-                              <a href="#">Checkout</a>
+                              <Link to={'/checkout'}>Checkout</Link>
                             </div>
                           </div>
                         </>

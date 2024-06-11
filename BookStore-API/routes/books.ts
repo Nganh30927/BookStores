@@ -31,7 +31,7 @@ const repository = AppDataSource.getRepository(Book);
 router.get('/', async (req: Request, res: Response, next: any) => {
   try {
     const { minPrice, maxPrice, categoryId } = req.query;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 6 //  giới hạn từ query parameter
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 100 //  giới hạn từ query parameter
     const page = req.query.page ? parseInt(req.query.page as string) : 1; // n số lượng bản ghi cần bỏ qua từ query parameter
 
     const query = repository.createQueryBuilder('book')
@@ -203,46 +203,32 @@ router.post('/', async (req: Request, res: Response, next: any) => {
   }
 });
 
-/* PATCH book */
-router.patch('/:id', async (req: Request, res: Response, next: any) => {
-  try {
-    const book = await repository.findOneBy({ id: parseInt(req.params.id) });
-    if (!book) {
-      return res.status(404).json({ error: 'Not found' });
-    }
 
-    Object.assign(book, req.body);
 
-    await repository.save(book);
+// Hiển thị danh sách sản phẩm có discount >=
+// router.get('/hotsales/random', async (req: Request, res: Response, next: any) => {
+//   try {
+//     const limit = req.query.limit ? parseInt(req.query.limit as string) : 3; // số lượng sản phẩm cần lấy
 
-    const updatedBook = await repository
-      .createQueryBuilder('b')
-      .leftJoinAndSelect('b.category', 'c')
-      .where('b.id = :id', { id: parseInt(req.params.id) })
-      .getOne();
-    res.json(updatedBook);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+//     const query = repository.createQueryBuilder('book')
+//   .leftJoinAndSelect('book.category', 'category')
+//   .leftJoinAndSelect('book.publisher', 'publisher')
+//   .where('book.discount >= :minDiscount AND book.discount <= :maxDiscount', { minDiscount: 10, maxDiscount: 40 })
+  
+//   .take(limit); // lấy 'limit' sản phẩm
 
-/* DELETE book */
-router.delete('/:id', async (req: Request, res: Response, next: any) => {
-  try {
-    const book = await repository.findOneBy({ id: parseInt(req.params.id) });
-    if (!book) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-    await repository.delete({
-      id: book.id,
-    });
+// const books = await query.getMany();
 
-    res.status(200).send();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// if (books.length === 0) {
+//   res.status(204).send();
+// } else {
+//   res.json(books);
+// }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 
 export default router;

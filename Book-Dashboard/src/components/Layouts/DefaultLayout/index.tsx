@@ -103,7 +103,7 @@ const DefaultLayout = () => {
               }}
             />
             <Space>
-              {/* <Avatar src={<img src={user?.photo} alt="avatar" />} /> */}
+              <Avatar src={<img src='../../../../public/images/image-yellow.png' alt="avatar" />} />
               <strong>{user?.name}</strong>
               <Button
                 type="primary"

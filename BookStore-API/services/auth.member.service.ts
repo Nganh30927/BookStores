@@ -54,8 +54,13 @@ const getProfile = async (id: number) => {
 
   const member = await repository
     .createQueryBuilder('member')
-    .select(['member.id', 'member.email' /* other fields except password */])
+    // .select(['member.id', 'member.email' /* other fields except password */])
     .where('member.id = :id', { id })
+    .select(["member.id",
+      "member.email",
+       "member.name",
+       "member.contact",
+       "member.address",])
     .getOne();
 
   return member;

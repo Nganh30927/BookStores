@@ -5,7 +5,7 @@ import config from '../constants/config';
 interface User {
   id: number;
   email: string;
-  name: string
+  name: string;
   phonenumber: number;
   position: string;
   address: string;

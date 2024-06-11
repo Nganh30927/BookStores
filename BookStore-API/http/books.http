@@ -1,5 +1,8 @@
 ###
 GET http://localhost:9000/books
+
+###
+GET http://localhost:9000/books/hotsales/random
 ###
 
 GET http://localhost:9000/books?categoryId=1010
