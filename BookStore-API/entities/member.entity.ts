@@ -20,13 +20,13 @@ export class Member {
   address: string;
 
   @IsNotEmpty()
-  @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others'] })
+  @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others']})
   gender: string;
 
   @MaxLength(10)
   @IsNotEmpty()
-  @Column({ name: 'Contact', type: 'nvarchar', unique: true, length: 10 })
-  contact: number;
+  @Column({ name: 'Contact', type: 'varchar', unique: true, length: 10 })
+  contact: string;
 
   @MinLength(8)
   @Column({name: 'Password', type: 'nvarchar', nullable: true})

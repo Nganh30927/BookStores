@@ -332,7 +332,7 @@ const Header = () => {
             <div className="ps-16">
               <div className="logo">{/* <Link to="/"><img src={Logo} alt="" /></Link> */} <h2>LOGO!</h2> </div>
             </div>
-            <div className='-mr-28'>
+            <div className='-mr-28 block lg:hidden md:hidden'>
             <QueryClientProvider client={queryClient}>
               <MobileSearch />
             </QueryClientProvider>
@@ -390,9 +390,14 @@ const Header = () => {
                                           >
                                             {item.name}
                                           </h6>
-                                          <span className="block text-sm font-bold text-red-600 mt-2" data-config-id="auto-txt-3-3">
-                                            {item.price} đ
+                                         <div className='flex gap-3'>
+                                         <span className="block text-sm font-bold text-red-600  mt-2" data-config-id="auto-txt-3-3">
+                                            {item.price * (1 - (item.discount) / 100)} đ
                                           </span>
+                                         <del className="block text-sm font-bold  mt-2" data-config-id="auto-txt-3-3">
+                                            {item.price} đ
+                                          </del>
+                                         </div>
                                         </div>
                                         <div className="flex items-end justify-between">
                                           <div className="inline-flex px-2 font-bold text-gray-400 border border-blueGray-800 bg-slate-700">
@@ -463,7 +468,7 @@ const Header = () => {
                           <div className={styles.bottom_cart}>
                             <div className={`flex justify-between px-2 ${styles.subtotal}`}>
                               <strong className="text-lg font-medium">SUBTOTAL:</strong>
-                              <span className={styles.total_price}>{total}</span>
+                              <span className={styles.total_price}>{total} đ</span>
                             </div>
                             <div className={styles.view_cart}>
                               <Link to={'/cart'}>View cart</Link>

@@ -59,20 +59,37 @@ const BooksDetailsPage = () => {
     data: book,
     isLoading,
     isError,
-    error,
+    error
   } = useQuery<IBooks, Error>({
     queryKey: ['book_details', id], // include id in the query key
     queryFn: () => getBooks(id), // pass id to getProduct
     onSuccess: (data) => {
       // Thành công thì trả lại data
 
-      console.log('getbooksId', data?.data);
+      console.log('getbooksId', data?.data.data);
     },
     onError: (error) => {
       console.log(error);
     },
   });
-  console.log('book', book);
+
+  // Hàm fetch related products
+  const getRelatedBooks = (categoryId: number, limit = 4): Promise<IBooks[]> => {
+    return axios.get(`http://localhost:9000/books?categoryId=${categoryId}&limit=${limit}`);
+  };
+
+  // Queries
+  const queryRelatedBooks = useQuery<IBooks[], Error>({
+    queryKey: ['related_books', book?.data?.data.categoryId ?? 0], // include categoryId and publisherId in the query key
+    queryFn: () => getRelatedBooks(book?.data?.data.categoryId ?? 0), // pass categoryId and publisherId to getRelatedBooks
+    onSuccess: (data) => {
+      // Thành công thì trả lại data
+      console.log('getRelatedBooks', data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const { addItem, items, itemCount, increaseQuantity, decreaseQuantity } = useCartStore();
   //========================================//
@@ -127,7 +144,10 @@ const BooksDetailsPage = () => {
                     </div>
                     <div className="block  mb-6" data-config-id="auto-txt-2-3">
                       <span className="text-red-600 text-xl font-semibold mr-1">
-                        {Number(book?.data?.data.price) * (1 - Number(book?.data?.data.discount) / 100)} đ
+                        {book?.data?.data.price && book?.data?.data.discount
+                          ? Number(book.data.data.price * (1 - book.data.data.discount / 100)).toFixed(0)
+                          : 0}{' '}
+                        đ
                       </span>{' '}
                       <del className="text-lg mr-1">{book?.data?.data.price} đ</del>
                       <span className="py-1 px-2 bg-red-600 text-white rounded-lg font-medium">{`-${book?.data?.data.discount}%`}</span>
@@ -137,32 +157,40 @@ const BooksDetailsPage = () => {
                       <span className="block mr-auto font-bold " data-config-id="auto-txt-4-3">
                         Quantity
                       </span>
-                      {/*                      
-                          <div className="inline-flex p-1 mb-1  font-bold text-gray-400 border border-gray-600 bg-slate-800">
-                            <button onClick={() => {
-                              
-                              // decreaseQuantity();
-                            }}
-                             className="inline-block p-1">
-                              <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-8-3">
-                                <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            </button>
-                            <input
-                              className="w-12 text-sm font-bold text-center bg-transparent outline-none"
-                              type="text"
-                             value={'1'}
-                              data-config-id="auto-input-8-3"
-                            />
-                            <button onClick={() => {
-                              // increaseQuantity();
-                            }}
-                             className="inline-block p-1">
-                              <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-9-3">
-                                <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            </button>
-                          </div> */}
+
+                  {/* <>
+                  {
+                    items.map((item) => {
+                      return(
+                        <div className="inline-flex p-1 mb-1  font-bold text-gray-400 border border-gray-600 bg-slate-800">
+                        <button onClick={() => {
+                          
+                          decreaseQuantity(item.id);
+                        }}
+                         className="inline-block p-1">
+                          <svg width={8} height={2} viewBox="0 0 8 2" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-8-3">
+                            <path d="M7 1H1" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <input
+                          className="w-12 text-sm font-bold text-center bg-transparent outline-none"
+                          type="text"
+                         value={item.quantity}
+                          data-config-id="auto-input-8-3"
+                        />
+                        <button onClick={() => {
+                          increaseQuantity(item.id);
+                        }}
+                         className="inline-block p-1">
+                          <svg width={8} height={8} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg" data-config-id="auto-svg-9-3">
+                            <path d="M4 1V4M4 4V7M4 4H7M4 4L1 4" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </div>
+                      )
+                    })
+                   }
+                  </> */}
                     </div>
                     <a
                       onClick={() => {
@@ -175,6 +203,7 @@ const BooksDetailsPage = () => {
                           name: item.name,
                           quantity: 1,
                           imageURL: item.imageURL,
+                          discount: item.discount,
                         });
                       }}
                       className="relative group block w-full h-12 mb-4 px-8 py-3 text-center font-bold text-yellow-50 bg-red-800 overflow-hidden"
@@ -243,110 +272,41 @@ const BooksDetailsPage = () => {
                     },
                   }}
                 >
-                  <SwiperSlide>
-                    <div className="w-full  px-4 mb-8 border-gray-200 border-2 py-2">
-                      <a className="group block relative" href="#">
-                        <span
-                          className="absolute top-0 left-0 m-4 inline-block px-2 py-px text-xs font-bold bg-gradient-to-r from-yellow-500 via-green-300 to-blue-500 border border-black rounded-full"
-                          data-config-id="auto-txt-5-4"
-                        >
-                          New
-                        </span>
-                        <img
-                          className="block mb-5 w-full h-80 object-cover"
-                          src="https://cdn0.fahasa.com/media/catalog/product/8/9/8935210305640.jpg"
-                          alt=""
-                          data-config-id="auto-img-2-4"
-                        />
-                        <div>
-                          <h6 className="inline-block font-bold  mb-1" data-config-id="auto-txt-6-4">
-                            Pixel 7 Pro
-                          </h6>
-                          <span className="block text-sm font-medium text-gray-500" data-config-id="auto-txt-7-4">
-                            From $349.99
-                          </span>
-                        </div>
-                      </a>
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="w-full  px-4 mb-8 border-gray-200 border-2 py-2">
-                      <a className="group block relative" href="#">
-                        <span
-                          className="absolute top-0 left-0 m-4 inline-block px-2 py-px text-xs font-bold bg-gradient-to-r from-yellow-500 via-green-300 to-blue-500 border border-black rounded-full"
-                          data-config-id="auto-txt-5-4"
-                        >
-                          New
-                        </span>
-                        <img
-                          className="block mb-5 w-full h-80 object-cover"
-                          src="https://cdn0.fahasa.com/media/catalog/product/8/9/8935210305640.jpg"
-                          alt=""
-                          data-config-id="auto-img-2-4"
-                        />
-                        <div>
-                          <h6 className="inline-block font-bold  mb-1" data-config-id="auto-txt-6-4">
-                            Pixel 7 Pro
-                          </h6>
-                          <span className="block text-sm font-medium text-gray-500" data-config-id="auto-txt-7-4">
-                            From $349.99
-                          </span>
-                        </div>
-                      </a>
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="w-full  px-4 mb-8 border-gray-200 border-2 py-2">
-                      <a className="group block relative" href="#">
-                        <span
-                          className="absolute top-0 left-0 m-4 inline-block px-2 py-px text-xs font-bold bg-gradient-to-r from-yellow-500 via-green-300 to-blue-500 border border-black rounded-full"
-                          data-config-id="auto-txt-5-4"
-                        >
-                          New
-                        </span>
-                        <img
-                          className="block mb-5 w-full h-80 object-cover"
-                          src="https://cdn0.fahasa.com/media/catalog/product/8/9/8935210305640.jpg"
-                          alt=""
-                          data-config-id="auto-img-2-4"
-                        />
-                        <div>
-                          <h6 className="inline-block font-bold  mb-1" data-config-id="auto-txt-6-4">
-                            Pixel 7 Pro
-                          </h6>
-                          <span className="block text-sm font-medium text-gray-500" data-config-id="auto-txt-7-4">
-                            From $349.99
-                          </span>
-                        </div>
-                      </a>
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="w-full  px-4 mb-8 border-gray-200 border-2 py-2">
-                      <a className="group block relative" href="#">
-                        <span
-                          className="absolute top-0 left-0 m-4 inline-block px-2 py-px text-xs font-bold bg-gradient-to-r from-yellow-500 via-green-300 to-blue-500 border border-black rounded-full"
-                          data-config-id="auto-txt-5-4"
-                        >
-                          New
-                        </span>
-                        <img
-                          className="block mb-5 w-full h-80 object-cover"
-                          src="https://cdn0.fahasa.com/media/catalog/product/8/9/8935210305640.jpg"
-                          alt=""
-                          data-config-id="auto-img-2-4"
-                        />
-                        <div>
-                          <h6 className="inline-block font-bold  mb-1" data-config-id="auto-txt-6-4">
-                            Pixel 7 Pro
-                          </h6>
-                          <span className="block text-sm font-medium text-gray-500" data-config-id="auto-txt-7-4">
-                            From $349.99
-                          </span>
-                        </div>
-                      </a>
-                    </div>
-                  </SwiperSlide>
+                  {queryRelatedBooks.data && queryRelatedBooks.data?.data
+                    ? queryRelatedBooks.data?.data.books.map((b: any) => {
+                        return (
+                          <SwiperSlide>
+                            <div className="w-full  px-4 mb-8 border-gray-200 border-2 py-2">
+                              <a className="group block relative" href="#">
+                                <span
+                                  className="absolute top-0 right-0 inline-block px-2 py-px text-xs font-bold bg-gradient-to-r from-yellow-500 via-green-300 to-blue-500 border border-black rounded-full"
+                                  data-config-id="auto-txt-5-4"
+                                >
+                                  New
+                                </span>
+                                <img
+                                  className="block mb-5 w-full h-80 object-contain"
+                                  src={`http://localhost:9000` + `${b.imageURL}`}
+                                  alt=""
+                                  data-config-id="auto-img-2-4"
+                                />
+                                <div>
+                                  <h6 className="inline-block font-bold  mb-1 overflow-hidden whitespace-nowrap overflow-ellipsis w-52" data-config-id="auto-txt-6-4">
+                                    {b.name}
+                                  </h6>
+                                  <div>
+                                    <span className="font-bold text-red-600" data-config-id="auto-txt-1-9">
+                                      {Number(b.price * (1 - b.discount / 100)).toFixed(0)} đ
+                                    </span>
+                                    <del className="ms-2 font-semibold text-black">{b.price}</del>
+                                  </div>
+                                </div>
+                              </a>
+                            </div>
+                          </SwiperSlide>
+                        );
+                      })
+                    : null}
                 </Swiper>
               </div>
               {/* end */}

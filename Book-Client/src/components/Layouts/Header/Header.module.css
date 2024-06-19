@@ -363,13 +363,13 @@
       border: 1px solid #E4E4E4;
       border-radius: 0 0 3px 3px;
       margin-top: 9px;
-    background-color: gray
+    background-color: whitesmoke
   }
   .header .bottom_header>div .category .menu_category>ul>li{
     border-bottom: 1px solid #E4E4E4;
   }
   .header .bottom_header>div .category .menu_category>ul>li:hover{
-    background-color: #E4E4E4;
+    background-color: white;
   }
   .header .bottom_header>div .category .menu_category>ul>li:hover>a{
     color: black;

@@ -204,31 +204,72 @@ router.post('/', async (req: Request, res: Response, next: any) => {
 });
 
 
+/* PATCH book */
+router.patch('/:id', async (req: Request, res: Response, next: any) => {
+  try {
+    const book = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!book) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    Object.assign(book, req.body);
+    await repository.save(book);
+    const updatedBook = await repository
+      .createQueryBuilder('b')
+      .leftJoinAndSelect('b.category', 'c')
+      .where('b.id = :id', { id: parseInt(req.params.id) })
+      .getOne();
+    res.json(updatedBook);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+/* DELETE book */
+router.delete('/:id', async (req: Request, res: Response, next: any) => {
+  try {
+    const book = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!book) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    await repository.delete({
+      id: book.id,
+    });
+    res.status(200).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 // Hiển thị danh sách sản phẩm có discount >=
-// router.get('/hotsales/random', async (req: Request, res: Response, next: any) => {
-//   try {
-//     const limit = req.query.limit ? parseInt(req.query.limit as string) : 3; // số lượng sản phẩm cần lấy
+router.get('/sales/hotsales', async (req: Request, res: Response, next: any) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10; // số lượng sản phẩm cần lấy
 
-//     const query = repository.createQueryBuilder('book')
-//   .leftJoinAndSelect('book.category', 'category')
-//   .leftJoinAndSelect('book.publisher', 'publisher')
-//   .where('book.discount >= :minDiscount AND book.discount <= :maxDiscount', { minDiscount: 10, maxDiscount: 40 })
-  
-//   .take(limit); // lấy 'limit' sản phẩm
+    const books = await repository.createQueryBuilder('book')
+    .where('book.discount >= :minDiscount AND book.discount <= :maxDiscount', { minDiscount: 50, maxDiscount: 90 })
+    .orderBy('book.id', 'DESC')
+    .take(limit)
+    .getMany();
+    
 
-// const books = await query.getMany();
+    if (!books) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.status(200).json({
+      message: 'success',
+      data: books
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
-// if (books.length === 0) {
-//   res.status(204).send();
-// } else {
-//   res.json(books);
-// }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
+
+
 
 
 export default router;

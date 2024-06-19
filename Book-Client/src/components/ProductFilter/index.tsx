@@ -8,6 +8,7 @@ import axios from 'axios';
 type queryType = {
   page?: number;
   categoryId?: number;
+  [key: string]: any; 
 };
 
 type ProductFilterType = {
@@ -17,11 +18,30 @@ type ProductFilterType = {
   setCurrentPage: (page: number) => void;
 };
 
-function encodeQueryData(data: Record<string, any>) {
+function encodeQueryData(data: Record<string, any>, existingParams: queryType) {
   const ret = [];
-  for (const d in data) ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+  // Loại bỏ các tham số không mong muốn từ existingParams
+  const filteredExistingParams = { ...existingParams };
+  for (const key in data) {
+    if (filteredExistingParams.hasOwnProperty(key)) {
+      delete filteredExistingParams[key];
+    }
+  }
+  // Thêm các tham số từ existingParams đã được lọc
+  for (const d in filteredExistingParams) {
+    if (filteredExistingParams[d] !== undefined) {
+      ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(filteredExistingParams[d]));
+    }
+  }
+  // Thêm các tham số mới từ data
+  for (const d in data) {
+    if (data[d] !== undefined) {
+      ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+    }
+  }
   return ret.join('&');
 }
+
 
 const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrentPage }: ProductFilterType) => {
   const navigate = useNavigate();
@@ -95,7 +115,9 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  navigate(`/books?page=${currentPage}&maxPrice=100000`);
+                   const newParams = { ...queryString, page: currentPage, maxPrice: 100000 };
+                  const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
+                  navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
               >
@@ -106,8 +128,8 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString,page: currentPage};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=100000&maxPrice=200000`;
+                  const newParams = { ...queryString, page: currentPage, minPrice: 100000, maxPrice: 200000 };
+                  const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -119,8 +141,8 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString,page: currentPage};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=200000&maxPrice=250000`;
+                  const newParams = {...queryString,page: currentPage, minPrice: 200000, maxPrice: 250000};
+                  const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -132,8 +154,8 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString,page: currentPage};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=250000&maxPrice=300000`;
+                  const newParams = {...queryString,page: currentPage, minPrice: 250000, maxPrice: 300000};
+                  const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}
@@ -145,8 +167,8 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
               <button
                 onClick={() => {
-                  queryString = {...queryString,page: currentPage};
-                  const pageUrl = `/books?`+encodeQueryData(queryString)+`&minPrice=300000`;
+                  const newParams = {...queryString,page: currentPage, minPrice: 300000};
+                  const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
                   navigate(pageUrl);
                 }}
                 className={'hover:text-indigo-500 font-bold text-indigo-500 btn-empty btn-empty hover:text-indigo-500'}

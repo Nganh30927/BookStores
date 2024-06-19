@@ -6,7 +6,7 @@ interface User {
   id: number;
   email?: string;
   name: string;
-  contact: number;
+  contact: string;
   address: string;
 }
 
@@ -16,6 +16,7 @@ interface Auth {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ isAuthenticated: boolean; error: string }>;
+  signup: (name: string, email: string, password: string, address: string, contact: string, gender: string) => Promise<{ ok: boolean; message: string }>;
   logout: () => void;
 }
 
@@ -60,6 +61,25 @@ const useAuth = create(
           return { isAuthenticated: false, isLoading: false, error: 'Login failed' };
         }
       },
+      signup: async (name: string, email: string, password: string, address: string, contact: string, gender: string) => {
+        try {
+          set({ isLoading: true });
+          const response = await axiosClient.post(config.urlAPI + '/members', { name, email, password, address, contact, gender });
+          console.log('signup', response);
+          if (response && response.status === 200) {
+            // Đăng ký thành công, bạn có thể tự động đăng nhập người dùng tại đây nếu muốn
+            return { ok: true, message: 'success' };
+          } else {
+            set({ isLoading: false });
+            return { ok: false, message: 'Signup failed' };
+          }
+        } catch (error) {
+          console.log('signup error', error);
+          set({ isLoading: false });
+          return { ok: false, message: 'Signup failed' };
+        }
+      },
+    
       logout: () => {
         // Xóa trạng thái user và isAuthenticated
         set({ user: null, isAuthenticated: false });
@@ -67,6 +87,7 @@ const useAuth = create(
         localStorage.removeItem('refreshToken');
       },
     }),
+    
     {
       name: 'auth-storage', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used

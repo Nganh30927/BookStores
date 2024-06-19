@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import config from '../../constants/config';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../hooks/useCartStore';
 import Pagination from '../../components/Pagination';
 import ProductFilter from '../../components/ProductFilter';
@@ -20,6 +20,7 @@ type FiltersType = {
 const BooksPage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+
   const page = params.get('page');
   // const limit = params.get('limit');
 
@@ -74,7 +75,7 @@ const BooksPage = () => {
     queryKey: ['books', { int_page, limit, int_cid, int_price_min, int_price_max }],
     queryFn: () => getBooks(int_page, limit, { categoryId: int_cid, minPrice: int_price_min, maxPrice: int_price_max }),
     onSuccess: (data) => {
-      console.log('getBooks:', data?.data);
+      console.log('getBooks:', data?.data.books);
     },
     onError: (error) => {
       console.log(error);
@@ -109,38 +110,57 @@ const BooksPage = () => {
                 {queryBooks.data && queryBooks.data?.data
                   ? queryBooks.data?.data.books.map((book: any) => {
                       return (
-                        <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 ">
-                          <Link to={`/booksdetail/${book.id}`} className="block p-5 ">
+                        <div key={`queryBooks${book.id}`} className="w-full sm:w-1/2  xl:w-1/3 bg-white overflow-hidden group border border-gray-300 relative hover:border-yellow-200">
+                           <div
+                                  className="absolute top-2 right-5 flex items-center justify-center w-12 h-12 font-bold bg-sky-300 rounded-3xl z-20"
+                                  data-config-id="auto-txt-5-4"
+                                >
+                                 <span className='leading-7 text-white'> - {book.discount}%</span>
+                                </div>
+                          <Link to={`/booksdetail/${book.id}`} className="block p-5">
                             <img
-                              className="block w-full h-80 mb-8 object-contain  transition-all group-hover:scale-105"
+                              className="block w-full h-80 mb-3 object-contain  transition-all group-hover:scale-105"
                               src={`http://localhost:9000` + `${book.imageURL}`}
                               alt={book.name}
                               data-config-id="auto-img-1-9"
                             />
                             <div className="">
-                              <h6 className="font-bold text-black mt-2 mb-5" data-config-id="auto-txt-2-9">
+                              <h6 className="font-bold text-black pt-3 pb-5 overflow-hidden whitespace-nowrap overflow-ellipsis w-50" data-config-id="auto-txt-2-9">
                                 {book.name}
                               </h6>
 
                               <div className="flex justify-between items-center mb-3">
                                 <div>
-                                  <span className="font-bold text-black" data-config-id="auto-txt-1-9">
-                                    {book.price}
+                                  <span className="font-bold text-red-600" data-config-id="auto-txt-1-9">
+                                  {Number((book.price) * (1 - (book.discount) / 100)).toFixed(0)} đ
                                   </span>
-                                  <del className="ms-2 font-semibold text-red-600">{book.discount}</del>
+                                  <del className="ms-2 font-semibold text-black">{book.price}</del>
                                 </div>
-                                <div className="w-12 h-12  text-sky-500 hover:bg-sky-600 hover:text-white rounded-3xl border border-sky-500 flex items-center justify-center">
-                                  <a
+                              </div>
+                            </div>
+                          </Link>
+                            <div className='absolute right-6 bottom-5'>
+                            <div className="w-12 h-12  text-sky-500 hover:bg-sky-600 hover:text-white rounded-3xl border border-sky-500 flex items-center justify-center">
+                                  <a className='cursor-pointer'
                                     onClick={() => {
-                                      console.log('Thêm giỏ hàng ID');
+                                      console.log('Thêm giỏ hàng ID', book.id);
+                                      const item: any = queryBooks.data.data;
+
+                                      addItem({
+                                        id: item.id,
+                                        price: item.price,
+                                        name: item.name,
+                                        quantity: 1,
+                                        imageURL: item.imageURL,
+                                        discount: item.discount,
+                                      });
                                     }}
                                   >
                                     <RiShoppingCartLine />
                                   </a>
                                 </div>
-                              </div>
                             </div>
-                          </Link>
+                         
                         </div>
                       );
                     })

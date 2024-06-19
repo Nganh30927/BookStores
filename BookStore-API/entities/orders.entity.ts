@@ -1,12 +1,12 @@
 import { Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn, Check } from 'typeorm';
-import { IsNotEmpty, Max, MaxLength, max, validateOrReject } from 'class-validator';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 import { Employee } from './employee.entity';
 import { Invoice } from './invoice.entity';
 import { OrderDetail } from './orderdetails.entity';
 import { Member } from './member.entity';
 
 @Entity({ name: 'Orders' })
-//ShippedDay >= OrderDay
+// ShippedDay >= OrderDay
 @Check(`"ShippedDay" >= "OrderDay"`)
 export class Order {
   @PrimaryGeneratedColumn({ name: 'Id' })
@@ -34,13 +34,17 @@ export class Order {
   @Column({ name: 'Description', type: 'nvarchar', nullable: true })
   description?: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', nullable: true })
   employeeId: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', nullable: true })
   memberId: number;
 
-  @ManyToOne(() => Employee, (e) => e.orders)
+  @ManyToOne(() => Employee, (e) => e.orders, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
   employee: Employee;
 
   @ManyToOne(() => Member, (m) => m.orders)

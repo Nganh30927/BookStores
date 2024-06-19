@@ -10,9 +10,10 @@ content-type: application/json
 
 {
     "name": "Nguyễn Văn Quảng",
+    "email": "7quang@gmail.com",
     "address": "76 Lý Thái Tông.....",
     "gender": "Male",
-    "contact": "0945352208"
+    "contact": "0961743733"
 }
 
 ###

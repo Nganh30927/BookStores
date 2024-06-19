@@ -50,8 +50,8 @@ interface DataType {
   shippingaddress: string;
   paymenttype: string;
   description?: string;
-  employeeId: number;
-  memberId: number;
+  employeeId?: number;
+  memberId?: number;
   orderDetails: {
     orderId?: number;
     bookId: number;

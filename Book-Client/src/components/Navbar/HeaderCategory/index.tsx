@@ -5,6 +5,7 @@ import styles from '../../Layouts/Header/Header.module.css';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
+
 type queryType = {
   categoryId?: number;
 };
@@ -48,7 +49,7 @@ const HeaderCategory = ({ currentCategoryId }: ProductFilterType) => {
                 <li key={`queryCategory${item.id}`}>
                 <a
                 onClick={() => {
-                    navigate(`/books/list?categoryId=${item.id}`);
+                    navigate(`/books?categoryId=${item.id}`);
                   }}
                   className={`flex font-medium text-center px-3 py-3 ${currentCategoryId == item.id ? 'your-active-class' : 'your-inactive-class'}`}>
                   {/* <CiMobile1 className="text-lg me-4" /> */}

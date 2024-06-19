@@ -61,7 +61,7 @@ const MobileFilter = ({ queryString, currentCategoryId }: ProductFilterType) => 
               if (e.target.value === 'all') {
                 navigate(`/books`);
               } else {
-                navigate(`/books/list?categoryId=${e.target.value}`);
+                navigate(`/books?categoryId=${e.target.value}`);
               }
             }}
           >

@@ -6,15 +6,29 @@ import { IoIosArrowDropright } from 'react-icons/io';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+import { Navigation, Pagination, Mousewheel, Keyboard, FreeMode } from 'swiper/modules';
 
 import { useQuery } from '@tanstack/react-query';
 import config from '../../constants/config';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import CountDown from '../../components/UI/Countdown';
+import GetNewBookCollection from '../../components/GetNewBookCollection';
 
- import GetNewBookCollection from '../../components/GetNewBookCollection';
-
+interface Ibooks {
+  id: number;
+  name: string;
+  author: string;
+  title: string;
+  quantity: number;
+  price: number;
+  serialnumber: number;
+  description: string;
+  discount: number;
+  imageURL: string;
+  publisherId: number;
+  categoryId: number;
+}
 const HomePage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -25,23 +39,56 @@ const HomePage = () => {
 
   const [currentPage, setCurrentPage] = React.useState(int_page);
   //===========Category SmartPhone=======//
-  // const fetchBook = async (page = 1, limit = 5) => {
-  //   return axios.get(config.urlAPI + `/v1/products?page=${page}&limit=${limit}`);
-  // };
+  const fetchGetAll = async (page = 1, limit = 5) => {
+    return axios.get(config.urlAPI + `/books?page=${page}&limit=${limit}`);
+  };
 
   // Sử dụng useQuery để fetch data từ API
-  // const queryCategorySmartPhone = useQuery({
-  //   queryKey: ['products_smartphone', int_page, limit],
-  //   queryFn: () => fetchBook(int_page),
-  //   onSuccess: (data) => {
-  //     //Thành công thì trả lại data
-  //     console.log(data);
-  //   },
-  //   onError: (error) => {
-  //     console.log(error);
-  //   },
-  // });
+  const queryGetAll = useQuery({
+    queryKey: ['books', int_page, limit],
+    queryFn: () => fetchGetAll(int_page),
+    onSuccess: (data) => {
+      //Thành công thì trả lại data
+      console.log('get all', data?.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
+  const fetchManga = async (categoryId = 1013, limit = 5) => {
+    return axios.get(config.urlAPI + `/books?categoryId=${categoryId}&limit=${limit}`);
+  };
+
+  // Sử dụng useQuery để fetch data từ API
+  const queryManga = useQuery({
+    queryKey: ['books_manga'],
+    queryFn: () => fetchManga(1013, 5),
+    onSuccess: (data) => {
+      //Thành công thì trả lại data
+      console.log('get manga', data?.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const fetchYouthBooks = async (categoryId = 1011, limit = 5) => {
+    return axios.get(config.urlAPI + `/books?categoryId=${categoryId}&limit=${limit}`);
+  };
+
+  // Sử dụng useQuery để fetch data từ API
+  const queryYouthBooks = useQuery({
+    queryKey: ['books_youth'],
+    queryFn: () => fetchManga(1011, 5),
+    onSuccess: (data) => {
+      //Thành công thì trả lại data
+      console.log('get manga', data?.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   return (
     <div>
       <Helmet>
@@ -49,24 +96,18 @@ const HomePage = () => {
         <title>Home Page</title>
       </Helmet>
       {/* //========Book Slide=======// */}
-      <section
-        data-section-id="1"
-        data-share=""
-        data-category="newest-products"
-        data-component-id="4f76139a_01_awz"
-        className="  overflow-x-hidden mx-auto"
-      >
+      <section data-section-id="1" data-share="" data-category="newest-products" data-component-id="4f76139a_01_awz" className="  overflow-x-hidden mx-auto">
         <div className="mx-auto">
           <div className="">
             <div className="w-full h-full lg:mb-0">
               <div className=" w-full h-96 overflow-hidden bg-contain  bg-slate-100 border">
                 <Swiper
-                 slidesPerView={1}
-                 spaceBetween={10}
-                 pagination={{ clickable: true }}
-                 navigation={true}
-                 modules={[Navigation, Pagination]}
-                 className="mySwiper"
+                  slidesPerView={1}
+                  spaceBetween={10}
+                  pagination={{ clickable: true }}
+                  navigation={true}
+                  modules={[Navigation, Pagination]}
+                  className="mySwiper"
                 >
                   <SwiperSlide className="">
                     <img className="w-full h-full object-fill" src="../../../public/images/banner_1.jpg" alt="Slide 1" />
@@ -82,51 +123,55 @@ const HomePage = () => {
         {/* Book Category */}
       </section>
 
-      <section className="mx-auto " >
+      <section className="mx-auto ">
         <div className="flex justify-center items-center mb-10 sm:mb-16 bg-gray-200 opacity-90">
-          <div className='overflow-x-auto'>
-          <div className="flex space-x-5 md:space-x-4">
-            <div className="text-left flex items-center py-3 pl-5 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/star-icon" alt="Icon - Rated 4.5/5 by customers" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap ">Rated 4.5/5 by customers</h4>
+          <div className="overflow-x-auto">
+            <div className="flex space-x-5 md:space-x-4">
+              <div className="text-left flex items-center py-3 pl-5 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/star-icon" alt="Icon - Rated 4.5/5 by customers" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap ">Rated 4.5/5 by customers</h4>
+              </div>
+              <div className="text-left flex items-center py-3 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Buy direct and support your club" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap">Buy direct and support your</h4>
+              </div>
+              <div className="text-left flex items-center py-3 pr-5 flex-shrink-0">
+                <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
+                <h4 className="text-base md:text-lg whitespace-nowrap">Members get 10% off</h4>
+              </div>
             </div>
-            <div className="text-left flex items-center py-3 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Buy direct and support your club" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Buy direct and support your</h4>
-            </div>
-            <div className="text-left flex items-center py-3 pr-5 flex-shrink-0">
-              <img src="https://arsenal.a.bigcontent.io/v1/static/box-icon" alt="Icon - Members get 10% off" className="h-4 mr-2" />
-              <h4 className="text-base md:text-lg whitespace-nowrap">Members get 10% off</h4>
-            </div>
-          </div>
           </div>
         </div>
       </section>
 
-
-    
-      <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
-        <picture className="relative">
-          <img className="opacity-80 object-cover w-full" src="../../../public/images/image_books.jpg" alt="" />
-        </picture>
-      </section>
-
-      {/* //========New Book Collections=======// */}
-      <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24 bg-gray-300  container mx-auto">
+      <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto mb-4">
         <div className="container mx-auto px-4">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
-            <div className="flex flex-wrap mx-4 mb-3  justify-between">
+            <div className="flex flex-wrap p-3  justify-between ">
+              <div className='flex gap-10'>
               <div>
-                <h1 className="text-3xl text-green-700 font-bold mb-2" data-config-id="auto-txt-1-2">
-                  New Collections
+                <h1 className="text-3xl 0 font-bold mb-1 uppercase" data-config-id="auto-txt-1-2">
+                  Hot Sales
                 </h1>
                 <span>
-                  <div className="w-28 mb-6  border-b border-green-700 dark:border-gray-400"></div>
+                  <div className="w-28  border-b border-gray-700 "></div>
                 </span>
               </div>
-
-              <div className="flex flex-row text-green-700 font-bold mb-2 text-lg" data-config-id="auto-txt-2-2">
-                Find more {<IoIosArrowDropright size={25} />}
+              <>
+                  <CountDown/>
+              </>
+              </div>
+              <div id="addToCartComponentSlot" className="peer">
+                <div>
+                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                    <span
+                      className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
+                      aria-hidden="true"
+                      data-testid="hover"
+                    />
+                    <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex flex-wrap -mx-4">
@@ -138,14 +183,305 @@ const HomePage = () => {
 
       <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
         <picture className="relative">
+          <img className="opacity-80 object-cover w-full" src="../../../public/images/image_books.jpg" alt="" />
+        </picture>
+      </section>
+
+      <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto">
+        <div className="container mx-auto px-4">
+          <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
+            <div className="flex flex-wrap mx-4 mb-3  justify-end">
+              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+                <div>
+                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                    <span
+                      className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
+                      aria-hidden="true"
+                      data-testid="hover"
+                    />
+                    <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap -mx-4">
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                freeMode={true}
+                pagination={{
+                  clickable: true,
+                }}
+                modules={[FreeMode, Pagination]}
+                className=""
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1,
+                    spaceBetween: 0,
+                  },
+                  768: {
+                    slidesPerView: 3,
+                    spaceBetween: 0,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 0,
+                  },
+                  1280: {
+                    slidesPerView: 5,
+                    spaceBetween: 0,
+                  },
+                }}
+              >
+                {queryGetAll.data && queryGetAll.data.data
+                  ? queryGetAll.data.data.books.map((allbook: any) => (
+                      <SwiperSlide>
+                        <div className="w-full  px-4 my-4">
+                          <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
+                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                              <img
+                                className="block w-full h-72 object-contain rounded-t-xl  pt-2"
+                                src={`http://localhost:9000` + `${allbook.imageURL}`}
+                                alt={allbook.name}
+                                data-config-id="auto-img-1-2"
+                              />
+
+                              <div className="group block py-4 ms-3">
+                                <h6
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  data-config-id="auto-txt-9-2"
+                                >
+                                  {allbook.name}
+                                </h6>
+                                <div className="flex items-center mb-1">
+                                  <span className=" text-base font-bold text-red-600 mr-2" data-config-id="auto-txt-10-2">
+                                    {Number(allbook.price * (1 - allbook.discount / 100)).toFixed(0)} đ
+                                  </span>
+                                  <del className=" text-sm font-bold text-black" data-config-id="auto-txt-10-2">
+                                    {allbook.price} đ
+                                  </del>
+
+                                  <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
+                                </div>
+                              </div>
+                            </Link>
+
+                            <div className="absolute top-0 right-0 m-3 inline-block ">
+                              <span className=" text-sm text-red-500 font-bold outline outline-1 rounded bg-white p-1" data-config-id="auto-txt-11-2">
+                                NEW
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))
+                  : null}
+              </Swiper>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
+        <picture className="relative">
           <img className="opacity-80 object-cover w-full" src="../../../public/images/image_manga.jpg" alt="" />
         </picture>
+      </section>
+
+      <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto">
+        <div className="container mx-auto px-4">
+          <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
+            <div className="flex flex-wrap mx-4 mb-3  justify-end">
+              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+                <div>
+                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                    <span
+                      className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
+                      aria-hidden="true"
+                      data-testid="hover"
+                    />
+                    <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap -mx-4">
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                freeMode={true}
+                pagination={{
+                  clickable: true,
+                }}
+                modules={[FreeMode, Pagination]}
+                className=""
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1,
+                    spaceBetween: 0,
+                  },
+                  768: {
+                    slidesPerView: 3,
+                    spaceBetween: 0,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 0,
+                  },
+                  1280: {
+                    slidesPerView: 5,
+                    spaceBetween: 0,
+                  },
+                }}
+              >
+                {queryManga.data && queryManga.data.data
+                  ? queryManga.data.data.books.map((manga: any) => (
+                      <SwiperSlide>
+                        <div className="w-full  px-4 my-4">
+                          <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
+                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                              <img
+                                className="block w-full h-72 object-contain rounded-t-xl  pt-2"
+                                src={`http://localhost:9000` + `${manga.imageURL}`}
+                                alt={manga.name}
+                                data-config-id="auto-img-1-2"
+                              />
+
+                              <div className="group block py-4 ms-3">
+                                <h6
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  data-config-id="auto-txt-9-2"
+                                >
+                                  {manga.name}
+                                </h6>
+                                <div className="flex items-center mb-1">
+                                  <span className=" text-base font-bold text-red-600 mr-2" data-config-id="auto-txt-10-2">
+                                    {Number(manga.price * (1 - manga.discount / 100)).toFixed(0)} đ
+                                  </span>
+                                  <del className=" text-sm font-bold text-black" data-config-id="auto-txt-10-2">
+                                    {manga.price} đ
+                                  </del>
+
+                                  <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
+                                </div>
+                              </div>
+                            </Link>
+
+                            <div className="absolute top-0 right-0 m-3 inline-block ">
+                              <span className=" text-sm text-red-500 font-bold outline outline-1 rounded bg-white p-1" data-config-id="auto-txt-11-2">
+                                NEW
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))
+                  : null}
+              </Swiper>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section data-section-id={1} data-share="" data-category="ta-banners" data-component-id="b753d053_01_awz" className="py-8">
         <picture className="relative">
           <img className="opacity-80 object-cover w-full" src="../../../public/images/image_series_manga.jpg" alt="" />
         </picture>
+      </section>
+
+      <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto">
+        <div className="container mx-auto px-4">
+          <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
+            <div className="flex flex-wrap mx-4 mb-3  justify-end">
+              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+                <div>
+                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                    <span
+                      className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
+                      aria-hidden="true"
+                      data-testid="hover"
+                    />
+                    <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap -mx-4">
+              <Swiper
+                slidesPerView={1}
+                spaceBetween={10}
+                freeMode={true}
+                pagination={{
+                  clickable: true,
+                }}
+                modules={[FreeMode, Pagination]}
+                className=""
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1,
+                    spaceBetween: 0,
+                  },
+                  768: {
+                    slidesPerView: 3,
+                    spaceBetween: 0,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 0,
+                  },
+                  1280: {
+                    slidesPerView: 5,
+                    spaceBetween: 0,
+                  },
+                }}
+              >
+                {queryYouthBooks.data && queryYouthBooks.data.data
+                  ? queryYouthBooks.data.data.books.map((ybooks: any) => (
+                      <SwiperSlide>
+                        <div className="w-full  px-4 my-4">
+                          <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
+                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                              <img
+                                className="block w-full h-72 object-contain rounded-t-xl  pt-2"
+                                src={`http://localhost:9000` + `${ybooks.imageURL}`}
+                                alt={ybooks.name}
+                                data-config-id="auto-img-1-2"
+                              />
+
+                              <div className="group block py-4 ms-3">
+                                <h6
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  data-config-id="auto-txt-9-2"
+                                >
+                                  {ybooks.name}
+                                </h6>
+                                <div className="flex items-center mb-1">
+                                  <span className=" text-base font-bold text-red-600 mr-2" data-config-id="auto-txt-10-2">
+                                    {Number(ybooks.price * (1 - ybooks.discount / 100)).toFixed(0)} đ
+                                  </span>
+                                  <del className=" text-sm font-bold text-black" data-config-id="auto-txt-10-2">
+                                    {ybooks.price} đ
+                                  </del>
+
+                                  <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
+                                </div>
+                              </div>
+                            </Link>
+
+                            <div className="absolute top-0 right-0 m-3 inline-block ">
+                              <span className=" text-sm text-red-500 font-bold outline outline-1 rounded bg-white p-1" data-config-id="auto-txt-11-2">
+                                NEW
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))
+                  : null}
+              </Swiper>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section data-section-id={1} data-share="" data-category="features" data-component-id="4d2f33a1_01_awz" className="pt-10 bg-gray-100 container mx-auto">
@@ -252,7 +588,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
     </div>
   );
 };
