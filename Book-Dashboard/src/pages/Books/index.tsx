@@ -568,23 +568,29 @@ const BooksPage = () => {
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={categories?.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+              options={
+                categories &&
+                categories?.map((item: any) => {
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-              options={publishers?.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+              options={
+                publishers &&
+                publishers.map((item: any) => {
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
@@ -704,23 +710,29 @@ const BooksPage = () => {
 
           <Form.Item<DataType> label="Category" name="categoryId" rules={[{ required: true, message: 'Please input book Category!' }]} hasFeedback>
             <Select
-              options={categories?.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+              options={
+                categories &&
+                categories?.map((item: any) => {
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 
           <Form.Item<DataType> hasFeedback label="Publisher" name="publisherId" rules={[{ required: true, message: 'Please input book Publisher!' }]}>
             <Select
-              options={publishers.map((item: any) => {
-                return {
-                  label: item.name,
-                  value: item.id,
-                };
-              })}
+              options={
+                publishers &&
+                publishers.map((item: any) => {
+                  return {
+                    label: item.name,
+                    value: item.id,
+                  };
+                })
+              }
             />
           </Form.Item>
 

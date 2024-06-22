@@ -20,7 +20,7 @@ export class Member {
   address: string;
 
   @IsNotEmpty()
-  @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others']})
+  @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others'], nullable: true })
   gender: string;
 
   @MaxLength(10)
@@ -29,11 +29,11 @@ export class Member {
   contact: string;
 
   @MinLength(8)
-  @Column({name: 'Password', type: 'nvarchar', nullable: true})
+  @Column({ name: 'Password', type: 'nvarchar', nullable: true })
   password?: string;
 
   @IsEmail()
-  @Column({name: 'Email', type: 'nvarchar', unique: true, nullable: true})
+  @Column({ name: 'Email', type: 'nvarchar', unique: true, nullable: true })
   email?: string;
 
   @OneToMany(() => Cart, (c) => c.member)

@@ -76,8 +76,6 @@ const Header = () => {
     setShowSearchResult(!showSearchResult);
   };
 
-
-
   return (
     <header>
       <div className={styles.header}>
@@ -117,9 +115,9 @@ const Header = () => {
               <h1>FASHA.COM</h1>
             </div>
             <div className={`col-span-6 relative ms-20 2xl:ms-10 lg:ms-10 ${styles.search}`}>
-            <QueryClientProvider client={queryClient}>
-              <HomeSearch />
-            </QueryClientProvider>
+              <QueryClientProvider client={queryClient}>
+                <HomeSearch />
+              </QueryClientProvider>
             </div>
             <div className={`col-span-3 ${styles.icon}`}>
               <div className="icon_action flex justify-end">
@@ -272,9 +270,9 @@ const Header = () => {
               <h2>FASHA.COM</h2>
             </div>
             <div className={`title col-span-8  ${styles.search}`}>
-            <QueryClientProvider client={queryClient}>
-              <TabletSearch/>
-            </QueryClientProvider>
+              <QueryClientProvider client={queryClient}>
+                <TabletSearch />
+              </QueryClientProvider>
             </div>
           </div>
         </div>
@@ -330,12 +328,14 @@ const Header = () => {
               </Drawer>
             </div>
             <div className="ps-16">
-              <div className="logo">{/* <Link to="/"><img src={Logo} alt="" /></Link> */} <h2>LOGO!</h2> </div>
+              <div className="logo">
+                {/* <Link to="/"><img src={Logo} alt="" /></Link> */} <h2>LOGO!</h2>{' '}
+              </div>
             </div>
-            <div className='-mr-28 block lg:hidden md:hidden'>
-            <QueryClientProvider client={queryClient}>
-              <MobileSearch />
-            </QueryClientProvider>
+            <div className="-mr-28 block lg:hidden md:hidden">
+              <QueryClientProvider client={queryClient}>
+                <MobileSearch />
+              </QueryClientProvider>
             </div>
             <div>
               <div className={` relative ${styles.site_header_cart_tablet}`}>
@@ -370,9 +370,9 @@ const Header = () => {
                         <>
                           <div className={styles.product}>
                             <ul>
-                              {items.map((item) => {
+                              {items.map((item, index) => {
                                 return (
-                                  <li>
+                                  <li key={index}>
                                     <div className={` ps-3 ${styles.product_details}`}>
                                       <div className="w-1/5 px-2">
                                         <img
@@ -390,14 +390,14 @@ const Header = () => {
                                           >
                                             {item.name}
                                           </h6>
-                                         <div className='flex gap-3'>
-                                         <span className="block text-sm font-bold text-red-600  mt-2" data-config-id="auto-txt-3-3">
-                                            {item.price * (1 - (item.discount) / 100)} đ
-                                          </span>
-                                         <del className="block text-sm font-bold  mt-2" data-config-id="auto-txt-3-3">
-                                            {item.price} đ
-                                          </del>
-                                         </div>
+                                          <div className="flex gap-3">
+                                            <span className="block text-sm font-bold text-red-600  mt-2" data-config-id="auto-txt-3-3">
+                                              {item.price * (1 - item.discount / 100)} đ
+                                            </span>
+                                            <del className="block text-sm font-bold  mt-2" data-config-id="auto-txt-3-3">
+                                              {item.price} đ
+                                            </del>
+                                          </div>
                                         </div>
                                         <div className="flex items-end justify-between">
                                           <div className="inline-flex px-2 font-bold text-gray-400 border border-blueGray-800 bg-slate-700">

@@ -1,22 +1,13 @@
 import React from 'react';
-import { Space, Table, Button, Modal, Form, Input, message, Pagination, Select   } from 'antd';
+import { Space, Table, Button, Modal, Form, Input, message, Pagination, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient
-} from '@tanstack/react-query';
-import {
-  EyeOutlined,
-  EyeTwoTone,
-  EyeInvisibleOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { EyeOutlined, EyeTwoTone, EyeInvisibleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { axiosClient } from '../../library/axiosClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
 import type { PaginationProps } from 'antd';
+import { number } from 'yup';
 interface DataType {
   id: number;
   name: string;
@@ -24,11 +15,10 @@ interface DataType {
   contact: number;
   gender: string;
   address: string;
-  password?: string
+  password?: string;
 }
 
-const Member= () => {
-
+const Member = () => {
   const [messageApi, contextHolder] = message.useMessage();
   //Toggle Modal Edit
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
@@ -36,31 +26,29 @@ const Member= () => {
   const [isModalCreateOpen, setIsModalCreateOpen] = React.useState(false);
   // Ẩn mật khẩu
   const [showPassword, setShowPassword] = React.useState(false);
-  
+
   const navigate = useNavigate();
- 
- 
+
   //Lay danh sach danhmuc
-  const getMembers = async ()=> {
-      return axiosClient.get(config.urlAPI+`/members`);
-  }
+  const getMembers = async () => {
+    return axiosClient.get(config.urlAPI + `/members`);
+  };
 
   // Access the client
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   //Lấy danh sách về
   const queryMember = useQuery({
     queryKey: ['members'],
-    queryFn: ()=>getMembers() 
+    queryFn: () => getMembers(),
   });
 
-  console.log('<<=== 🚀 queryMember.data ===>>',queryMember.data?.data);
-
+  console.log('<<=== 🚀 queryMember.data ===>>', queryMember.data?.data);
 
   //======= Sự kiện XÓA =====//
-  const fetchDelete = async (id: number)=> {
-      return axiosClient.delete(config.urlAPI+'/members/'+id);
-  } 
+  const fetchDelete = async (id: number) => {
+    return axiosClient.delete(config.urlAPI + '/members/' + id);
+  };
   // Mutations => Thêm mới, xóa, edit
   const mutationDelete = useMutation({
     mutationFn: fetchDelete,
@@ -71,18 +59,18 @@ const Member= () => {
         content: 'Delete success !',
       });
       // Làm tươi lại danh sách danh mục dựa trên key đã định nghĩa
-      queryClient.invalidateQueries({ queryKey: ['members'] })
+      queryClient.invalidateQueries({ queryKey: ['members'] });
     },
-    onError: ()=>{
+    onError: () => {
       //khi gọi API bị lỗi
-    }
+    },
   });
 
   //======= Sự kiện EDit =====//
   const fetchUpdate = async (formData: DataType) => {
-    const {id, ...payload} = formData;
-    return axiosClient.patch(config.urlAPI+'/members/'+id, payload);
-  } 
+    const { id, ...payload } = formData;
+    return axiosClient.patch(config.urlAPI + '/members/' + id, payload);
+  };
   // Mutations => Thêm mới, xóa, edit
   const mutationUpdate = useMutation({
     mutationFn: fetchUpdate,
@@ -97,9 +85,9 @@ const Member= () => {
       //Ẩn modal
       setIsModalEditOpen(false);
     },
-    onError: ()=>{
+    onError: () => {
       //khi gọi API bị lỗi
-    }
+    },
   });
 
   const [updateForm] = Form.useForm();
@@ -129,8 +117,8 @@ const Member= () => {
 
   //======= Sự kiện Create =====//
   const fetchCreate = async (formData: DataType) => {
-    return axiosClient.post(config.urlAPI+'/members', formData);
-  } 
+    return axiosClient.post(config.urlAPI + '/members', formData);
+  };
   // Mutations => Thêm mới, xóa, edit
   const mutationCreate = useMutation({
     mutationFn: fetchCreate,
@@ -144,11 +132,11 @@ const Member= () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
       //Ẩn modal
       setIsModalCreateOpen(false);
-      createForm.resetFields();//làm trống các input
+      createForm.resetFields(); //làm trống các input
     },
-    onError: ()=>{
+    onError: () => {
       //khi gọi API bị lỗi
-    }
+    },
   });
 
   const [createForm] = Form.useForm();
@@ -175,7 +163,6 @@ const Member= () => {
   const onFinishCreateFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
-
 
   const columns: ColumnsType<DataType> = [
     {
@@ -204,86 +191,97 @@ const Member= () => {
       dataIndex: 'address',
       key: 'address',
     },
-    
+
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-      <Space size="middle">
+        <Space size="middle">
+          <Button
+            onClick={() => {
+              console.log('Edit this item');
+              setIsModalEditOpen(true); //show modal edit lên
+              updateForm.setFieldsValue(record);
+            }}
+          >
+            Edit
+          </Button>
 
-          <Button onClick={()=>{
-            console.log('Edit this item');
-            setIsModalEditOpen(true); //show modal edit lên
-            updateForm.setFieldsValue(record);
-          }}>Edit</Button>
-
-          <Button danger onClick={()=>{
-            console.log('Delete this item', record);
+          <Button
+            danger
+            onClick={() => {
+              console.log('Delete this item', record);
               mutationDelete.mutate(record.id);
-          }}>Delete</Button>
-
+            }}
+          >
+            Delete
+          </Button>
         </Space>
       ),
     },
   ];
 
-  
-
-  
-
   return (
     <>
-    {contextHolder}
-     <Button type="primary" onClick={()=>{
-       console.log('Open Model Create Member');
-       //show modal them moi
-       setIsModalCreateOpen(true);
-     }}>Create a new Member</Button>
-
-    <Table pagination={{pageSize: 5}} columns={columns} key={'id'} dataSource={queryMember.data?.data}/>
-    <div>
-    
-    </div>
-     {/* begin Edit Modal */}
-     <Modal title="Edit Category" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
-     <Form
-      form={updateForm}
-      name='edit-form'
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
-      onFinish={onFinishEdit}
-      onFinishFailed={onFinishEditFailed}
-      autoComplete="off"
-    >
-      <Form.Item<DataType>
-        label="Name"
-        name="name"
-        rules={[
-          { required: true, message: 'Please input category Name!' },
-          // {min: 4, message: 'Tối thiểu 4 kí tự'}
-        ]}
+      {contextHolder}
+      <Button
+        type="primary"
+        onClick={() => {
+          console.log('Open Model Create Member');
+          //show modal them moi
+          setIsModalCreateOpen(true);
+        }}
       >
-        <Input />
-      </Form.Item>
-  
-      <Form.Item<DataType>
-        label="Email"
-        name="email"
-        rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
+        Create a new Member
+      </Button>
 
-      <Form.Item<DataType>
-        label="Contact"
-        name="contact"
-        rules={[{ max: 10, message: 'Tối đa 10 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
+      <Table pagination={{ pageSize: 5 }} columns={columns} key={'id'} dataSource={queryMember.data?.data} />
+      <div></div>
+      {/* begin Edit Modal */}
+      <Modal title="Edit Category" open={isModalEditOpen} onOk={handleEditOk} onCancel={handleEditCancel}>
+        <Form
+          form={updateForm}
+          name="edit-form"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinishEdit}
+          onFinishFailed={onFinishEditFailed}
+          autoComplete="off"
+        >
+          <Form.Item<DataType>
+            label="Name"
+            name="name"
+            rules={[
+              { required: true, message: 'Please input category Name!' },
+              // {min: 4, message: 'Tối thiểu 4 kí tự'}
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-      <Form.Item<DataType> name='gender' label='Gender'>
+          <Form.Item<DataType>
+            label="Email"
+            name="email"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!',
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item<DataType> label="Contact" name="contact" rules={[{ required: true, max: 10, message: 'Tối đa 10 kí tự' }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item<DataType> name="gender" label="Gender">
             <Select
               options={[
                 {
@@ -297,92 +295,83 @@ const Member= () => {
                 {
                   label: 'Others',
                   value: 'Others',
-                }
+                },
               ]}
-            />
-      </Form.Item>
-      
-
-      <Form.Item<DataType>
-        label="Address"
-        name="address"
-        rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item<DataType>
-            label="Password"
-            name="password"
-            rules={[
-              { required: true, message: "Please input members password!" },
-              { min: 8, message: "Tối thiểu 8 kí tự" },
-            ]}
-          >
-            <Input.Password
-              type={showPassword ? "text" : "password"}
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
-              suffix={
-                <EyeOutlined
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                />
-              }
             />
           </Form.Item>
 
-      <Form.Item hidden label='Id' name='id'>
+          <Form.Item<DataType> label="Address" name="address" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
             <Input />
-      </Form.Item>
-     
-    </Form>
-   
+          </Form.Item>
+
+          <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: 'Please input members password!' },
+              { min: 8, message: 'Tối thiểu 8 kí tự' },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? 'text' : 'password'}
+              iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={<EyeOutlined onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }} />}
+            />
+          </Form.Item>
+
+          <Form.Item hidden label="Id" name="id">
+            <Input />
+          </Form.Item>
+        </Form>
       </Modal>
       {/* End Edit Modal */}
 
       {/* begin Create Modal */}
-     <Modal title="Create Member" open={isModalCreateOpen} onOk={handleCreateOk} onCancel={handleCreateCancel}>
-     <Form
-      form={createForm}
-      name='create-form'
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
-      onFinish={onFinishCreate}
-      onFinishFailed={onFinishCreateFailed}
-      autoComplete="off"
-    >
-      <Form.Item<DataType>
-        label="Name"
-        name="name"
-        rules={[
-          { required: true, message: 'Please input category Name!' },
-          // {min: 4, message: 'Tối thiểu 4 kí tự'}
-        ]}
-      >
-        <Input />
-      </Form.Item>
-  
-      <Form.Item<DataType>
-        label="Email"
-        name="email"
-        rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
+      <Modal title="Create Member" open={isModalCreateOpen} onOk={handleCreateOk} onCancel={handleCreateCancel}>
+        <Form
+          form={createForm}
+          name="create-form"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinishCreate}
+          onFinishFailed={onFinishCreateFailed}
+          autoComplete="off"
+        >
+          <Form.Item<DataType>
+            label="Name"
+            name="name"
+            rules={[
+              { required: true, message: 'Please input category Name!' },
+              // {min: 4, message: 'Tối thiểu 4 kí tự'}
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-      <Form.Item<DataType>
-        label="Contact"
-        name="contact"
-        rules={[{ max: 10, message: 'Tối đa 10 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
+          <Form.Item<DataType>
+            label="Email"
+            name="email"
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!',
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-      <Form.Item<DataType> name='gender' label='Gender'>
+          <Form.Item<DataType> label="Contact" name="contact" rules={[{ required: true, max: 10, message: 'Tối đa 10 kí tự' }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item<DataType> name="gender" label="Gender">
             <Select
               options={[
                 {
@@ -396,49 +385,35 @@ const Member= () => {
                 {
                   label: 'Others',
                   value: 'Others',
-                }
+                },
               ]}
-            />
-      </Form.Item>
-      
-
-      <Form.Item<DataType>
-        label="Address"
-        name="address"
-        rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item<DataType>
-            label="Password"
-            name="password"
-            rules={[
-              { required: true, message: "Please input members password!" },
-              { min: 8, message: "Tối thiểu 8 kí tự" },
-            ]}
-          >
-            <Input.Password
-              type={showPassword ? "text" : "password"}
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
-              suffix={
-                <EyeOutlined
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                />
-              }
             />
           </Form.Item>
 
-    </Form>
-        
+          <Form.Item<DataType> label="Address" name="address" rules={[{ max: 500, message: 'Tối đa 500 kí tự' }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item<DataType>
+            label="Password"
+            name="password"
+            rules={[
+              { required: true, message: 'Please input members password!' },
+              { min: 8, message: 'Tối thiểu 8 kí tự' },
+            ]}
+          >
+            <Input.Password
+              type={showPassword ? 'text' : 'password'}
+              iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              // Thêm sự kiện click để chuyển đổi giữa hiển thị và ẩn mật khẩu
+              suffix={<EyeOutlined onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }} />}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
       {/* End Create Modal */}
     </>
-  )
+  );
 };
 
 export default Member;

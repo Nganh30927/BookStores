@@ -966,7 +966,6 @@ export default function Orders({}: Props) {
 
           <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
-              
               options={
                 employees &&
                 employees?.map((item: any) => {
@@ -1019,6 +1018,9 @@ export default function Orders({}: Props) {
             <DatePicker onChange={onDateChange} />
           </Form.Item>
           <Form.Item<DataType> name="description" label="Description">
+            <Input.TextArea rows={2} />
+          </Form.Item>
+          <Form.Item<DataType> name="orderDetails" label="OrderDetails" hidden>
             <Input.TextArea rows={2} />
           </Form.Item>
 
