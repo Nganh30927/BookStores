@@ -44,14 +44,22 @@ interface OrderDataType {
 
 interface DataType {
   id: number;
-  orderday: Date;
-  shippedday?: Date;
+  orderday: string;
+  shippedday: string | null;
   status: string;
   shippingaddress: string;
   paymenttype: string;
-  description?: string;
-  employeeId?: number;
-  memberId?: number;
+  description: string;
+  employeeId: number | null;
+  memberId: number | null;
+  member: {
+    id: number;
+    name: string;
+  };
+  employee: {
+    id: number;
+    name: string;
+  };
   orderDetails: {
     orderId?: number;
     bookId: number;
@@ -439,7 +447,7 @@ export default function Orders({}: Props) {
               <div style={{ whiteSpace: 'nowrap' }}>
                 <Space>
                   <UserOutlined />
-                  <span>{record.employee.name}</span>
+                  <span>{record.employee?.name}</span>
                 </Space>
               </div>
             );
@@ -455,7 +463,7 @@ export default function Orders({}: Props) {
               <div>
                 <Space>
                   <PhoneOutlined />
-                  <span>{record.employee.phonenumber}</span>
+                  <span>{record.employee?.phonenumber}</span>
                 </Space>
               </div>
             );
@@ -708,7 +716,7 @@ export default function Orders({}: Props) {
       children:
         order &&
         order?.map((item: any, index: number) => {
-          return <span key={index}>{item.employee.name}</span>;
+          return <span key={index}>{item.employee?.name}</span>;
         }),
       span: 2,
     },
@@ -958,7 +966,7 @@ export default function Orders({}: Props) {
 
           <Form.Item<DataType> name="employeeId" label="Employee">
             <Select
-              disabled
+              
               options={
                 employees &&
                 employees?.map((item: any) => {

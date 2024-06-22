@@ -37,7 +37,7 @@ export class Order {
   @Column({ type: 'int', nullable: true })
   employeeId: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int' })
   memberId: number;
 
   @ManyToOne(() => Employee, (e) => e.orders, {

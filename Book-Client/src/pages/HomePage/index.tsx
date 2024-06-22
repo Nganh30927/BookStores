@@ -6,7 +6,7 @@ import { IoIosArrowDropright } from 'react-icons/io';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Mousewheel, Keyboard, FreeMode } from 'swiper/modules';
+import { Navigation, Pagination, Mousewheel, Keyboard, FreeMode, Autoplay } from 'swiper/modules';
 
 import { useQuery } from '@tanstack/react-query';
 import config from '../../constants/config';
@@ -157,21 +157,24 @@ const HomePage = () => {
                   <div className="w-28  border-b border-gray-700 "></div>
                 </span>
               </div>
-              <>
+              <div className='hidden lg:block md:block '>
                   <CountDown/>
-              </>
               </div>
-              <div id="addToCartComponentSlot" className="peer">
+              </div>
+              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
                 <div>
-                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                  <a href={'/books'} className="basis-0 w-full py-2 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
                     <span
                       className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
                       aria-hidden="true"
                       data-testid="hover"
                     />
                     <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
-                  </button>
+                  </a>
                 </div>
+              </div>
+              <div className='block lg:hidden md:hidden mt-5'>
+                  <CountDown/>
               </div>
             </div>
             <div className="flex flex-wrap -mx-4">
@@ -191,16 +194,16 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-end">
-              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+            <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
                 <div>
-                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                  <a href={'/books'} className="basis-0 w-full py-2 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
                     <span
                       className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
                       aria-hidden="true"
                       data-testid="hover"
                     />
                     <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -212,13 +215,21 @@ const HomePage = () => {
                 pagination={{
                   clickable: true,
                 }}
-                modules={[FreeMode, Pagination]}
+                modules={[Autoplay, FreeMode, Pagination]}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
                 className=""
                 breakpoints={{
-                  640: {
-                    slidesPerView: 1,
+                  425: {
+                    slidesPerView: 2,
                     spaceBetween: 0,
                   },
+                  // 640: {
+                  //   slidesPerView: 1,
+                  //   spaceBetween: 0,
+                  // },
                   768: {
                     slidesPerView: 3,
                     spaceBetween: 0,
@@ -292,16 +303,16 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-end">
-              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+            <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
                 <div>
-                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                  <a href={'/books?categoryId=1013'} className="basis-0 w-full py-2 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
                     <span
                       className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
                       aria-hidden="true"
                       data-testid="hover"
                     />
                     <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -313,13 +324,21 @@ const HomePage = () => {
                 pagination={{
                   clickable: true,
                 }}
-                modules={[FreeMode, Pagination]}
+                modules={[Autoplay, FreeMode, Pagination]}
+                autoplay={{
+                  delay: 2000,
+                  disableOnInteraction: false,
+                }}
                 className=""
                 breakpoints={{
-                  640: {
-                    slidesPerView: 1,
+                  425: {
+                    slidesPerView: 2,
                     spaceBetween: 0,
                   },
+                  // 640: {
+                  //   slidesPerView: 1,
+                  //   spaceBetween: 0,
+                  // },
                   768: {
                     slidesPerView: 3,
                     spaceBetween: 0,
@@ -393,16 +412,16 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-end">
-              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+            <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
                 <div>
-                  <button className="basis-0 w-full h-10 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
+                  <a href={'/books?categoryId=1011'} className="basis-0 w-full py-2 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
                     <span
                       className="absolute top-0 left-0 flex w-0 h-full mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-red-500 group-hover:w-full rounded-br-2xl "
                       aria-hidden="true"
                       data-testid="hover"
                     />
                     <span className="relative whitespace-nowrap font-bold">VIEW ALL</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -414,13 +433,21 @@ const HomePage = () => {
                 pagination={{
                   clickable: true,
                 }}
-                modules={[FreeMode, Pagination]}
+                modules={[Autoplay, FreeMode, Pagination]}
+                autoplay={{
+                  delay: 2000,
+                  disableOnInteraction: false,
+                }}
                 className=""
                 breakpoints={{
-                  640: {
-                    slidesPerView: 1,
+                  425: {
+                    slidesPerView: 2,
                     spaceBetween: 0,
                   },
+                  // 640: {
+                  //   slidesPerView: 1,
+                  //   spaceBetween: 0,
+                  // },
                   768: {
                     slidesPerView: 3,
                     spaceBetween: 0,

@@ -181,11 +181,6 @@ router.post('/', async (req: Request, res: Response, next: any) => {
 
 
 
-
-
-
-
-
 // router.post('/', async (req: Request, res: Response, next: any) => {
 //   try {
 //     const queryRunner = repository.manager.connection.createQueryRunner();

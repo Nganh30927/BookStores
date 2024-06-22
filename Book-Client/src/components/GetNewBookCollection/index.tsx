@@ -10,10 +10,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 // import required modules
-import { Keyboard, Navigation, Pagination } from 'swiper/modules';
+import { Keyboard, Navigation, Pagination, FreeMode, Autoplay } from 'swiper/modules';
 import { Button } from '@mui/material';
 import { FaHeart } from 'react-icons/fa';
-
+import styles from './books.module.css'
 export interface IBooks {
   data: {
     data: {
@@ -63,39 +63,40 @@ const GetNewBookCollection = () => {
   return (
     <>
       <Swiper
-        slidesPerView={5}
-        slidesPerGroupSkip={1}
-        centeredSlides={false}
-        grabCursor={true}
-        keyboard={{
-          enabled: true,
-        }}
-        breakpoints={{
-          426: {
-            slidesPerView: 1,
-            spaceBetween: 0,
-          },
-          768: {
-            slidesPerView: 3,
-            spaceBetween: 0,
-          },
-          1024: {
-            slidesPerView: 4,
-            spaceBetween: 0,
-          },
-          1280: {
-            slidesPerView: 5,
-            spaceBetween: 0,
-          },
-        }}
-        scrollbar={true}
-        navigation={true}
-        pagination={{
-          clickable: true,
-          type: 'bullets',
-        }}
-        modules={[Keyboard, Navigation, Pagination]}
-        className="mySwiper"
+      slidesPerView={1}
+      spaceBetween={10}
+      freeMode={true}
+      pagination={{
+        clickable: true,
+      }}
+      modules={[Autoplay, FreeMode, Pagination]}
+      autoplay={{
+        delay: 2000,
+        disableOnInteraction: false,
+      }}
+      className=""
+      breakpoints={{
+        425: {
+          slidesPerView: 2,
+          spaceBetween: 0,
+        },
+        // 640: {
+        //   slidesPerView: 1,
+        //   spaceBetween: 0,
+        // },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 0,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 0,
+        },
+        1280: {
+          slidesPerView: 5,
+          spaceBetween: 0,
+        },
+      }}
       >
         {querySales.data && querySales.data?.data
           ? querySales.data?.data.data.map((book: any) => (

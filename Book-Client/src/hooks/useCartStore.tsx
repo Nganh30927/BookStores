@@ -93,27 +93,33 @@ export const useCartStore = create(
             itemCount: state.itemCount - 1,
           };
         }),
-      placeOrder: async (payload) => {
-        try {
-          set({ isLoading: true });
-          const { data } = await axiosClient.post(config.urlAPI + '/orders', payload);
-          console.log('placeOrder ok', data);
-
-          if (data.statusCode === 200) {
-            //Reset state
-            set({ isLoading: false, itemCount: 0, items: [], total: 0, error: null });
-            return { ok: true, message: 'success' };
-          } else {
-            set({ isLoading: false });
-            return { ok: false, message: 'not success' };
+        placeOrder: async (payload) => {
+          try {
+            set({ isLoading: true });
+            const { data } = await axiosClient.post(config.urlAPI + '/orders', payload);
+            console.log('placeOrder ok', data);
+            /*
+              if gui don hanh cong
+                - Xoa gio hang
+                - Chuyen huong den trang thong bao thanh cong
+              else
+                - show message loi
+              */
+            if (data.statusCode === 200) {
+              //Reset state
+              set({ isLoading: false, itemCount: 0, items: [], total: 0, error: null });
+              return { ok: true, message: 'success' };
+            } else {
+              set({ isLoading: false });
+              return { ok: false, message: 'not success' };
+            }
+          } catch (error: any) {
+            console.log('placeOrder nok', error?.response?.data.message);
+            const msg = error?.response?.data.message || 'Internal Server Error)';
+            set({ isLoading: false, error: msg });
+            return { ok: false, message: msg };
           }
-        } catch (error: any) {
-          console.log('placeOrder nok', error?.response?.data.message);
-          const msg = error?.response?.data.message || 'Internal Server Error)';
-          set({ isLoading: false, error: msg });
-          return { ok: false, message: msg };
-        }
-      },
+        },
     }),
     {
       name: 'cart-storage', // tên của key trong localStorage

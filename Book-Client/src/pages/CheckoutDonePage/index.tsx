@@ -27,7 +27,7 @@ const CheckoutDonePage = () => {
                 <p className="text-lg font-semibold leading-4 text-left text-gray-800 dark:text-gray-400">
                   {item.name}</p>
                 <p className="text-sm leading-4 text-gray-600 dark:text-gray-400">{itemCount} Previous Orders</p>
-                <p className="text-sm leading-4 cursor-pointer dark:text-gray-400">{item.email}</p>
+                {/* <p className="text-sm leading-4 cursor-pointer dark:text-gray-400">{item.name}</p> */}
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@ const CheckoutDonePage = () => {
             <p className="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
               Order Number: </p>
             <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">
-              {item.phoneNumber}</p>
+              </p>
           </div>
           <div className="w-full px-4 mb-4 md:w-1/4">
             <p className="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
@@ -56,7 +56,7 @@ const CheckoutDonePage = () => {
             <p className="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
               Payment Method: </p>
             <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400 ">
-              {item.paymentType} </p>
+               </p>
           </div>
         </div>
         <div className="px-4 mb-10">
