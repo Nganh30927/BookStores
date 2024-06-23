@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import numeral from 'numeral';
+import { CheckCircleOutlined } from '@ant-design/icons';
 
 const CheckoutDonePage = () => {
   const navigate = useNavigate();
@@ -19,7 +20,13 @@ const CheckoutDonePage = () => {
         {order.map((item, index) => {
           return (
             <div key={index}>
-              <h1 className="px-4 mb-8 text-2xl font-semibold tracking-wide text-gray-700 dark:text-gray-300 ">Thank you. Your order has been received. </h1>
+              <div className="flex">
+                <span className="px -4 mb-8 text-2xl font-semibold tracking-wide text-green-700 dark:text-gray-300 mr-3">{<CheckCircleOutlined />}</span>
+                <span className="px -4 mb-8 text-2xl font-semibold tracking-wide text-gray-700 dark:text-gray-300">
+                  Thank you. Your order has been received
+                </span>
+              </div>
+
               <div className="flex border-b border-gray-200 dark:border-gray-700  items-stretch justify-start w-full h-full px-4 mb-8 md:flex-row xl:flex-col md:space-x-6 lg:space-x-8 xl:space-x-0">
                 <div className="flex items-start justify-start flex-shrink-0">
                   <div className="flex flex-col justify-start gap-10 w-full pb-6 md:justify-start">
@@ -33,8 +40,9 @@ const CheckoutDonePage = () => {
                           />
                           <div className="flex flex-col items-start justify-start space-y-2">
                             <p className="text-lg font-semibold text-left text-gray-800 dark:text-gray-400">{book.book.name}</p>
-                            <p className="text-sm font-semibold leading-4 text-red-600 dark:text-gray-400">Quantity: {book.quantity}</p>
-                            <p className="text-md font-semibold leading-4 text-gray-600 dark:text-gray-400"> {numeral(book.price).format('0,0')} VND</p>
+                            <p className="text-sm font-semibold leading-4 text-gray-600 dark:text-gray-400">Quantity: {book.quantity}</p>
+                            <p className="text-sm font-semibold leading-4 text-gray-600 dark:text-gray-400">Discount: {book.discount} %</p>
+                            <p className="text-md font-semibold leading-4 text-red-600 dark:text-gray-400"> {numeral(book.price).format('0,0')} VND</p>
                           </div>
                         </div>
                       );
@@ -53,12 +61,12 @@ const CheckoutDonePage = () => {
                   <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">{item.shippedDate}</p>
                 </div>
                 <div className="w-full px-4 mb-4 md:w-1/4">
-                  <p className="mb-2 text-sm font-medium leading-5 text-gray-800 dark:text-gray-400 ">Total: </p>
-                  <p className="text-base font-semibold leading-4 text-blue-600 dark:text-gray-400">VND</p>
-                </div>
-                <div className="w-full px-4 mb-4 md:w-1/4">
                   <p className="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">Payment Method: </p>
                   <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400 ">{item.paymenttype}</p>
+                </div>
+                <div className="w-full px-4 mb-4 md:w-1/4">
+                  <p className="text-base font-semibold text-blue-600 dark:text-gray-400">Total: </p>
+                  <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400 ">{numeral(total).format('0,0')} VND</p>
                 </div>
               </div>
 
@@ -116,16 +124,10 @@ const CheckoutDonePage = () => {
               </div>
               <div className="flex flex-wrap items-center justify-start gap-4 px-4 mt-6 ">
                 <Link
-                  to={'/products'}
+                  to={'/books'}
                   className="w-full px-4 py-2 text-blue-500 border border-blue-500 rounded-md md:w-auto hover:text-gray-100 hover:bg-blue-600 dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-300"
                 >
                   Go back shopping
-                </Link>
-                <Link
-                  to={'/customers/orders/ordersdetail'}
-                  className="w-full px-4 py-2 bg-blue-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800"
-                >
-                  View career details
                 </Link>
               </div>
             </div>

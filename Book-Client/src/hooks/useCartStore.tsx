@@ -120,7 +120,7 @@ export const useCartStore = create(
               */
           if (data) {
             //Reset state
-            set({ order: [data], isLoading: false, items: [], itemCount: 0, total: 0, error: null });
+            set({ order: [data], isLoading: false, items: [], itemCount: 0, error: null });
             return { ok: true, message: 'success' };
           } else {
             set({ isLoading: false });
