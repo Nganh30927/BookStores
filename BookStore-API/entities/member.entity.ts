@@ -21,7 +21,7 @@ export class Member {
 
   @IsNotEmpty()
   @Column({ name: 'Gender', type: 'nvarchar', enum: ['Male', 'Female', 'Others'], nullable: true })
-  gender: string;
+  gender?: string;
 
   @MaxLength(10)
   @IsNotEmpty()

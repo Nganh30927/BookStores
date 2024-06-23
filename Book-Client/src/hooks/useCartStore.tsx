@@ -3,6 +3,7 @@ import { axiosClient } from '../library/axiosClient';
 import config from '../constants/config';
 import { create } from 'zustand';
 import axios from 'axios';
+import { min } from 'lodash';
 
 interface CartItem {
   id: number;
@@ -16,7 +17,9 @@ interface CartItem {
 interface CartStore {
   items: CartItem[]; //Lưu danh sách products
   total: number; //Tổng tiền
-  itemCount: number; //Tổng items có trong giỏ
+  //Tổng items có trong giỏ, số nguyên
+  itemCount: number;
+  order: any[]; //Lưu thông tin đơn hàng
   addItem: (item: CartItem) => void; //phương thức thêm item
   removeItem: (id: number) => void; //phương thức xóa item
   increaseQuantity: (id: number) => void; //tăng số lượng của item
@@ -34,6 +37,7 @@ export const useCartStore = create(
       itemCount: 0,
       isLoading: false,
       error: null,
+      order: [],
       addItem: (item) =>
         set((state) => {
           const existingItem = state.items.find((i) => i.id === item.id);
@@ -86,17 +90,25 @@ export const useCartStore = create(
           const item = state.items.find((i) => i.id === id);
           if (!item || item.quantity <= 0) return state;
           const priceAfterDiscount = item.price * (1 - item.discount / 100);
-
+          if (state.itemCount !== 0) {
+            return {
+              ...state,
+              items: state.items.map((i) => (i.id === id ? { ...i, quantity: i.quantity - 1 } : i)),
+              total: state.total - priceAfterDiscount,
+              itemCount: state.itemCount - 1,
+            };
+          }
           return {
             ...state,
             items: state.items.map((i) => (i.id === id ? { ...i, quantity: i.quantity - 1 } : i)),
             total: state.total - priceAfterDiscount,
-            itemCount: state.itemCount - 1,
+            itemCount: state.itemCount,
           };
         }),
       placeOrder: async (payload) => {
         try {
           set({ isLoading: true });
+
           const { data } = await axios.post(config.urlAPI + '/orders', payload);
           console.log('placeOrder ok', data);
           /*
@@ -106,9 +118,9 @@ export const useCartStore = create(
               else
                 - show message loi
               */
-          if (data.statusCode === 200) {
+          if (data) {
             //Reset state
-            set({ isLoading: false, itemCount: 0, items: [], total: 0, error: null });
+            set({ order: [data], isLoading: false, items: [], itemCount: 0, total: 0, error: null });
             return { ok: true, message: 'success' };
           } else {
             set({ isLoading: false });

@@ -50,7 +50,9 @@ const CheckoutPage = () => {
     console.log(newMemberdata);
 
     //check new member exist in database or not
-    const existingMember = members.find((member) => member.contact === newMemberdata.contact || member.email === newMemberdata.email);
+    const existingMember = members.find(
+      (member) => (member.contact === newMemberdata.contact && member.email === newMemberdata.email) || member.email === newMemberdata.email,
+    );
 
     if (existingMember) {
       const newOrderData = {
@@ -77,32 +79,33 @@ const CheckoutPage = () => {
       if (result.ok) {
         navigate('/checkout-done');
       }
-    }
-    const pushMember = await axios.post(config.urlAPI + '/members', newMemberdata);
-    console.log(pushMember.data);
-    const newOrderData = {
-      status: 'WAITING',
-      shippingAddress: data.shippingaddress,
-      paymenttype: data.paymenttype,
-      description: data.description,
-      memberId: pushMember.data.id,
-    };
-    console.log(newOrderData);
-    const payload = {
-      ...newOrderData,
-      orderDetails: items.map((item) => ({
-        bookId: item.id,
-        quantity: item.quantity,
-        discount: item.discount,
-        imageURL: item.imageURL,
-        name: item.name,
-        price: item.price,
-      })),
-    };
-    console.log(payload);
-    const result = await placeOrder(payload);
-    if (result.ok) {
-      navigate('/checkout-done');
+    } else {
+      const pushMember = await axios.post(config.urlAPI + '/members', newMemberdata);
+      console.log(pushMember.data);
+      const newOrderData = {
+        status: 'WAITING',
+        shippingAddress: data.shippingaddress,
+        paymenttype: data.paymenttype,
+        description: data.description,
+        memberId: pushMember.data.id,
+      };
+      console.log(newOrderData);
+      const payload = {
+        ...newOrderData,
+        orderDetails: items.map((item) => ({
+          bookId: item.id,
+          quantity: item.quantity,
+          discount: item.discount,
+          imageURL: item.imageURL,
+          name: item.name,
+          price: item.price,
+        })),
+      };
+      console.log(payload);
+      const result = await placeOrder(payload);
+      if (result.ok) {
+        navigate('/checkout-done');
+      }
     }
   };
 
