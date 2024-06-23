@@ -34,10 +34,9 @@ function App() {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<HomePage />} />
               <Route path="/books" element={<BooksPage />} />
-              <Route path="/books/filter" element={<BooksPage />} />
               <Route path="/books/search" element={<BooksPage />} />
               <Route path="booksdetail/:id" element={<BooksDetailsPage />} />
-              <Route path="/contact" element={<ContactPage/>}/>
+              <Route path="/contact" element={<ContactPage />} />
             </Route>
 
             {/* OnlyHeaderLayout */}
