@@ -66,7 +66,7 @@ const useAuth = create(
           set({ isLoading: true });
           const response = await axiosClient.post(config.urlAPI + '/members', { name, email, password, address, contact, gender });
           console.log('signup', response);
-          if (response && response.status === 200) {
+          if (response.data) {
             // Đăng ký thành công, bạn có thể tự động đăng nhập người dùng tại đây nếu muốn
             return { ok: true, message: 'success' };
           } else {
@@ -79,7 +79,7 @@ const useAuth = create(
           return { ok: false, message: 'Signup failed' };
         }
       },
-    
+
       logout: () => {
         // Xóa trạng thái user và isAuthenticated
         set({ user: null, isAuthenticated: false });
@@ -87,7 +87,7 @@ const useAuth = create(
         localStorage.removeItem('refreshToken');
       },
     }),
-    
+
     {
       name: 'auth-storage', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used

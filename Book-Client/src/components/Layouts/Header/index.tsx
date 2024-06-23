@@ -140,7 +140,8 @@ const Header = () => {
                                 </span>
                               </div>
                             </Link>
-                            <a className="group relative flex p-2 hover:bg-gray-200 transition duration-200" href="#">
+
+                            <Link className="group relative flex p-2 hover:bg-gray-200 transition duration-200" to={'/signup'}>
                               <div className="mr-5 text-xl mt-0.5">
                                 <RiShieldUserLine />
                               </div>
@@ -149,7 +150,7 @@ const Header = () => {
                                   Đăng ký
                                 </span>
                               </div>
-                            </a>
+                            </Link>
                           </>
                         )}
                         {isAuthenticated && (

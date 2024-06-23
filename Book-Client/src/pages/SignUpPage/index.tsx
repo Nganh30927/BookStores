@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { RiGoogleFill } from 'react-icons/ri';
-
+import axios from 'axios';
+import { message } from 'antd';
 
 const schema = yup
   .object({
@@ -19,12 +20,38 @@ const schema = yup
   .required();
 type FormData = yup.InferType<typeof schema>;
 
-
 const SignUpPage = () => {
-  
   const navigate = useNavigate();
   const { signup, isAuthenticated, isLoading } = useAuth();
   const [error, setError] = React.useState<string | null>(null);
+  const [members, setMembers] = React.useState<any[]>([]);
+  const [refresh, setRefresh] = React.useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [newMemberdata, setNewMemberData] = React.useState<any>({});
+
+  React.useEffect(() => {
+    const fetchMembers = async () => {
+      const response = await axios.get('http://localhost:9000/members');
+      setMembers(response.data);
+    };
+    fetchMembers();
+    console.log(members);
+  }, [refresh]);
+
+  const warning = () => {
+    messageApi.open({
+      type: 'warning',
+      content: 'This is a warning message',
+    });
+  };
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'This is a success message',
+    });
+  };
+
   const {
     register,
     handleSubmit,
@@ -33,24 +60,24 @@ const SignUpPage = () => {
     resolver: yupResolver(schema),
   });
   const onSubmit = async (data: FormData) => {
-    console.log('Form data:', data);
-    const result = await signup(data.name, data.email, data.password, data.address, data.contact, data.gender);
-    console.log('Signup result:', result);
-    if (!result.ok) {
-      setError(result.message);
+    setNewMemberData(data);
+    console.log('Form data:', newMemberdata);
+    if (members.find((member) => member.email === data.email)) {
+      return;
     } else {
-      console.log('Navigating to "/"');
-      navigate('/');
+      const result = await signup(data.name, data.email, data.password, data.address, data.contact, data.gender);
+      console.log('Signup result:', result);
+      if (!result.ok) {
+        setError(result.message);
+      }
     }
   };
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/customers");
+      navigate('/customers');
     }
-  }, [isAuthenticated])
-
-
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -129,25 +156,11 @@ const SignUpPage = () => {
                     </div>
 
                     <div className="w-full lg:w-1/3 flex items-center gap-x-4">
-                      <input
-                        {...register('gender', { required: true })}
-                        className="h-5 w-5"
-                        id="genderFemale"
-                        type="radio"
-                        name="gender"
-                        value="Female"
-                      />
+                      <input {...register('gender', { required: true })} className="h-5 w-5" id="genderFemale" type="radio" name="gender" value="Female" />
                       <label htmlFor="genderFemale">Female</label>
                     </div>
                     <div className="w-full lg:w-1/3 flex items-center gap-x-4">
-                      <input
-                        {...register('gender', { required: true })}
-                        className="h-5 w-5"
-                        id="genderOthers"
-                        type="radio"
-                        name="gender"
-                        value="Others"
-                      />
+                      <input {...register('gender', { required: true })} className="h-5 w-5" id="genderOthers" type="radio" name="gender" value="Others" />
                       <label htmlFor="genderOthers">Others</label>
                     </div>
                   </div>
@@ -186,7 +199,16 @@ const SignUpPage = () => {
                   <input type="checkbox" value="" id="" data-config-id="auto-input-7-10"/>
                   <label className="ml-2 text-xs text-gray-800"  data-config-id="auto-txt-6-10">Remember me</label>
                 </div> */}
+                {contextHolder}
                 <button
+                  onClick={() => {
+                    if (members.find((member) => member.email === newMemberdata.email)) {
+                      warning();
+                    } else {
+                      success();
+                      navigate('/');
+                    }
+                  }}
                   className="relative group block w-full mb-6 py-3 px-5 text-center text-sm font-semibold text-orange-50 bg-orange-600 rounded-full overflow-hidden"
                   type="submit"
                 >
