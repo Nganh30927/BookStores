@@ -1,0 +1,7 @@
+###
+
+GET http://localhost:9000/categories/1010/books
+
+###
+
+GET http://localhost:9000/categories/typeorm/1

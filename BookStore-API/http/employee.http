@@ -1,0 +1,27 @@
+###
+
+GET http://localhost:9000/employees
+
+
+###
+
+GET http://localhost:9000/employees/1
+
+
+###
+## Create a 
+POST http://localhost:9000/employees
+content-type: application/json
+
+{
+    "name": "Ng Anh",
+    "phonenumber": "0945456667",
+    "email": "nganh@gmail.com",
+    "address": "23aaaaaaaaaaaaaaaaaaaaaa",
+    "gender": "Male",
+    "position": "Admin",
+    "birthday": "1999-07-17",
+    "password": "nganh12345"
+}
+
+###

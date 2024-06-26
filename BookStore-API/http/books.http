@@ -1,0 +1,51 @@
+###
+GET http://localhost:9000/books
+
+###
+GET http://localhost:9000/books/sales/hotsales
+###
+
+GET http://localhost:9000/books?categoryId=1010
+
+###
+
+GET http://localhost:9000/books/search?keyword=những
+
+
+###
+
+
+GET http://localhost:9000/books?maxPrice=100000
+
+###
+
+GET http://localhost:9000/books
+# Nếu em làm theo cách này thì khi dùng code của thầy
+# em phải xem response nó trả về như thế nào để
+# dùng hợp lý
+
+# Dùng axios thì có 1 biến data.
+
+###
+## Creat a book
+POST http://localhost:9000/books
+content-type: application/json
+
+{
+    "name": "Bước Chậm Lại Giữa Thế Gian Vội Vã (Tái Bản 2018)",
+    "author": "Hae Min",
+    "title": "Chen vai thích cánh để có một chỗ bám trên xe buýt giờ đi làm, nhích từng xentimét bánh xe trên đường lúc tan sở, quay cuồng với thi cử và tiến độ công việc, lu bù vướng mắc trong những mối quan hệ cả thân lẫn sơ… bạn có luôn cảm thấy thế gian xung quanh mình đang xoay chuyển quá vội vàng?",
+    "quantity": 10,
+    "price": 85000,
+    "serialnumber": 119,
+    "description": "Văn học....",
+    "discount": 20,
+    "imageURL": "https://cdn0.fahasa.com/media/catalog/product/b/u/buoc_cham_lai_giua_the_gian_voi_va.u335.d20160817.t102115.612356.jpg",
+    "publisherId": 3,
+    "categoryId": 1
+}
+
+
+###
+
+GET http://localhost:9000/books/1

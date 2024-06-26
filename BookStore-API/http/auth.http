@@ -1,0 +1,20 @@
+#Get all User
+POST http://localhost:9000/auth/login HTTP/1.1
+content-type: application/json
+
+{
+ 
+  "email": "nganh@gmail.com",
+  "password": "nganh12345"
+  
+}
+###
+#Get all User
+GET  http://localhost:9000/auth/profile HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTgwMjE3MDYsImV4cCI6MTcxOTMxNzcwNn0.AUY1h77rBQwFdlhJi8tOFcriBNioiJIfGnKMSLeMqeI
+
+###
+GET http://localhost:9000/auth/refresh-token HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJuZ2FuaEBnbWFpbC5jb20iLCJpYXQiOjE3MTU0NjI2NDEsImV4cCI6MTcxODA1NDY0MX0.F7JwOMCSA8OjzEAYfkgrSxT6eGma8QK5fFbsFHv9rZs
