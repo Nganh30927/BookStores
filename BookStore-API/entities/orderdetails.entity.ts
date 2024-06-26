@@ -1,4 +1,4 @@
-import { Check, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Check, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
 import { Book } from './book.entity';
 import { Order } from './orders.entity';
@@ -7,8 +7,11 @@ import { Order } from './orders.entity';
 @Check(`"Discount" >= 0`)
 @Check(`"Discount" <= 100`)
 export class OrderDetail {
-  @PrimaryGeneratedColumn({ name: 'Id' })
-  id: number;
+  @PrimaryColumn({ type: 'int' })
+  orderId: number;
+
+  @PrimaryColumn({ type: 'int' })
+  bookId?: number;
 
   @IsNotEmpty()
   @Column({ name: 'Quantity', type: 'decimal', precision: 18, scale: 2, default: 1 })
@@ -22,15 +25,9 @@ export class OrderDetail {
   @Column({ name: 'Discount', type: 'decimal', precision: 18, scale: 2 })
   discount: number;
 
-  @IsNotEmpty()
-  @Column({ name: 'SubTotalOrder', type: 'money' })
-  subtotalorder: number;
-
-  @Column({ type: 'int' })
-  bookId: number;
-
-  @Column({ type: 'int' })
-  orderId: number;
+  // SELECT quantity * price * (1 - discount/100) AS subtotalorder FROM OrderDetail;
+  @Column({ name: 'SubTotalOrder', type: 'money', nullable: true })
+  subtotalorder?: number;
 
   @ManyToOne(() => Book, (b) => b.orderDetails)
   book: Book;

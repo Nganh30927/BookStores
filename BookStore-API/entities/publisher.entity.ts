@@ -29,6 +29,4 @@ export class Publisher {
     @OneToMany(() => Book, (b) => b.publisher)
     books: Book[];
 
-    @OneToMany(() => Order, (o) => o.publisher)
-    orders: Order[];
 }

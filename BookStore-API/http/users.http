@@ -1,0 +1,10 @@
+#Get all User
+POST http://localhost:9000/users/login HTTP/1.1
+content-type: application/json
+
+{
+ 
+  "email": "cap@gmail.com",
+  "password": "cap123456"
+  
+}

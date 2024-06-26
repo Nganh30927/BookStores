@@ -1,0 +1,20 @@
+#Get all User
+POST http://localhost:9000/users/login HTTP/1.1
+content-type: application/json
+
+{
+ 
+  "email": "cap@gmail.com",
+  "password": "cap123456"
+  
+}
+###
+#Get all User
+GET  http://localhost:9000/users/profile HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJjYXBAZ21haWwuY29tIiwidXNlclR5cGUiOiJNZW1iZXIiLCJpYXQiOjE3MTc2OTcwNjgsImV4cCI6MTcxODk5MzA2OH0.WCXveEIs0zigU6iM1dWnOT01pAWF5MDjxIPj-hF1UxM
+
+###
+GET http://localhost:9000/users/refresh-token HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJjYXBAZ21haWwuY29tIiwidXNlclR5cGUiOiJNZW1iZXIiLCJpYXQiOjE3MTc2OTcwNjgsImV4cCI6MTcyMDI4OTA2OH0.yrHmw5lOGvp1szWsP6Dp3jsuSwS3czKFy4mtiLej9Es

@@ -1,14 +1,14 @@
 import Home from '../pages/Home';
 import Product from '../pages/Product';
-import Category from '../pages/Category';
+import Category from '../pages/Categories';
 import Customers from '../pages/Customers';
 import CustomerProfile from '../pages/Customers/CustomerProfile';
 import CustomerOrders from '../pages/Customers/CustomerOrders';
 import ProductDetails from '../pages/ProductDetails';
 import Login from '../pages/Login';
 import EmptyLayout from '../components/Layouts/EmptyLayout';
-import CategoryAdd from '../pages/Category/CategoryAdd';
-import CategoryEdit from '../pages/Category/CategoryEdit';
+import CategoryAdd from '../pages/Categories/CategoryAdd';
+import CategoryEdit from '../pages/Categories/CategoryEdit';
 import Employees from '../pages/Employees';
 
 interface BaseProps {

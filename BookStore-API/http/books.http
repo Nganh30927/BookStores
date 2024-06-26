@@ -1,11 +1,30 @@
 ###
+GET http://localhost:9000/books
 
-GET http://localhost:9000/books/list?categoryId=2
+###
+GET http://localhost:9000/books/sales/hotsales
+###
+
+GET http://localhost:9000/books?categoryId=1010
+
+###
+
+GET http://localhost:9000/books/search?keyword=những
 
 
 ###
 
+
+GET http://localhost:9000/books?maxPrice=100000
+
+###
+
 GET http://localhost:9000/books
+# Nếu em làm theo cách này thì khi dùng code của thầy
+# em phải xem response nó trả về như thế nào để
+# dùng hợp lý
+
+# Dùng axios thì có 1 biến data.
 
 ###
 ## Creat a book
@@ -21,7 +40,7 @@ content-type: application/json
     "serialnumber": 119,
     "description": "Văn học....",
     "discount": 20,
-    "imageurl": "https://cdn0.fahasa.com/media/catalog/product/b/u/buoc_cham_lai_giua_the_gian_voi_va.u335.d20160817.t102115.612356.jpg",
+    "imageURL": "https://cdn0.fahasa.com/media/catalog/product/b/u/buoc_cham_lai_giua_the_gian_voi_va.u335.d20160817.t102115.612356.jpg",
     "publisherId": 3,
     "categoryId": 1
 }

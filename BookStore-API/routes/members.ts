@@ -46,14 +46,20 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       const member = new Member();
       Object.assign(member, req.body);
   
+      // Kiểm tra tồn tại của email
+      const existingMember = await repository.findOneBy({ email: member.email });
+      if (existingMember) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+  
       await repository.save(member);
       res.status(201).json(member);
     } catch (error) {
       console.error(error);
-      res.status(400).json({ error });
+      res.status(500).json({ error: 'Server error' });
     }
   });
-
+  
      /*Update*/
 
   router.patch('/:id', async (req: Request, res: Response, next: any) => {

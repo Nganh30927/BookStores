@@ -18,9 +18,8 @@ export class Cart {
   @Column({ name: 'CartStatus', type: 'varchar', length: 50 })
   cartStatus: string;
 
-  @IsNotEmpty()
-  @Column({ name: 'CartTotal', type: 'int' })
-  cartTotal: number;
+  @Column({ name: 'CartTotal', type: 'int', nullable: true })
+  cartTotal?: number;
 
   @Column({ type: 'int' })
   memberId: number;

@@ -1,12 +1,12 @@
 import { Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn, Check } from 'typeorm';
-import { IsNotEmpty, MaxLength, validateOrReject } from 'class-validator';
-import { Publisher } from './publisher.entity';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 import { Employee } from './employee.entity';
 import { Invoice } from './invoice.entity';
 import { OrderDetail } from './orderdetails.entity';
+import { Member } from './member.entity';
 
 @Entity({ name: 'Orders' })
-//ShippedDay >= OrderDay
+// ShippedDay >= OrderDay
 @Check(`"ShippedDay" >= "OrderDay"`)
 export class Order {
   @PrimaryGeneratedColumn({ name: 'Id' })
@@ -24,29 +24,35 @@ export class Order {
   status: string;
 
   @MaxLength(500)
-  @IsNotEmpty()
-  @Column({ name: 'ShippingAddress', type: 'nvarchar', length: 500 })
+  @Column({ name: 'ShippingAddress', type: 'nvarchar', length: 500, nullable: true })
   shippingaddress: string;
 
   @IsNotEmpty()
   @Column({ name: 'PaymentType', type: 'varchar', length: 50, default: 'CASH', enum: ['CASH', 'CREDIT'] })
   paymenttype: string;
 
-  @Column({ type: 'int' })
-  publisherId: number;
+  @Column({ name: 'Description', type: 'nvarchar', nullable: true })
+  description?: string;
+
+  @Column({ type: 'int', nullable: true })
+  employeeId: number;
 
   @Column({ type: 'int' })
-  employeId: number;
+  memberId: number;
 
-  @ManyToOne(() => Employee, (e) => e.orders)
+  @ManyToOne(() => Employee, (e) => e.orders, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
   employee: Employee;
+
+  @ManyToOne(() => Member, (m) => m.orders)
+  member: Member;
 
   @OneToMany(() => Invoice, (i) => i.order)
   invoices: Invoice[];
 
   @OneToMany(() => OrderDetail, (o) => o.order)
   orderDetails: OrderDetail[];
-
-  @ManyToOne(() => Publisher, (p) => p.orders)
-  publisher: Publisher;
 }

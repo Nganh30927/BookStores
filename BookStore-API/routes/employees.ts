@@ -3,9 +3,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Employee } from '../entities/employee.entity';
 
-const repository = AppDataSource.getRepository(Employee);
-
 const router = express.Router();
+const repository = AppDataSource.getRepository(Employee);
 
 /*G */
 
@@ -45,7 +44,6 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const employee = new Employee();
       Object.assign(employee, req.body);
-  
       await repository.save(employee);
       res.status(201).json(employee);
     } catch (error) {

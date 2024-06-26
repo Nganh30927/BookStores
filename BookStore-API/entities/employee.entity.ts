@@ -1,5 +1,5 @@
 import { BaseEntity, BeforeInsert, BeforeUpdate, Column, OneToMany, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNotEmpty, IsEmail, MaxLength, validateOrReject } from 'class-validator';
+import { IsNotEmpty, IsEmail, MaxLength, validateOrReject, MinLength, min } from 'class-validator';
 import { Order } from './orders.entity';
 
 @Entity({ name: 'Employees' })
@@ -32,11 +32,15 @@ export class Employee {
   gender: string;
 
   @IsNotEmpty()
-  @Column({ name: 'Position', type: 'varchar', default: 'Staff' })
+  @Column({ name: 'Position', type: 'varchar', default: 'Staff', enum: ['Staff', 'Admin'] })
   position: string;
 
   @Column({ name: 'BirthDay', type: 'date', nullable: true })
-  birthday: Date;
+  birthday?: Date;
+
+  @MinLength(8)
+  @Column({name: 'Password', type: 'nvarchar'})
+  password: string;
 
   @OneToMany(() => Order, (o) => o.employee)
   orders: Order[];
