@@ -69,7 +69,7 @@ const GetNewBookCollection = () => {
       pagination={{
         clickable: true,
       }}
-      modules={[Autoplay, FreeMode, Pagination]}
+      modules={[ Autoplay,FreeMode, Pagination]}
       autoplay={{
         delay: 2000,
         disableOnInteraction: false,
@@ -101,9 +101,9 @@ const GetNewBookCollection = () => {
         {querySales.data && querySales.data?.data
           ? querySales.data?.data.data.map((book: any) => (
               <SwiperSlide>
-                <div className="w-full  px-4 my-4">
+                <div className="w-full  px-4 my-4 lg:px-4 md:px-4 sm:pl-4">
                   <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
-                   <Link to={''} className='cursor-pointer text-black hover:text-red-600'>
+                   <Link to={`/booksdetail/${book.id}`} className='cursor-pointer text-black hover:text-red-600'>
                    <img
                       className="block w-full h-72 object-contain rounded-t-xl  pt-2"
                       src={`http://localhost:9000` + `${book.imageURL}`}
@@ -111,24 +111,24 @@ const GetNewBookCollection = () => {
                       data-config-id="auto-img-1-2"
                     />
 
-                    <div className="group block py-4 ms-3" >
-                      <h6
-                        className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
-                        data-config-id="auto-txt-9-2"
-                      >
-                        {book.name}
-                      </h6>
-                      <div className="flex items-center mb-1">
-                        <span className=" text-base font-bold text-red-600 mr-2" data-config-id="auto-txt-10-2">
-                        {Number((book.price) * (1 - (book.discount) / 100)).toFixed(0)} đ
-                        </span>
-                        <del className=" text-sm font-bold text-black" data-config-id="auto-txt-10-2">
-                          {book.price} đ
-                        </del>
-                       
-                        <img className="block" src="vendia-assets/images/item-cards/stars-gradient.svg" alt="" data-config-id="auto-img-2-2" />
+                      <div className="group block py-4 ms-3" >
+                        <h6
+                          className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-40 lg:w-52 md:w-52 sm:w-40"
+                          data-config-id="auto-txt-9-2"
+                        >
+                          {book.name}
+                        </h6>
+                        <div className="flex items-center mb-1">
+                          <span className=" text-base font-bold text-red-600 mr-2" data-config-id="auto-txt-10-2">
+                          {Number((book.price) * (1 - (book.discount) / 100)).toFixed(0)} đ
+                          </span>
+                          <del className=" text-sm font-bold text-black" data-config-id="auto-txt-10-2">
+                            {book.price} đ
+                          </del>
+                        
+                          {/* <img className="block" src="" alt="" data-config-id="auto-img-2-2" /> */}
+                        </div>
                       </div>
-                    </div>
                    </Link>
 
                     <div className="absolute top-0 right-0 m-3 inline-block " >

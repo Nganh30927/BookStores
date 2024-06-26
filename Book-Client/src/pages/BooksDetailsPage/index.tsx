@@ -101,6 +101,35 @@ const BooksDetailsPage = () => {
         <title>{book?.data?.data.name}</title>
       </Helmet>
       <div className="container mx-auto ">
+      <section data-section-id={1} data-share="" data-category="breadcrumbs" data-component-id="b7267bf7_02_awz" className="relative bg-coolGray-50">
+        <div className="py-4">
+          <div className="container mx-auto px-4">
+            <div>
+              <a className="inline-block text-black" href="/" data-config-id="auto-txt-1-2">
+                Home page
+              </a>
+              <span className="inline-block mx-4" data-config-id="auto-txt-2-2">
+                /
+              </span>
+              <a className="inline-block text-black" href="/books" data-config-id="auto-txt-3-2">
+                Books
+              </a>
+              <span className="inline-block mx-4" data-config-id="auto-txt-2-2">
+                /
+              </span>
+              <a className="inline-block text-black" data-config-id="auto-txt-1-2">
+                BookDetail
+              </a>
+              <span className="inline-block mx-4" data-config-id="auto-txt-2-2">
+                /
+              </span>
+              <span className="inline-block text-black" data-config-id="auto-txt-3-2">
+              {book?.data?.data.name}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
         <section
           data-section-id={1}
           data-share=""

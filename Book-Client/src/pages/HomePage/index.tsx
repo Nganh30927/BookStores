@@ -97,10 +97,10 @@ const HomePage = () => {
       </Helmet>
       {/* //========Book Slide=======// */}
       <section data-section-id="1" data-share="" data-category="newest-products" data-component-id="4f76139a_01_awz" className="  overflow-x-hidden mx-auto">
-        <div className="mx-auto">
+        <div className="mx-auto container">
           <div className="">
             <div className="w-full h-full lg:mb-0">
-              <div className=" w-full h-96 overflow-hidden bg-contain  bg-slate-100 border">
+              <div className=" w-full h-48 lg:h-96 md:h-80 sm:h-48 overflow-hidden bg-contain  bg-slate-100 border">
                 <Swiper
                   slidesPerView={1}
                   spaceBetween={10}
@@ -110,10 +110,10 @@ const HomePage = () => {
                   className="mySwiper"
                 >
                   <SwiperSlide className="">
-                    <img className="w-full h-full object-fill" src="../../../public/images/banner_1.jpg" alt="Slide 1" />
+                    <img className="w-full h-full xl:object-fill lg:object-contain sm:object-fill" src="../../../public/images/MangaWeek_T524_MangaFiesta_Slidebanner_840x320.jpg" alt="Slide 1" />
                   </SwiperSlide>
                   <SwiperSlide>
-                    <img className="w-full h-full object-cover" src="../../../public/images/banner_2.jpg" alt="Slide 2" />
+                    <img className="w-full h-full xl:object-fill lg:object-contain sm:object-fill" src="../../../public/images/Summersale_0624_ldp_840x320_DealHot.jpg" alt="Slide 2" />
                   </SwiperSlide>
                 </Swiper>
               </div>
@@ -123,7 +123,7 @@ const HomePage = () => {
         {/* Book Category */}
       </section>
 
-      <section className="mx-auto ">
+      <section className="mx-auto container">
         <div className="flex justify-center items-center mb-10 sm:mb-16 bg-gray-200 opacity-90">
           <div className="overflow-x-auto">
             <div className="flex space-x-5 md:space-x-4">
@@ -161,7 +161,7 @@ const HomePage = () => {
                   <CountDown/>
               </div>
               </div>
-              <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
+              <div id="addToCartComponentSlot" className="peer max-lg:mb-4 mt-2">
                 <div>
                   <a href={'/books'} className="basis-0 w-full py-2 px-6 rounded-br-2xl  bg-red-700 text-white group typography--button-medium uppercase relative clip clip--medium">
                     <span
@@ -191,7 +191,7 @@ const HomePage = () => {
       </section>
 
       <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 ">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-end">
             <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
@@ -247,9 +247,9 @@ const HomePage = () => {
                 {queryGetAll.data && queryGetAll.data.data
                   ? queryGetAll.data.data.books.map((allbook: any) => (
                       <SwiperSlide>
-                        <div className="w-full  px-4 my-4">
+                        <div className="w-full  px-4 my-4 lg:px-4 md:px-4 sm:pl-4">
                           <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
-                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                            <Link to={`/booksdetail/${allbook.id}`} className="cursor-pointer text-black hover:text-red-600">
                               <img
                                 className="block w-full h-72 object-contain rounded-t-xl  pt-2"
                                 src={`http://localhost:9000` + `${allbook.imageURL}`}
@@ -259,7 +259,7 @@ const HomePage = () => {
 
                               <div className="group block py-4 ms-3">
                                 <h6
-                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-40 lg:w-52 md:w-52 sm:w-40"
                                   data-config-id="auto-txt-9-2"
                                 >
                                   {allbook.name}
@@ -356,9 +356,9 @@ const HomePage = () => {
                 {queryManga.data && queryManga.data.data
                   ? queryManga.data.data.books.map((manga: any) => (
                       <SwiperSlide>
-                        <div className="w-full  px-4 my-4">
+                        <div className="w-full  px-4 my-4 lg:px-4 md:px-4 sm:pl-4">
                           <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
-                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                            <Link to={`/booksdetail/${manga.id}`} className="cursor-pointer text-black hover:text-red-600">
                               <img
                                 className="block w-full h-72 object-contain rounded-t-xl  pt-2"
                                 src={`http://localhost:9000` + `${manga.imageURL}`}
@@ -368,7 +368,7 @@ const HomePage = () => {
 
                               <div className="group block py-4 ms-3">
                                 <h6
-                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-40 lg:w-52 md:w-52 sm:w-40"
                                   data-config-id="auto-txt-9-2"
                                 >
                                   {manga.name}
@@ -409,7 +409,7 @@ const HomePage = () => {
       </section>
 
       <section data-section-id={1} data-share="" className="py-12 mt-6 py-md-24  container mx-auto">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 ">
           <div className="max-w-sm md:max-w-xl mx-auto lg:max-w-none contents">
             <div className="flex flex-wrap mx-4 mb-3  justify-end">
             <div id="addToCartComponentSlot" className="peer max-lg:mb-4">
@@ -465,9 +465,9 @@ const HomePage = () => {
                 {queryYouthBooks.data && queryYouthBooks.data.data
                   ? queryYouthBooks.data.data.books.map((ybooks: any) => (
                       <SwiperSlide>
-                        <div className="w-full  px-4 my-4">
+                        <div className="w-full  px-4 my-4 lg:px-4 md:px-4 sm:pl-4">
                           <div className="block w-full h-full relative bg-white rounded-xl border-2 border-rose-100 overflow-hidden hover:scale-105 ease-in duration-300">
-                            <Link to={''} className="cursor-pointer text-black hover:text-red-600">
+                            <Link to={`/booksdetail/${ybooks.id}`} className="cursor-pointer text-black hover:text-red-600">
                               <img
                                 className="block w-full h-72 object-contain rounded-t-xl  pt-2"
                                 src={`http://localhost:9000` + `${ybooks.imageURL}`}
@@ -477,7 +477,7 @@ const HomePage = () => {
 
                               <div className="group block py-4 ms-3">
                                 <h6
-                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-52"
+                                  className="inline-block text-base font-semibold  text-black hover:text-red-600 mb-2 overflow-hidden whitespace-nowrap overflow-ellipsis w-40 lg:w-52 md:w-52 sm:w-40"
                                   data-config-id="auto-txt-9-2"
                                 >
                                   {ybooks.name}

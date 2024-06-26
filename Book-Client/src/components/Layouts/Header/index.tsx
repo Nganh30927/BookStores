@@ -111,8 +111,7 @@ const Header = () => {
         <div className={` hidden lg:block  ${styles.middler_header}`}>
           <div className="main_bottom_header grid grid-cols-12 container mx-auto 2xl:px-28 lg:px-5 text-center py-5 justify-center items-center">
             <div className="logo col-span-3">
-              {/* <Link to="/"><img src={Logo} alt="" /></Link> */}
-              <h1>FASHA.COM</h1>
+              <Link to="/"><img src={'../../../../public/images/fahasa-logo.png'} className='h-16' alt="" /></Link>
             </div>
             <div className={`col-span-6 relative ms-20 2xl:ms-10 lg:ms-10 ${styles.search}`}>
               <QueryClientProvider client={queryClient}>
@@ -251,13 +250,13 @@ const Header = () => {
                     <Link to="/books">Shop</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 2 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(2)}>
-                    <Link to="/Blog">Blog</Link>
+                    <Link to="/blog">Blog</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 3 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(3)}>
                     <Link to="/contact">Contact</Link>
                   </li>
                   <li className={`px-5 font-bold  ${activeIndexNavigation === 4 ? styles.active : ''}`} onClick={() => handleItemNavigationClick(4)}>
-                    <Link to="/About">About</Link>
+                    <Link to="/about">About</Link>
                   </li>
                 </ul>
               </div>
@@ -267,8 +266,8 @@ const Header = () => {
         <div className={` hidden sm:hidden md:block lg:hidden xl:hidden ${styles.middler_header_tablet}`}>
           <div className="main_middler_header_tablet grid grid-cols-12 px-5 justify-center items-center py-4">
             <div className="logo col-span-4 pt-2">
-              {/* <Link to="/"><img src={Logo} alt="" /></Link> */}
-              <h2>FASHA.COM</h2>
+              <Link to="/"><img src={'../../../../public/images/fahasa-logo.png'} className='h-12' alt="" /></Link>
+             
             </div>
             <div className={`title col-span-8  ${styles.search}`}>
               <QueryClientProvider client={queryClient}>
@@ -309,10 +308,10 @@ const Header = () => {
                         <Link to="/">Home</Link>
                       </li>
                       <li>
-                        <Link to="/Shop">Shop</Link>
+                        <Link to="/books">Shop</Link>
                       </li>
                       <li>
-                        <Link to="/Blog">Blog</Link>
+                        <Link to="/blog">Blog</Link>
                       </li>
                       <li>
                         <Link to="/contact">Contact</Link>
@@ -329,11 +328,11 @@ const Header = () => {
               </Drawer>
             </div>
             <div className="ps-16">
-              <div className="logo">
-                {/* <Link to="/"><img src={Logo} alt="" /></Link> */} <h2>LOGO!</h2>{' '}
+              <div className="block lg:hidden md:hidden sm:block">
+                <Link to="/"><img src={'../../../../public/images/fahasa-logo.png'} className='h-9' alt="" /></Link> 
               </div>
             </div>
-            <div className="-mr-28 block lg:hidden md:hidden">
+            <div className="-mr-20 block lg:hidden md:hidden">
               <QueryClientProvider client={queryClient}>
                 <MobileSearch />
               </QueryClientProvider>

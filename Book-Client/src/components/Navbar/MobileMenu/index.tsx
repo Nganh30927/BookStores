@@ -45,7 +45,7 @@ const MobileMenu = ({ currentCategoryId }: ProductFilterType) => {
               <li key={`queryCategory${item.id}`}>
                 <a
                   onClick={() => {
-                    navigate(`/books/list?categoryId=${item.id}`);
+                    navigate(`/books?categoryId=${item.id}`);
                   }}
                   className={` ${currentCategoryId == item.id ? 'your-active-class' : 'your-inactive-class'}`}
                 >

@@ -31,7 +31,7 @@ const CartPage = () => {
       ) : (
         <div className="container px-4 mx-auto">
       
-      <div className="flex flex-wrap justify-between -mx-4 bg-slate-100 py-12 px-4 rounded-lg">
+      <div className="flex flex-wrap justify-between -mx-4 bg-white py-12 px-4 rounded-lg border-2 border-gray-400">
         <div className="w-full xl:w-9/12 2xl:w-8/12 px-4 mb-16 xl:mb-0">
           
         {
@@ -261,7 +261,7 @@ const CartPage = () => {
               </h2>
               <div className="flex justify-between items-center mb-3">
                 <h4
-                  className="font-heading font-medium text-white text-opacity-50"
+                  className="font-heading font-bold text-white "
                   data-config-id="auto-txt-52-2"
                 >
                   Items
@@ -328,4 +328,3 @@ const CartPage = () => {
 }
 
 export default CartPage
-

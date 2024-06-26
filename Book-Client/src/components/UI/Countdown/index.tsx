@@ -43,7 +43,7 @@ const CountDown = () => {
 
   return (
     <>
-      <div className="grid grid-flow-col gap-4 text-center items-center auto-cols-max border-rose-500 border rounded-md px-2">
+      <div className="grid grid-flow-col gap-4 text-center items-center auto-cols-max border-rose-500 border rounded-md px-2 py-1">
         <div className="flex flex-col px-2 leading-none text-red-500">
           <span className="countdown font-semibold">
             {timeLeft.days.toString().padStart(2, '0')}

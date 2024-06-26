@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 type queryType = {
   page?: number;
   categoryId?: string;
-  [key: string]: any;
+  minPrice?: number;
+  maxPrice?: number;
+  // [key: string]: any;
 };
 
 type TPagination = {
@@ -13,45 +15,23 @@ type TPagination = {
   currentPage: number;
   setCurrentPage: (page: number) => void;
 };
-function encodeQueryData(data: Record<string, any>, existingParams: queryType) {
+function encodeQueryData(data: Record<string, any>) {
   const ret = [];
-  // Loại bỏ các tham số không mong muốn từ existingParams
-  const filteredExistingParams = { ...existingParams };
-  for (const key in data) {
-    if (filteredExistingParams.hasOwnProperty(key)) {
-      delete filteredExistingParams[key];
-    }
-  }
-  // Thêm các tham số từ existingParams đã được lọc
-  for (const d in filteredExistingParams) {
-    if (filteredExistingParams[d] !== undefined) {
-      ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(filteredExistingParams[d]));
-    }
-  }
-  // Thêm các tham số mới từ data
-  for (const d in data) {
-    if (data[d] !== undefined) {
-      ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
-    }
-  }
+  for (const d in data) ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
   return ret.join('&');
 }
 
 const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TPagination) => {
   const navigate = useNavigate();
-  // React.useEffect(() => {
-  //   const newParams = { ...queryString, page: currentPage };
-  //   const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
-  //   navigate(pageUrl);
-  // }, [currentPage, queryString, navigate]);
 
   const pageNumbers = [...Array(totalPages + 1).keys()].slice(1);
 
   console.log(pageNumbers);
   const goToNextPage = () => {
     if (currentPage !== totalPages) {
+      const newQueryString = { ...queryString, page: currentPage + 1 };
       setCurrentPage(currentPage + 1);
-      navigate(`/books?page=${currentPage + 1}`);
+      navigate(`/books?${encodeQueryData(newQueryString)}`);
     }
   };
   const goToPrevPage = () => {
@@ -88,8 +68,8 @@ const Pagination = ({ queryString, totalPages, currentPage, setCurrentPage }: TP
               }
               onClick={() => {
                 setCurrentPage(pgNumber);
-                const newParams = { ...queryString, page: pgNumber };
-                const pageUrl = `/books?` + encodeQueryData(newParams, queryString);
+                queryString = {...queryString,page: pgNumber};
+                const pageUrl = `/books?`+encodeQueryData(queryString);
                 navigate(pageUrl);
               }}
             >

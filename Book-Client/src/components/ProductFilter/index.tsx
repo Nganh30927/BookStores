@@ -48,6 +48,7 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
         <li className="list-none hover:bg-slate-200 py-1 px-2">
           <button
             onClick={() => {
+              setCurrentPage(1);
               navigate(`/books`);
             }}
             className={currentCategoryId === 0 ? `hover:text-indigo-500 font-bold text-indigo-500 btn-empty` : `btn-empty hover:text-indigo-500`}
@@ -62,6 +63,7 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
                   <li key={item.id} className="mb-2 py-1 px-2 hover:bg-slate-100 font-medium">
                     <button
                       onClick={() => {
+                        setCurrentPage(1);
                         navigate(`/books?categoryId=${item.id}`);
                       }}
                       className={
@@ -168,6 +170,7 @@ const ProductFilter = ({ queryString, currentCategoryId, currentPage, setCurrent
             <li className="list-none hover:bg-slate-200 py-1 px-2">
               <button
                 onClick={() => {
+                  setCurrentPage(1);
                   navigate(`/books`);
                 }}
                 className={currentCategoryId === 0 ? `hover:text-red-400 font-bold text-red-600 btn-empty` : `btn-empty hover:text-red-400`}

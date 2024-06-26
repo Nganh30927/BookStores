@@ -51,6 +51,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
     }
 
     const [books, totalCount] = await query
+      .orderBy('book.id', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
