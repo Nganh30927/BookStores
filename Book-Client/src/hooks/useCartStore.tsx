@@ -1,9 +1,7 @@
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { axiosClient } from '../library/axiosClient';
-import config from '../constants/config';
 import { create } from 'zustand';
 import axios from 'axios';
-import { min } from 'lodash';
+import config from '../constants/config';
 
 interface CartItem {
   id: number;
@@ -27,13 +25,16 @@ interface CartStore {
   placeOrder: (payload: any) => Promise<{ ok: boolean; message: string }>;
   isLoading: boolean;
   error: string | null;
+  itemTotal: number;
+  // itemCart: (item: CartItem) => void;
 }
 
 export const useCartStore = create(
   persist<CartStore>(
-    (set) => ({
+    (set, get) => ({
       items: [],
       total: 0,
+      itemTotal: 0,
       itemCount: 0,
       isLoading: false,
       error: null,
@@ -48,6 +49,7 @@ export const useCartStore = create(
               ...state,
               items: state.items.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)),
               total: state.total + priceAfterDiscount,
+              itemTotal: state.itemTotal + item.price,
               itemCount: state.itemCount + 1,
             };
           } else {
@@ -56,6 +58,7 @@ export const useCartStore = create(
               ...state,
               items: [...state.items, item],
               total: state.total + priceAfterDiscount,
+              itemTotal: state.itemTotal + item.price,
               itemCount: state.itemCount + 1,
             };
           }
@@ -133,6 +136,7 @@ export const useCartStore = create(
           return { ok: false, message: msg };
         }
       },
+     
     }),
     {
       name: 'cart-storage', // tên của key trong localStorage

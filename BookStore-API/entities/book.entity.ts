@@ -7,7 +7,7 @@ import { FeedBack } from './feedback.entity';
 import { OrderDetail } from './orderdetails.entity';
 
 @Entity({ name: 'Books' })
-@Check(`"Quantity" >= 0`)
+@Check(`"Stock" >= 0`)
 @Check(`"Price" >= 0`)
 @Check(`"Discount" >= 0`)
 @Check(`"Discount" <= 100`)
@@ -29,8 +29,8 @@ export class Book {
   title?: string;
 
   @IsNotEmpty()
-  @Column({ name: 'Quantity', type: 'int', default: 0 })
-  quantity: number;
+  @Column({ name: 'Stock', type: 'int', default: 0 })
+  stock: number;
 
   @IsNotEmpty()
   @Column({ name: 'Price', type: 'money' })

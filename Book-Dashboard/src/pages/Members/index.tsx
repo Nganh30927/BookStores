@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Space, Table, Button, Modal, Form, Input, message, Pagination, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { EyeOutlined, EyeTwoTone, EyeInvisibleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined, EyeTwoTone, EyeInvisibleOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { axiosClient } from '../../library/axiosClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import config from '../../constants/config';
+import type { DatePickerProps, InputRef } from 'antd';
 import type { PaginationProps } from 'antd';
 import { number } from 'yup';
+import type { ColumnType, FilterDropdownProps } from 'antd/es/table/interface';
+import Highlighter from 'react-highlight-words';
 interface DataType {
   id: number;
   name: string;
@@ -17,7 +20,7 @@ interface DataType {
   address: string;
   password?: string;
 }
-
+type DataIndex = keyof DataType;
 const Member = () => {
   const [messageApi, contextHolder] = message.useMessage();
   //Toggle Modal Edit
@@ -115,6 +118,107 @@ const Member = () => {
     console.log('Failed:', errorInfo);
   };
 
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps['confirm'],
+    dataIndex: DataIndex,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }: FilterDropdownProps) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText((selectedKeys as string[])[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            Close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase())
+        : false,
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+  
   //======= Sự kiện Create =====//
   const fetchCreate = async (formData: DataType) => {
     return axiosClient.post(config.urlAPI + '/members', formData);
@@ -170,16 +274,19 @@ const Member = () => {
       dataIndex: 'name',
       key: 'name',
       render: (text) => <a>{text}</a>,
+      ...getColumnSearchProps('name'),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      ...getColumnSearchProps('email'),
     },
     {
       title: 'Contact',
       dataIndex: 'contact',
       key: 'contact',
+      ...getColumnSearchProps('contact'),
     },
     {
       title: 'Gender',

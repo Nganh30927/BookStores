@@ -46,7 +46,7 @@ const useAuth = create(
           const {data} = await axiosClient.get(config.urlAPI+'/auth/profile');
           
           //cập nhật lại state
-          set({user: data.data, isAuthenticated,isLoading: false });
+          set({user: data, isAuthenticated,isLoading: false });
           console.log('get data profile ', data);
           //trả lại thông tin cho hàm login
           return { isAuthenticated, error: '',isLoading: false };

@@ -1,32 +1,15 @@
 import express, { Request, Response } from 'express';
-
+import { sendJsonSuccess } from '../helpers/responseHandler';
 import { AppDataSource } from '../data-source';
 import { Book } from '../entities/book.entity';
+import { Order } from '../entities/orders.entity';
 
 const router = express.Router();
 
 const repository = AppDataSource.getRepository(Book);
+const ordersRepository = AppDataSource.getRepository(Order);
 
-/* GET Books */
-// router.get('/', async (req: Request, res: Response, next: any) => {
-//   try {
-//     // SELECT * FROM [Books] AS 'book'
-//     const books = await repository
-//       .createQueryBuilder('book')
-//       .leftJoinAndSelect('book.category', 'category')
-//       .leftJoinAndSelect('book.publisher', 'publisher')
-//       .getMany();
 
-//     if (books.length === 0) {
-//       res.status(204).send();
-//     } else {
-//       res.json(books);
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 router.get('/', async (req: Request, res: Response, next: any) => {
   try {
@@ -64,87 +47,14 @@ router.get('/', async (req: Request, res: Response, next: any) => {
       recordsPerPage: limit
     };
 
-    if (result.books.length === 0) {
-      res.status(204).send();
-    } else {
-      res.json(result);
-    }
+    sendJsonSuccess(res)(result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
 
 
-// router.get('/', async (req: Request, res: Response, next: any) => {
-//   try {
-//     const minPrice = req.query.minPrice; // Giả sử bạn nhận giá tối thiểu từ query parameter
-//     const maxPrice = req.query.maxPrice; // Giả sử bạn nhận giá tối đa từ query parameter
-//     const take = req.query.limit ? parseInt(req.query.limit as string) : 10 //  giới hạn từ query parameter
-//     const skip = req.query.page ? parseInt(req.query.page as string) : 1; // n số lượng bản ghi cần bỏ qua từ query parameter
-
-//     const query = repository.createQueryBuilder('book')
-//       .leftJoinAndSelect('book.category', 'category')
-//       .leftJoinAndSelect('book.publisher', 'publisher');
-    
-//     // http://localhost:9000/books?minPrice=&maxPrice=
-//     if (minPrice) {
-//       query.andWhere('book.price >= :minPrice', { minPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có minPrice
-//     }
-
-//     if (maxPrice) {
-//       query.andWhere('book.price <= :maxPrice', { maxPrice }); // Thêm điều kiện WHERE vào truy vấn nếu có maxPrice
-//     }
-
-//     if (take) {
-//       query.take(take); // Giới hạn số lượng bản ghi được trả về
-//     }
-
-//     if (skip) {
-//       query.skip((skip - 1) * take); // Bỏ qua một số lượng nhất định các bản ghi đầu tiên
-//     }
-
-    
-//     const books = await query.getMany();
-
-//     if (books.length === 0) {
-//       res.status(204).send();
-//     } else {
-//       res.json(books);
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
-
-
-
-
-// SELECT o FROM Book o WHERE o.category.id=?1
-// router.get('/list', async (req: Request, res: Response, next: any) => {
-//   try {
-//     const categoryId = req.query.categoryId;
-//     console.log('categoryId:', categoryId);
-
-//     const books = await repository
-//       .createQueryBuilder('book')
-//       .leftJoinAndSelect('book.category', 'category')
-//       .leftJoinAndSelect('book.publisher', 'publisher')
-//       .where('category.id = :categoryId', { categoryId })
-//       .getMany();
-
-//     if (books.length === 0) {
-//       res.status(204).send();
-//     } else {
-//       res.json(books);
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 // @Query("SELECT o FROM Books o WHERE o.name LIKE %?1%")
 router.get('/search', async (req: Request, res: Response, next: any) => {
@@ -158,38 +68,143 @@ router.get('/search', async (req: Request, res: Response, next: any) => {
       .where('book.name LIKE :keyword', { keyword: `%${keyword}%` })
       .getMany();
 
-    if (books.length === 0) {
-      res.status(204).send();
-    } else {
-      res.json(books);
+      sendJsonSuccess(res)(books);
+    } catch (error) {
+      next(error);
     }
+});
+
+// /* GET book by id */
+// router.get('/:id', async (req: Request, res: Response, next: any) => {
+//   try {
+//     const book = await repository
+//       .createQueryBuilder('book')
+//       .leftJoinAndSelect('book.category', 'category')
+//       .leftJoinAndSelect('book.publisher', 'publisher')
+//       .where('book.id = :id', { id: parseInt(req.params.id) })
+//       .getOne();
+//     if (!book) {
+//       return res.status(404).json({ error: 'Not found' });
+//     }
+//     sendJsonSuccess(res)(book);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+router.get('/:id', async (req: Request, res: Response, next: any) => {
+  const itemId = parseInt(req.params.id);
+
+  try {
+    // Fetch book details with category and publisher relations
+    const found = await repository.findOneOrFail({
+      where: { id: itemId },
+      relations: ["category", "publisher"]
+    });
+    if (!found) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    // Fetch amount sold
+    const amountSoldQuery = ordersRepository.createQueryBuilder("order")
+      .leftJoinAndSelect("order.orderDetails", "orderDetail")
+      .leftJoinAndSelect("orderDetail.book", "book")
+      .where("order.status = :status", { status: "COMPLETED" })
+      .andWhere("book.id = :bookId", { bookId: itemId })
+      .select("book.id", "bookId")
+      .addSelect("book.name", "bookName")
+      .addSelect("book.price", "price")
+      .addSelect("SUM(orderDetail.quantity)", "totalQuantity")
+      .groupBy("book.id")
+      .addGroupBy("book.name")
+      .addGroupBy("book.price");
+
+    const amountSold = await amountSoldQuery.getRawOne();
+
+    // Combine the book details with the amount sold
+    const result = {
+      ...found,
+      amountSold: amountSold ? amountSold.totalQuantity : 0
+    };
+    
+    // Send the combined result
+    sendJsonSuccess(res)(result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
-/* GET book by id */
-router.get('/:id', async (req: Request, res: Response, next: any) => {
+router.post("/orderm/:orderId/stock", async (req: Request, res: Response, next: any) => {
   try {
-    const book = await repository
-      .createQueryBuilder('book')
-      .leftJoinAndSelect('book.category', 'category')
-      .leftJoinAndSelect('book.publisher', 'publisher')
-      .where('book.id = :id', { id: parseInt(req.params.id) })
-      .getOne();
-    if (!book) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-    res.status(200).json({
-      message: 'success',
-      data: book
+    const orderId = parseInt(req.params.orderId);
+
+    const orders = await ordersRepository.findOne({
+      where: { id: orderId },
+      relations: ["orderDetails", "orderDetails.book"]
     });
+
+    if (!orders) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    for (const orderDetails of orders.orderDetails) {
+      const bookId = orderDetails.book.id; 
+      const quantity = orderDetails.quantity;
+    
+      const book = await repository.findOne({ where: { id: bookId } });
+
+      if (!book) {
+        console.log(`Book not found for order detail: ${orderDetails.orderId}`);
+        continue;
+      }
+
+      book.stock += quantity;
+      await repository.save(book);
+
+    }
+
+    res.json({ message: "quantity updated successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
+
+router.post("/orderp/:orderId/stock", async (req: Request, res: Response, next: any) => {
+  try {
+    const orderId = parseInt(req.params.orderId);
+
+    const order = await ordersRepository.findOne({
+      where: { id: orderId },
+      relations: ["orderDetails", "orderDetails.book"]
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    for (const orderDetail of order.orderDetails) {
+      const bookId = orderDetail.book.id; 
+      const quantity = orderDetail.quantity;
+    
+      const book = await repository.findOne({ where: { id: bookId } });
+
+      if (!book) {
+        console.log(`Book not found for order detail: ${orderDetail.orderId}`);
+        continue;
+      }
+
+      book.stock -= quantity;
+      await repository.save(book);
+    }
+
+    res.json({ message: "Stock updated successfully" });
+  } catch (error) {
+    console.error(error);
+   next(error)
+  }
+});
+
+
 
 /* POST book */
 router.post('/', async (req: Request, res: Response, next: any) => {
@@ -197,10 +212,9 @@ router.post('/', async (req: Request, res: Response, next: any) => {
     const book = new Book();
     Object.assign(book, req.body);
     await repository.save(book);
-    res.status(201).json(book);
+    sendJsonSuccess(res)(book);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
@@ -219,11 +233,10 @@ router.patch('/:id', async (req: Request, res: Response, next: any) => {
       .leftJoinAndSelect('b.category', 'c')
       .where('b.id = :id', { id: parseInt(req.params.id) })
       .getOne();
-    res.json(updatedBook);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+      sendJsonSuccess(res)(updatedBook);
+    } catch (error) {
+      next(error);
+    }
 });
 /* DELETE book */
 router.delete('/:id', async (req: Request, res: Response, next: any) => {
@@ -235,10 +248,9 @@ router.delete('/:id', async (req: Request, res: Response, next: any) => {
     await repository.delete({
       id: book.id,
     });
-    res.status(200).send();
+    sendJsonSuccess(res)(book);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
@@ -259,13 +271,9 @@ router.get('/sales/hotsales', async (req: Request, res: Response, next: any) => 
     if (!books) {
       return res.status(404).json({ error: 'Not found' });
     }
-    res.status(200).json({
-      message: 'success',
-      data: books
-    });
+    sendJsonSuccess(res)(books);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 

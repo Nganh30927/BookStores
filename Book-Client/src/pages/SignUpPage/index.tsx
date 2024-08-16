@@ -10,12 +10,17 @@ import { message } from 'antd';
 
 const schema = yup
   .object({
-    name: yup.string().required(),
-    email: yup.string().email().required(),
-    password: yup.string().required(),
-    address: yup.string().required(),
-    contact: yup.string().required(),
-    gender: yup.string().required(),
+    name: yup.string().required("Họ và tên không được để trống").matches(/[^a-z0-9A-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỂưăạảấầẩẫậắằẳẵặẹẻẽềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]/u, 'Tên không hợp lệ'),
+    email: yup.string().email().matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email không hợp lệ")
+    .required("Email không được để trống."),
+    password: yup.string().required("password không được để trống"),
+    address: yup.string().required("Địa chỉ không được để trống"),
+    contact: yup.string().matches(
+      /([\+84|84|0]+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+      "Số điện thoại không hợp lệ"
+    )
+    .required("Số điện thoại không được để trống."),
+    gender: yup.string().required("Giới tính không được để trống"),
   })
   .required();
 type FormData = yup.InferType<typeof schema>;
@@ -69,6 +74,9 @@ const SignUpPage = () => {
       console.log('Signup result:', result);
       if (!result.ok) {
         setError(result.message);
+      } else {
+        console.log('Navigating to "/"');
+        navigate('/');
       }
     }
   };

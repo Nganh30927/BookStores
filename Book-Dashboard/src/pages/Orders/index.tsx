@@ -13,6 +13,7 @@ import {
   UserOutlined,
   ShoppingCartOutlined,
   SaveOutlined,
+  SearchOutlined
 } from '@ant-design/icons';
 import numeral from 'numeral';
 import dayjs from 'dayjs';
@@ -20,9 +21,8 @@ import moment from 'moment';
 import { PopconfirmProps, Descriptions, DescriptionsProps, Badge } from 'antd';
 import type { DatePickerProps } from 'antd';
 import type { GetRef, InputRef } from 'antd';
-import FormItem from 'antd/es/form/FormItem';
-import OrderDetailTable from './OrderDetailsTable';
-import { get, set } from 'react-hook-form';
+import Highlighter from 'react-highlight-words';
+import type { ColumnType, FilterDropdownProps } from 'antd/es/table/interface';
 
 interface OrderItem {
   orderId?: number;
@@ -71,7 +71,7 @@ interface DataType {
 }
 
 type Props = {};
-
+type DataIndex = keyof DataType;
 export default function Orders({}: Props) {
   const [createForm] = Form.useForm<DataType>();
   const [updateForm] = Form.useForm<DataType>();
@@ -379,6 +379,111 @@ export default function Orders({}: Props) {
     }
   };
 
+  /**FILTER ITEMS */
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps['confirm'],
+    dataIndex: DataIndex,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }: FilterDropdownProps) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText((selectedKeys as string[])[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            Close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase())
+        : false,
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+  
+
+
+  /**END FILTER */
   const columns: TableColumnsType<DataType> = [
     {
       title: 'No.',
@@ -413,6 +518,7 @@ export default function Orders({}: Props) {
               </div>
             );
           },
+          // ...getColumnSearchProps('name'),
         },
         {
           title: 'Phone',
@@ -479,6 +585,11 @@ export default function Orders({}: Props) {
       render: (text: string, record: any, index: number) => {
         return <span>{text}</span>;
       },
+      filters: [
+        { text: 'WAITING', value: 'WAITING' },
+        { text: 'CANCELED', value: 'CANCELED' },
+        { text: 'COMPLETED', value: 'COMPLETED' },
+      ],
     },
     {
       title: () => {
@@ -490,6 +601,11 @@ export default function Orders({}: Props) {
       render: (text: string, record: any, index: number) => {
         return <span>{text}</span>;
       },
+      filters: [
+        { text: 'CASH', value: 'CASH' },
+        { text: 'CREDIT', value: 'CREDIT' },
+        { text: 'MOMO', value: 'MOMO' },
+      ],
     },
     {
       title: 'Date',

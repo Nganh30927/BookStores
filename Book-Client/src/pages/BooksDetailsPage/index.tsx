@@ -14,7 +14,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export interface IBooks {
-  data: {
+
     data: {
       id: number;
       name: string;
@@ -37,7 +37,7 @@ export interface IBooks {
         name: string;
       };
     };
-  };
+
 }
 
 const BooksDetailsPage = () => {
@@ -66,7 +66,7 @@ const BooksDetailsPage = () => {
     onSuccess: (data) => {
       // Thành công thì trả lại data
 
-      console.log('getbooksId', data?.data.data);
+      console.log('getbooksId', data?.data);
     },
     onError: (error) => {
       console.log(error);
@@ -80,8 +80,8 @@ const BooksDetailsPage = () => {
 
   // Queries
   const queryRelatedBooks = useQuery<IBooks[], Error>({
-    queryKey: ['related_books', book?.data?.data.categoryId ?? 0], // include categoryId and publisherId in the query key
-    queryFn: () => getRelatedBooks(book?.data?.data.categoryId ?? 0), // pass categoryId and publisherId to getRelatedBooks
+    queryKey: ['related_books', book?.data.categoryId ?? 0], // include categoryId and publisherId in the query key
+    queryFn: () => getRelatedBooks(book?.data.categoryId ?? 0), // pass categoryId and publisherId to getRelatedBooks
     onSuccess: (data) => {
       // Thành công thì trả lại data
       console.log('getRelatedBooks', data);
@@ -98,7 +98,7 @@ const BooksDetailsPage = () => {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{book?.data?.data.name}</title>
+        <title>{book?.data.name}</title>
       </Helmet>
       <div className="container mx-auto ">
       <section data-section-id={1} data-share="" data-category="breadcrumbs" data-component-id="b7267bf7_02_awz" className="relative bg-coolGray-50">
@@ -124,7 +124,7 @@ const BooksDetailsPage = () => {
                 /
               </span>
               <span className="inline-block text-black" data-config-id="auto-txt-3-2">
-              {book?.data?.data.name}
+              {book?.data.name}
               </span>
             </div>
           </div>
@@ -147,7 +147,7 @@ const BooksDetailsPage = () => {
                       <div className="border-gray-300 border-4">
                         <img
                           className="block h-full w-full"
-                          src={`http://localhost:9000` + `${book?.data?.data.imageURL}`}
+                          src={`http://localhost:9000` + `${book?.data.imageURL}`}
                           alt=""
                           style={{ maxHeight: 650 }}
                           data-config-id="auto-img-4-3"
@@ -159,27 +159,27 @@ const BooksDetailsPage = () => {
                 <div className="w-full md:w-1/2 px-4">
                   <div className="max-w-md mx-auto">
                     <h3 className="font-heading text-3xl  font-bold mb-4" data-config-id="auto-txt-1-3">
-                      {book?.data?.data.name}
+                      {book?.data.name}
                     </h3>
                     <span className="block text-lg font-bold  mb-6" data-config-id="auto-txt-2-3">
-                      {book?.data?.data.title}
+                      {book?.data.title}
                     </span>
                     <div className="block text-lg  mb-6" data-config-id="auto-txt-2-3">
-                      <span>Tác giả:</span> <span className="font-semibold">{book?.data?.data.author}</span>
+                      <span>Tác giả:</span> <span className="font-semibold">{book?.data.author}</span>
                     </div>
                     <div className="block mb-8" data-config-id="auto-txt-2-3">
                       <span className="text-lg">Nhà xuất bản:</span>{' '}
-                      <span className="text-lg font-semibold text-blue-500">{book?.data?.data.publisher.name}</span>
+                      <span className="text-lg font-semibold text-blue-500">{book?.data.publisher.name}</span>
                     </div>
                     <div className="block  mb-6" data-config-id="auto-txt-2-3">
                       <span className="text-red-600 text-xl font-semibold mr-1">
-                        {book?.data?.data.price && book?.data?.data.discount
-                          ? Number(book.data.data.price * (1 - book.data.data.discount / 100)).toFixed(0)
+                        {book?.data.price && book?.data.discount
+                          ? Number(book.data.price * (1 - book.data.discount / 100)).toFixed(0)
                           : 0}{' '}
                         đ
                       </span>{' '}
-                      <del className="text-lg mr-1">{book?.data?.data.price} đ</del>
-                      <span className="py-1 px-2 bg-red-600 text-white rounded-lg font-medium">{`-${book?.data?.data.discount}%`}</span>
+                      <del className="text-lg mr-1">{book?.data.price} đ</del>
+                      <span className="py-1 px-2 bg-red-600 text-white rounded-lg font-medium">{`-${book?.data.discount}%`}</span>
                     </div>
 
                     <div className="flex items-center border-b border-blueGray-800 mb-6">
@@ -224,7 +224,7 @@ const BooksDetailsPage = () => {
                     <a
                       onClick={() => {
                         console.log('Thêm giỏ hàng:', id);
-                        const item: any = book?.data?.data;
+                        const item: any = book?.data;
 
                         addItem({
                           id: item.id,
@@ -247,10 +247,10 @@ const BooksDetailsPage = () => {
                       Free Shipping &amp; Returns within 7 days.
                     </span>
                     <h5 className="mt-8 mb-3 text-lg font-bold " data-config-id="auto-txt-7-3">
-                      {book?.data?.data.title}
+                      {book?.data.title}
                     </h5>
                     <p className="text-gray-500 mb-6" data-config-id="auto-txt-8-3">
-                      {book?.data?.data.description}
+                      {book?.data.description}
                     </p>
                   </div>
                 </div>

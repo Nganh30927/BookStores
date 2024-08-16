@@ -2,6 +2,8 @@
 
 GET http://localhost:9000/members
 
+content-type: application/json
+
 
 ###
 ## Create a 
@@ -9,11 +11,12 @@ POST http://localhost:9000/members
 content-type: application/json
 
 {
-    "name": "Nguyễn Văn Quảng",
-    "email": "7quang@gmail.com",
+    "name": "Sĩ Nguyên",
+    "email": "singuyen@gmail.com",
     "address": "76 Lý Thái Tông.....",
     "gender": "Male",
-    "contact": "0961743733"
+    "contact": "0335954321",
+    "password": "singuyen@"
 }
 
 ###

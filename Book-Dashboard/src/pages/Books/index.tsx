@@ -26,21 +26,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { axiosClient } from '../../library/axiosClient';
 import config from '../../constants/config';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType } from 'antd/es/table';
-import type { TableColumnsType } from 'antd';
+import type { InputRef, TableColumnsType } from 'antd';
 import numeral from 'numeral';
-import { CloseOutlined, DeleteOutlined, EditOutlined, QuestionCircleOutlined, UploadOutlined } from '@ant-design/icons';
-
+import { CloseOutlined, DeleteOutlined, EditOutlined, QuestionCircleOutlined, UploadOutlined, SearchOutlined } from '@ant-design/icons';
 import form from 'antd/es/form';
 import axios from 'axios';
 import TextArea from 'antd/es/input/TextArea';
 import { set } from 'react-hook-form';
-
-// import { useNavigate, useSearchParams } from "react-router-dom";
-// import config from "../../constants/config";
-// import type { PaginationProps } from "antd";
+import type { ColumnType, FilterDropdownProps } from 'antd/es/table/interface';
+import Highlighter from 'react-highlight-words';
 
 interface DataType {
   id: number;
@@ -58,7 +55,7 @@ interface DataType {
   // category?: { id: number; name: string };
   // publisher?: { id: number; name: string };
 }
-
+type DataIndex = keyof DataType;
 const BooksPage = () => {
   const [books, setBooks] = useState<DataType[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -104,7 +101,9 @@ const BooksPage = () => {
     queryKey: ['publishers'],
     queryFn: async () => {
       const response = await axiosClient.get(config.urlAPI + `/publishers`);
-      setPublishers(response.data);
+      return response.data
+    },onSuccess: (data) => {
+      setPublishers(data);
     },
   });
   console.log('queryPublishers', publishers);
@@ -285,6 +284,112 @@ const BooksPage = () => {
   //   },
   // });
 
+    /**FILTER ITEMS */
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef<InputRef>(null);
+  
+    const handleSearch = (
+      selectedKeys: string[],
+      confirm: FilterDropdownProps['confirm'],
+      dataIndex: DataIndex,
+    ) => {
+      confirm();
+      setSearchText(selectedKeys[0]);
+      setSearchedColumn(dataIndex);
+    };
+  
+    const handleReset = (clearFilters: () => void) => {
+      clearFilters();
+      setSearchText('');
+    };
+  
+    const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => ({
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        close,
+      }: FilterDropdownProps) => (
+        <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+          <Input
+            ref={searchInput}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            style={{ marginBottom: 8, display: 'block' }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => clearFilters && handleReset(clearFilters)}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => {
+                confirm({ closeDropdown: false });
+                setSearchText((selectedKeys as string[])[0]);
+                setSearchedColumn(dataIndex);
+              }}
+            >
+              Filter
+            </Button>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => {
+                close();
+              }}
+            >
+              Close
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: (filtered: boolean) => (
+        <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+      ),
+      onFilter: (value, record) =>
+        record[dataIndex]
+          ? record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase())
+          : false,
+      onFilterDropdownOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+      render: (text) =>
+        searchedColumn === dataIndex ? (
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={text ? text.toString() : ''}
+          />
+        ) : (
+          text
+        ),
+    });
+    
+  
+  
+    /**END FILTER */
+
   const columns: TableColumnsType<DataType> = [
     {
       title: 'No.',
@@ -311,12 +416,14 @@ const BooksPage = () => {
       key: 'name',
       width: 150,
       render: (text) => <strong>{text}</strong>,
+      ...getColumnSearchProps('name'),
     },
     {
       title: 'Author',
       dataIndex: 'author',
       key: 'author',
       width: 120,
+      ...getColumnSearchProps('author'),
     },
     {
       title: 'Title',
@@ -346,6 +453,7 @@ const BooksPage = () => {
       key: 'category',
       width: 150,
       render: (_, record: any) => <span>{record.category.name}</span>,
+      // ...getColumnSearchProps(),
     },
 
     {
@@ -360,6 +468,7 @@ const BooksPage = () => {
       dataIndex: 'price',
       key: 'price',
       render: (text) => <strong>{text}</strong>,
+      ...getColumnSearchProps('price'),
     },
     {
       title: 'Serial',

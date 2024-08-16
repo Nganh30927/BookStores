@@ -28,7 +28,7 @@ export class Order {
   shippingaddress: string;
 
   @IsNotEmpty()
-  @Column({ name: 'PaymentType', type: 'varchar', length: 50, default: 'CASH', enum: ['CASH', 'CREDIT'] })
+  @Column({ name: 'PaymentType', type: 'varchar', length: 50, default: 'CASH', enum: ['CASH', 'CREDIT', 'MOMO', 'VNPAY'] })
   paymenttype: string;
 
   @Column({ name: 'Description', type: 'nvarchar', nullable: true })

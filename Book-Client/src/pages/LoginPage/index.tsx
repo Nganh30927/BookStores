@@ -8,8 +8,9 @@ import { RiGoogleFill, RiFacebookCircleFill } from 'react-icons/ri';
 
 const schema = yup
   .object({
-    email: yup.string().email().required(),
-    password: yup.string().required(),
+    email: yup.string().email().matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email không hợp lệ")
+    .required("Email không được để trống."),
+    password: yup.string().required("Password không được để trống"),
   })
   .required();
 type FormData = yup.InferType<typeof schema>;
